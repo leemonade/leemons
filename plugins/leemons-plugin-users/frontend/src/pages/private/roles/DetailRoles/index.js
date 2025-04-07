@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   ActionButton,
@@ -32,11 +32,7 @@ import { PermissionsTab } from "../../profiles/DetailProfile/PermissionsTab";
 import { SelectUserAgent } from "@users/components";
 import getUserFullName from "@users/helpers/getUserFullName";
 import prefixPN from "@users/helpers/prefixPN";
-import {
-  addRoleRequest,
-  getRoleRequest,
-  updateRoleRequest,
-} from "@users/request";
+import { addRoleRequest, getRoleRequest, updateRoleRequest } from "@users/request";
 
 function RoleDetail() {
   const [translations] = useTranslate({
@@ -45,7 +41,7 @@ function RoleDetail() {
   const t = tLoader(prefixPN("detail_roles"), translations);
   const { t: tCommonHeader } = useCommonTranslate("page_header");
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const { uri } = useParams();
 
   const [editMode, setEditMode] = useState(false);
@@ -54,8 +50,7 @@ function RoleDetail() {
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const [error, setError, ErrorAlert, getErrorMessage] =
-    useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
 
   useEffect(() => {
     if (!uri) {
@@ -90,7 +85,7 @@ function RoleDetail() {
       await hooks.fireEvent("user:update:permissions", role);
       setSaveLoading(false);
       setEditMode(false);
-      history.push(`/private/users/roles/detail/${response.role.uri}`);
+      navigate(`/private/users/roles/detail/${response.role.uri}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
       setSaveLoading(false);
@@ -151,7 +146,7 @@ function RoleDetail() {
     if (role?.id) {
       setEditMode(false);
     } else {
-      history.push("/private/users/roles/list");
+      navigate("/private/users/roles/list");
     }
   };
 

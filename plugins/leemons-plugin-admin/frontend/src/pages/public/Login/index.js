@@ -1,30 +1,20 @@
-import React from "react";
-import { isEmpty } from "lodash";
-import {
-  Box,
-  Button,
-  ContextContainer,
-  TextInput,
-  PasswordInput,
-} from "@bubbles-ui/components";
-import Cookies from "js-cookie";
-import { useHistory } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { unflatten } from "@common";
-import {
-  loginRequest,
-  getUserProfilesRequest,
-  getUserProfileTokenRequest,
-} from "@users/request";
-import prefixPN from "../../../helpers/prefixPN";
-import { HeroWrapper } from "../../../components/HeroWrapper";
-import { EMAIL_REGEX } from "../../../constants";
+import { Box, Button, ContextContainer, PasswordInput, TextInput } from '@bubbles-ui/components';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getUserProfileTokenRequest, getUserProfilesRequest, loginRequest } from '@users/request';
+import Cookies from 'js-cookie';
+import { isEmpty } from 'lodash';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { HeroWrapper } from '../../../components/HeroWrapper';
+import { EMAIL_REGEX } from '../../../constants';
+import prefixPN from '../../../helpers/prefixPN';
 
 const Login = () => {
   const [loading, setLoading] = React.useState(false);
-  const [, translations] = useTranslateLoader(prefixPN(""));
-  const history = useHistory();
+  const [, translations] = useTranslateLoader(prefixPN(''));
+  const navigate = useNavigate();
 
   const t = React.useMemo(() => {
     const empty = { welcome: {}, signup: {} };
@@ -42,7 +32,7 @@ const Login = () => {
 
   const defaultValues = {
     email: null,
-    password: "",
+    password: '',
   };
 
   const {
@@ -62,10 +52,7 @@ const Login = () => {
       try {
         const { profiles } = await getUserProfilesRequest(response.jwtToken);
         if (profiles && !isEmpty(profiles)) {
-          const { jwtToken } = await getUserProfileTokenRequest(
-            profiles[0].id,
-            response.jwtToken
-          );
+          const { jwtToken } = await getUserProfileTokenRequest(profiles[0].id, response.jwtToken);
 
           response.jwtToken = { ...jwtToken, profile: profiles[0] };
         }
@@ -74,8 +61,8 @@ const Login = () => {
       }
 
       // Finalmente metemos el token
-      Cookies.set("token", response.jwtToken);
-      history.push("/private/admin/setup");
+      Cookies.set('token', response.jwtToken);
+      navigate('/private/admin/setup');
 
       setLoading(false);
     } catch (err) {
@@ -95,23 +82,18 @@ const Login = () => {
   // RENDER
 
   return (
-    <HeroWrapper
-      quote={{ q: t.welcome.quote?.title, a: t.welcome.quote?.description }}
-    >
+    <HeroWrapper quote={{ q: t.welcome.quote?.title, a: t.welcome.quote?.description }}>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <ContextContainer title={"Login as admin"}>
+        <ContextContainer title={'Login as admin'}>
           <Box>
             <Controller
               control={control}
               name="email"
               rules={{
-                required:
-                  t.signup.errorMessages?.email?.required || "Field required",
+                required: t.signup.errorMessages?.email?.required || 'Field required',
                 pattern: {
                   value: EMAIL_REGEX,
-                  message:
-                    t.signup.errorMessages?.email?.invalidFormat ||
-                    "Invalid email format",
+                  message: t.signup.errorMessages?.email?.invalidFormat || 'Invalid email format',
                 },
               }}
               render={({ field }) => (
@@ -129,8 +111,7 @@ const Login = () => {
             name="password"
             control={control}
             rules={{
-              required:
-                t.signup.errorMessages?.password?.required || "Field required",
+              required: t.signup.errorMessages?.password?.required || 'Field required',
             }}
             render={({ field }) => (
               <PasswordInput

@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 
 import {
   Box,
-  Stack,
   Button,
   Checkbox,
-  FileUpload,
-  NumberInput,
-  InputWrapper,
   ContextContainer,
+  FileUpload,
+  InputWrapper,
+  NumberInput,
+  Stack,
   TotalLayoutFooterContainer,
 } from "@bubbles-ui/components";
 import { ChevLeftIcon, DownloadIcon } from "@bubbles-ui/icons/outline";
@@ -29,11 +28,12 @@ import { readExcel } from "../helpers/readExcel";
 import { XlsxTable } from "./xlsxTable";
 
 import { useUserList } from "@users/hooks/queries/useUserList";
+import { useNavigate } from "react-router-dom";
 
 export function UploadFile({ t, center, profile, scrollRef }) {
   const [store, render] = useStore();
   const [includeData, setIncludeData] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const locale = useLocale();
 
   const { data: userDatasetSchema } = useDatasetSchema({
@@ -103,9 +103,7 @@ export function UploadFile({ t, center, profile, scrollRef }) {
           value,
         });
       });
-      if (
-        JSON.stringify(store.file[0]) === JSON.stringify(store.templateIndexs)
-      ) {
+      if (JSON.stringify(store.file[0]) === JSON.stringify(store.templateIndexs)) {
         store.fileIsTemplate = true;
         store.initRow = 3;
       }
@@ -121,7 +119,7 @@ export function UploadFile({ t, center, profile, scrollRef }) {
   }
 
   function goToUsersList() {
-    history.push("/private/users/list");
+    navigate("/private/users/list");
   }
 
   async function onSave() {
@@ -175,9 +173,7 @@ export function UploadFile({ t, center, profile, scrollRef }) {
               subtitle={t("dropFile")}
               hideUploadButton
               single
-              accept={[
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-              ]}
+              accept={["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]}
               onChange={onSelectFile}
               loading={store.loading}
               disabled={store.loading}
@@ -187,11 +183,7 @@ export function UploadFile({ t, center, profile, scrollRef }) {
             fixed
             fullWidth
             leftZone={
-              <Button
-                variant="link"
-                onClick={goToUsersList}
-                leftIcon={<ChevLeftIcon />}
-              >
+              <Button variant="link" onClick={goToUsersList} leftIcon={<ChevLeftIcon />}>
                 {t("backToUsers")}
               </Button>
             }

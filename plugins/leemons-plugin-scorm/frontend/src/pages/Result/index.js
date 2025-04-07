@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import {
   ActivityAccordion,
@@ -17,11 +17,7 @@ import {
   Title,
   createStyles,
 } from "@bubbles-ui/components";
-import {
-  CutStarIcon,
-  PluginComunicaIcon,
-  StarIcon,
-} from "@bubbles-ui/icons/solid";
+import { CutStarIcon, PluginComunicaIcon, StarIcon } from "@bubbles-ui/icons/solid";
 import { LocaleDuration } from "@common";
 import hooks from "@leemons/hooks";
 
@@ -114,7 +110,7 @@ export default function Result() {
     --- Contexts and styles ----
    */
   const { id, user } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
   const { classes, cx } = useResultStyles();
@@ -136,21 +132,18 @@ export default function Result() {
   const evaluationSystem = useProgramEvaluationSystem(instance, {
     enabled: !!instance,
   });
-  const {
-    data: { assignation, scormStatus: state } = {},
-    isLoading: assignationIsLoading,
-  } = useAssignation({
-    instance: id,
-    user,
-    enabled: !!id && !!user,
-  });
+  const { data: { assignation, scormStatus: state } = {}, isLoading: assignationIsLoading } =
+    useAssignation({
+      instance: id,
+      user,
+      enabled: !!id && !!user,
+    });
 
   /*
     --- Parsed data --
   */
   const evaluationType = useEvaluationType(instance ?? {});
-  const evaluationTypeLocalzation =
-    evaluationTypeLocalizations?.[evaluationType];
+  const evaluationTypeLocalzation = evaluationTypeLocalizations?.[evaluationType];
 
   const questions = useScormQuestions({
     state,
@@ -185,9 +178,7 @@ export default function Result() {
           ),
           result: isAnswered ? (
             <Box style={{ minWidth: "100px" }} className={classes.tableCell}>
-              <Box
-                style={{ width: "20px", height: "20px", position: "relative" }}
-              >
+              <Box style={{ width: "20px", height: "20px", position: "relative" }}>
                 <ImageLoader
                   src={
                     isCorrect
@@ -235,9 +226,9 @@ export default function Result() {
   */
   const onUserChange = (newUser) => {
     if (newUser) {
-      history.push(`/private/scorm/result/${id}/${newUser}`);
+      navigate(`/private/scorm/result/${id}/${newUser}`);
     } else {
-      history.push(`/private/scorm/result/${id}`);
+      navigate(`/private/scorm/result/${id}`);
     }
   };
 
@@ -258,11 +249,7 @@ export default function Result() {
         <Box className={classes.container}>
           {!!isTeacher && (
             <Box className={classes.studentSelector}>
-              <AssignableUserNavigator
-                onChange={onUserChange}
-                value={user}
-                instance={instance}
-              />
+              <AssignableUserNavigator onChange={onUserChange} value={user} instance={instance} />
             </Box>
           )}
           {!!user && !assignationIsLoading && (
@@ -273,8 +260,7 @@ export default function Result() {
             >
               <Box className={classes.header}>
                 <Text role="productive">
-                  {evaluationTypeLocalzation}{" "}
-                  {instance.gradable ? <StarIcon /> : <CutStarIcon />}
+                  {evaluationTypeLocalzation} {instance.gradable ? <StarIcon /> : <CutStarIcon />}
                 </Text>
               </Box>
               <Box className={classes.content}>
@@ -330,11 +316,7 @@ export default function Result() {
                   </Stack>
                 </ScoreFeedback>
                 {!!questions.questions.length && (
-                  <ActivityAccordion
-                    multiple
-                    value={accordionState}
-                    onChange={setAccordionState}
-                  >
+                  <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
                     <ActivityAccordionPanel
                       key={1}
                       itemValue="questions"
@@ -374,9 +356,7 @@ export default function Result() {
               <Box sx={(theme) => ({ marginTop: theme.spacing[10] })}>
                 <ContextContainer alignItems="center">
                   <Text size="md" color="primary" strong>
-                    {isTeacher
-                      ? t("chatTeacherDescription")
-                      : t("chatDescription")}
+                    {isTeacher ? t("chatTeacherDescription") : t("chatDescription")}
                   </Text>
                   <Box>
                     <Button
@@ -387,9 +367,7 @@ export default function Result() {
                         setChatOpened(true);
                       }}
                     >
-                      {isTeacher
-                        ? t("chatButtonStudent")
-                        : t("chatButtonTeacher")}
+                      {isTeacher ? t("chatButtonStudent") : t("chatButtonTeacher")}
                     </Button>
                   </Box>
                 </ContextContainer>

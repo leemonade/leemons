@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
-import { useEffect, useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   LoadingOverlay,
@@ -15,10 +15,7 @@ import { useLayout } from "@layout/context";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { omit } from "lodash";
 
-import {
-  getQuestionBankRequest,
-  saveQuestionBankRequest,
-} from "../../../request";
+import { getQuestionBankRequest, saveQuestionBankRequest } from "../../../request";
 
 import DetailBasic from "./components/DetailBasic";
 import { DetailQuestionsRouter } from "./components/DetailQuestionsRouter";
@@ -36,7 +33,7 @@ export default function Detail() {
   const { layoutState, setLayoutState } = useLayout();
 
   const scrollRef = useRef();
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
   const isNew = useMemo(() => !params.id, [params.id]);
 
@@ -80,9 +77,9 @@ export default function Detail() {
       });
       addSuccessAlert(t("savedAsDraft"));
       if (isNew) {
-        history.replace(`/private/tests/questions-banks/${questionBank.id}`);
+        navigate(`/private/tests/questions-banks/${questionBank.id}`, { replace: true });
       }
-      history.push("/private/tests/questions-banks");
+      navigate("/private/tests/questions-banks");
     } catch (error) {
       addErrorAlert(error);
     } finally {
@@ -97,7 +94,7 @@ export default function Detail() {
     try {
       await saveQuestionBankRequest({ ...body, published: true });
       addSuccessAlert(t("published"));
-      history.push("/private/tests/questions-banks");
+      navigate("/private/tests/questions-banks");
     } catch (error) {
       addErrorAlert(t("errors.save"), error.message);
     } finally {
@@ -108,9 +105,9 @@ export default function Detail() {
   const setCurrentStep = useCallback(
     (step) => {
       searchParams.set("step", step);
-      history.push(`${window.location.pathname}?${searchParams.toString()}`);
+      navigate(`${window.location.pathname}?${searchParams.toString()}`);
     },
-    [searchParams, history]
+    [searchParams, navigate]
   );
 
   // EFFECTS ········································································ |
@@ -151,7 +148,9 @@ export default function Detail() {
     }
   }, [params.id]);
 
-  if (isLoading) return <LoadingOverlay visible />;
+  if (isLoading) {
+    return <LoadingOverlay visible />;
+  }
 
   return (
     <TotalLayoutContainer
@@ -161,7 +160,7 @@ export default function Detail() {
           icon={<QuestionBankIcon width={23} height={23} />}
           title={isNew ? t("pageTitleNew") : t("pageTitle")}
           formTitlePlaceholder={qBankName || t("headerTitlePlaceholder")}
-          onCancel={() => history.goBack()}
+          onCancel={() => navigate(-1)}
           mainActionLabel={t("cancel")}
         />
       }

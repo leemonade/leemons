@@ -1,52 +1,43 @@
-import React, { useEffect, useMemo, useState } from "react";
-import _ from "lodash";
-import {
-  Paper,
-  Box,
-  Stack,
-  ActionButton,
-  Tabs,
-  TabPanel,
-  Table,
-} from "@bubbles-ui/components";
+import { ActionButton, Box, Paper, Stack, TabPanel, Table, Tabs } from '@bubbles-ui/components';
+import _ from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 // TODO: import from @common plugin
 
-import { AdminPageHeader } from "@bubbles-ui/leemons";
-import { ExpandDiagonalIcon } from "@bubbles-ui/icons/outline";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
-import useRequestErrorMessage from "@common/useRequestErrorMessage";
-import { listProfilesRequest } from "@users/request";
-import { goDetailProfilePage } from "@users/navigate";
-import prefixPN from "@users/helpers/prefixPN";
-import { Link, useHistory } from "react-router-dom";
+import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@users/helpers/prefixPN';
+import { goDetailProfilePage } from '@users/navigate';
+import { listProfilesRequest } from '@users/request';
+import { Link, useNavigate } from 'react-router-dom';
 
 function ListProfiles() {
-  const [t] = useTranslateLoader(prefixPN("list_profiles"));
-  const { t: tCommon } = useCommonTranslate("page_header");
-  const [loadingError, setLoadingError, LoadingErrorAlert] =
-    useRequestErrorMessage();
+  const [t] = useTranslateLoader(prefixPN('list_profiles'));
+  const { t: tCommon } = useCommonTranslate('page_header');
+  const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState(null);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const tableHeaders = useMemo(
     () => [
       {
-        Header: t("name"),
-        accessor: "name",
-        className: "text-left",
+        Header: t('name'),
+        accessor: 'name',
+        className: 'text-left',
       },
       {
-        Header: t("overview"),
-        accessor: "description",
-        className: "text-left",
+        Header: t('overview'),
+        accessor: 'description',
+        className: 'text-left',
       },
       {
-        Header: t("actions"),
-        accessor: "actions",
-        className: "text-right",
+        Header: t('actions'),
+        accessor: 'actions',
+        className: 'text-right',
       },
     ],
     [t]
@@ -58,11 +49,11 @@ function ListProfiles() {
         ? _.map(pagination.items, (item) => ({
             ...item,
             actions: (
-              <Box style={{ textAlign: "right", width: "100%" }}>
+              <Box style={{ textAlign: 'right', width: '100%' }}>
                 <ActionButton
                   as={Link}
                   to={`/private/users/profiles/detail/${item.uri}`}
-                  tooltip={t("view")}
+                  tooltip={t('view')}
                   icon={<ExpandDiagonalIcon />}
                 />
               </Box>
@@ -96,8 +87,8 @@ function ListProfiles() {
 
   const headerValues = useMemo(
     () => ({
-      title: t("page_title"),
-      description: t("page_description"),
+      title: t('page_title'),
+      description: t('page_description'),
     }),
     [t]
   );
@@ -106,13 +97,13 @@ function ListProfiles() {
     <Stack direction="column" fullWidth fullHeight>
       <AdminPageHeader
         values={headerValues}
-        buttons={{ new: tCommon("new") }}
-        onNew={() => goDetailProfilePage(history)}
+        buttons={{ new: tCommon('new') }}
+        onNew={() => goDetailProfilePage(navigate)}
       />
 
       <Box style={{ flex: 1 }}>
         <Tabs usePageLayout={true} panelColor="solid" fullHeight>
-          <TabPanel label={t("page_title")}>
+          <TabPanel label={t('page_title')}>
             <Paper padding={2} mt={20} mb={20} fullWidth>
               <LoadingErrorAlert />
               {!loading && !loadingError ? (

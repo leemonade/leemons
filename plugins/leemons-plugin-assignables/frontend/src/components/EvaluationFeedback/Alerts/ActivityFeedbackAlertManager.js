@@ -1,21 +1,17 @@
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
-import { useSearchParams } from "@common";
-import { useHistory } from "react-router-dom";
 import { Stack } from "@bubbles-ui/components";
+import { useSearchParams } from "@common";
+import PropTypes from "prop-types";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import FinishedAlert from "./FinishedAlert";
 import NotSubmittedAlert from "./NotSubmittedAlert";
 import PendingEvaluationAlert from "./PendingEvaluationAlert";
 import SubmittedAlert from "./SubmittedAlert";
 import TimeoutAlert from "./TimeoutAlert";
 
-export default function ActivityFeedbackAlertManager({
-  assignation,
-  hasSubmission,
-  isSubmitted,
-}) {
+export default function ActivityFeedbackAlertManager({ assignation, hasSubmission, isSubmitted }) {
   const params = useSearchParams();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { instance } = assignation ?? {};
 
@@ -35,7 +31,7 @@ export default function ActivityFeedbackAlertManager({
             onClose={() => {
               params.delete("fromTimeout");
 
-              history.replace({ search: params.toString() });
+              navigate({ search: params.toString() }, { replace: true });
             }}
           />
         )}
@@ -44,7 +40,7 @@ export default function ActivityFeedbackAlertManager({
           <SubmittedAlert
             onClose={() => {
               params.delete("fromExecution");
-              history.replace({ search: params.toString() });
+              navigate({ search: params.toString() }, { replace: true });
             }}
           />
         )}

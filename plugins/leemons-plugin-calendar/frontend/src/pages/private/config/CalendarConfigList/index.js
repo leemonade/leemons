@@ -1,9 +1,7 @@
-import React from "react";
-
 /*
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 // import { PageContainer, PageHeader, Table } from 'leemons--ui';
 import { addErrorAlert } from '@layout/alert';
@@ -22,7 +20,7 @@ function ConfigsList() {
 
   const [list, setList] = useState([]);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const getConfigList = async () => {
     const { configs } = await listCalendarConfigsRequest();
@@ -32,14 +30,14 @@ function ConfigsList() {
   const init = async (canRoute) => {
     const configs = await getConfigList();
     if (!configs.length && canRoute) {
-      return history.push('/private/calendar/config/detail/new');
+      return navigate('/private/calendar/config/detail/new');
     }
     setList(configs);
     return null;
   };
 
   const goDetailPage = () => {
-    history.push('/private/calendar/config/detail/new');
+    navigate('/private/calendar/config/detail/new');
   };
 
   useEffect(() => {

@@ -1,21 +1,21 @@
 import React, { useEffect, useMemo } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
+  ActionButton,
   Badge,
   Box,
-  Text,
-  Pager,
-  Stack,
-  Table,
-  Select,
   Button,
-  TLayout,
   Checkbox,
-  ImageLoader,
-  SearchInput,
-  ActionButton,
   ContextContainer,
+  ImageLoader,
+  Pager,
+  SearchInput,
+  Select,
+  Stack,
+  TLayout,
+  Table,
+  Text,
 } from "@bubbles-ui/components";
 import { ExpandDiagonalIcon } from "@bubbles-ui/icons/outline";
 import { CloudUploadIcon, DeleteBinIcon } from "@bubbles-ui/icons/solid";
@@ -27,9 +27,9 @@ import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import _, { isBoolean, isFunction } from "lodash";
 
 import {
-  listUsersRequest,
   activateUserRequest,
   getPermissionsWithActionsIfIHaveRequest,
+  listUsersRequest,
 } from "../../../../request";
 
 import { BulkActionModal } from "./components/BulkActionModal";
@@ -57,7 +57,7 @@ function ListUsers() {
   });
   const [loadingError] = useRequestErrorMessage();
   const [bulkActionInfo, setBulkActionInfo] = React.useState(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const isSuperAdmin = useIsSuperAdmin();
@@ -111,15 +111,13 @@ function ListUsers() {
   }
 
   async function getPermissions() {
-    const [{ permissions: addPermission }, { permissions: importPermission }] =
-      await Promise.all([
-        getPermissionsWithActionsIfIHaveRequest("users.users"),
-        getPermissionsWithActionsIfIHaveRequest("users.import"),
-      ]);
+    const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
+      getPermissionsWithActionsIfIHaveRequest("users.users"),
+      getPermissionsWithActionsIfIHaveRequest("users.import"),
+    ]);
     if (addPermission) {
       store.canAdd =
-        addPermission.actionNames.includes("create") ||
-        addPermission.actionNames.includes("admin");
+        addPermission.actionNames.includes("create") || addPermission.actionNames.includes("admin");
     }
     if (importPermission) {
       store.canImport =
@@ -159,7 +157,7 @@ function ListUsers() {
   }
 
   function goImportPage() {
-    history.push("/private/users/import");
+    navigate("/private/users/import");
   }
 
   function makeAction(action) {
@@ -194,19 +192,11 @@ function ListUsers() {
       store.loading = true;
       store.actionModal = null;
       render();
-      const updatedCount = await changeSelectedUserAgentState(
-        profiles,
-        disableUserAgent
-      );
+      const updatedCount = await changeSelectedUserAgentState(profiles, disableUserAgent);
       addSuccessAlert(
-        t(
-          updatedCount === 1
-            ? "disableSingleUserSuccess"
-            : "disableUserSuccess",
-          {
-            n: updatedCount,
-          }
-        )
+        t(updatedCount === 1 ? "disableSingleUserSuccess" : "disableUserSuccess", {
+          n: updatedCount,
+        })
       );
       store.checkeds = [];
       await load();
@@ -222,17 +212,11 @@ function ListUsers() {
       store.loading = true;
       store.actionModal = null;
       render();
-      const updatedCount = await changeSelectedUserAgentState(
-        profiles,
-        activeUserAgent
-      );
+      const updatedCount = await changeSelectedUserAgentState(profiles, activeUserAgent);
       addSuccessAlert(
-        t(
-          updatedCount === 1 ? "enableSingleUserSuccess" : "enableUserSuccess",
-          {
-            n: updatedCount,
-          }
-        )
+        t(updatedCount === 1 ? "enableSingleUserSuccess" : "enableUserSuccess", {
+          n: updatedCount,
+        })
       );
       store.checkeds = [];
       await load();
@@ -462,11 +446,7 @@ function ListUsers() {
           cancelable={false}
           icon={
             <Box sx={{ position: "relative", width: 24, height: 24 }}>
-              <ImageLoader
-                src="/public/users/menu-icon.svg"
-                width={18}
-                height={18}
-              />
+              <ImageLoader src="/public/users/menu-icon.svg" width={18} height={18} />
             </Box>
           }
         />
@@ -515,11 +495,7 @@ function ListUsers() {
                   }}
                 />
                 <Stack noFlex alignItems="end" spacing={2}>
-                  <Button
-                    variant="link"
-                    leftIcon={<DeleteBinIcon />}
-                    onClick={handleClearFilters}
-                  >
+                  <Button variant="link" leftIcon={<DeleteBinIcon />} onClick={handleClearFilters}>
                     {t("clearFilter")}
                   </Button>
                 </Stack>
@@ -536,8 +512,7 @@ function ListUsers() {
                           data={[
                             { label: t("activateUsers"), value: "active" },
                             { label: t("disableUsers"), value: "disable" },
-                            (!provider ||
-                              provider?.supportedMethods?.recoverPassword) && {
+                            (!provider || provider?.supportedMethods?.recoverPassword) && {
                               label: t("activateUserManually"),
                               value: "activate-manually",
                             },
@@ -552,14 +527,10 @@ function ListUsers() {
                     </>
                   )}
 
-                  {tableItems?.length > 0 && (
-                    <Table columns={tableHeaders} data={tableItems} />
-                  )}
+                  {tableItems?.length > 0 && <Table columns={tableHeaders} data={tableItems} />}
                   {tableItems?.length === 0 && store.canAdd && (
                     <ListEmptyState
-                      description={t(
-                        store.isSearching ? "noResults" : "emptyState"
-                      )}
+                      description={t(store.isSearching ? "noResults" : "emptyState")}
                       buttonLabel={t("new")}
                       onClick={handleOpenUserDrawer}
                     />
@@ -588,17 +559,11 @@ function ListUsers() {
         <TLayout.Footer fullWidth>
           <TLayout.Footer.RightActions>
             {store.canImport && (
-              <Button
-                variant="outline"
-                onClick={goImportPage}
-                leftIcon={<CloudUploadIcon />}
-              >
+              <Button variant="outline" onClick={goImportPage} leftIcon={<CloudUploadIcon />}>
                 {t("import")}
               </Button>
             )}
-            {store.canAdd && (
-              <Button onClick={handleOpenUserDrawer}>{t("new")}</Button>
-            )}
+            {store.canAdd && <Button onClick={handleOpenUserDrawer}>{t("new")}</Button>}
           </TLayout.Footer.RightActions>
         </TLayout.Footer>
       </TLayout>
@@ -608,9 +573,7 @@ function ListUsers() {
           <DisableUsersModal
             users={store.checkeds}
             center={store.center}
-            opened={
-              store.actionModal === "disable" && store.checkeds.length > 0
-            }
+            opened={store.actionModal === "disable" && store.checkeds.length > 0}
             onClose={() => {
               store.actionModal = null;
               render();
@@ -630,10 +593,7 @@ function ListUsers() {
           />
 
           <SetPasswordModal
-            opened={
-              store.actionModal === "activate-manually" &&
-              store.checkeds.length > 0
-            }
+            opened={store.actionModal === "activate-manually" && store.checkeds.length > 0}
             onClose={() => {
               store.actionModal = null;
               render();
@@ -655,10 +615,7 @@ function ListUsers() {
             onClose={handleCloseUserDrawer}
           />
 
-          <BulkActionModal
-            opened={bulkActionInfo !== null}
-            info={bulkActionInfo}
-          />
+          <BulkActionModal opened={bulkActionInfo !== null} info={bulkActionInfo} />
         </>
       )}
     </>

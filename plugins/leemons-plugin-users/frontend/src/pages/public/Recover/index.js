@@ -1,24 +1,17 @@
-import React from "react";
-import { useSession } from "@users/session";
-import constants from "@users/constants";
-import { useForm } from "react-hook-form";
-import { recoverRequest } from "@users/request";
-import { goLoginPage } from "@users/navigate";
-import { useHistory } from "react-router-dom";
+import { Alert, Box, Button, ContextContainer, TextInput } from "@bubbles-ui/components";
 import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
-import {
-  Alert,
-  Box,
-  Button,
-  ContextContainer,
-  TextInput,
-} from "@bubbles-ui/components";
-import useTranslate from "@multilanguage/useTranslate";
-import prefixPN from "@users/helpers/prefixPN";
-import tLoader from "@multilanguage/helpers/tLoader";
 import { useSearchParams, useStore } from "@common";
-import { AuthLayout } from "@users/layout/AuthLayout";
+import tLoader from "@multilanguage/helpers/tLoader";
+import useTranslate from "@multilanguage/useTranslate";
 import { AuthContainer } from "@users/components/AuthContainer";
+import constants from "@users/constants";
+import prefixPN from "@users/helpers/prefixPN";
+import { AuthLayout } from "@users/layout/AuthLayout";
+import { goLoginPage } from "@users/navigate";
+import { recoverRequest } from "@users/request";
+import { useSession } from "@users/session";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 export default function Recover() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
@@ -28,7 +21,7 @@ export default function Recover() {
   const [translations] = useTranslate({ keysStartsWith: prefixPN("recover") });
   const t = tLoader(prefixPN("recover"), translations);
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const paramsEmail = useSearchParams().get("email")?.replace(" ", "+");
 
   const {
@@ -71,10 +64,7 @@ export default function Recover() {
     <AuthLayout>
       <AuthContainer>
         <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-          <ContextContainer
-            title={t("title")}
-            description={store.email ? " " : t("description")}
-          >
+          <ContextContainer title={t("title")} description={store.email ? " " : t("description")}>
             {!store.email && (
               <TextInput
                 label={t("email")}
@@ -85,13 +75,8 @@ export default function Recover() {
             )}
 
             {store.email || store.message ? (
-              <Alert
-                severity={store.message ? "warning" : "success"}
-                closeable={false}
-              >
-                {store.message
-                  ? store.message
-                  : t("emailSendTo", { email: store.email })}
+              <Alert severity={store.message ? "warning" : "success"} closeable={false}>
+                {store.message ? store.message : t("emailSendTo", { email: store.email })}
               </Alert>
             ) : null}
 
@@ -107,7 +92,7 @@ export default function Recover() {
               <Button
                 leftIcon={<ChevLeftIcon />}
                 variant="link"
-                onClick={() => goLoginPage(history)}
+                onClick={() => goLoginPage(navigate)}
               >
                 {t("returnLogin")}
               </Button>

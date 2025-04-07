@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
-  Box,
-  Stack,
   Alert,
+  Box,
   Button,
   ContextContainer,
+  Stack,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from "@bubbles-ui/components";
@@ -36,7 +36,7 @@ export default function DetailQuestions({
 }) {
   const [saveAttempt, setSaveAttempt] = useState(false);
   const searchParams = useSearchParams();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const formValues = form.watch();
   const categories = form.watch("categories");
@@ -45,16 +45,25 @@ export default function DetailQuestions({
   // FUNCTIONS ························································|
 
   const processCategories = (categories) => {
-    if (!categories) return;
+    if (!categories) {
+      return;
+    }
+
     const categoriesOrderMap = {};
     const processedCategories = categories.map((category, index) => {
       categoriesOrderMap[category.id] = index;
-      if (isLRN(category.id)) return { ...category, order: index };
+      if (isLRN(category.id)) {
+        return { ...category, order: index };
+      }
+
       return { value: category.value, order: index };
     });
 
     const processedQuestions = form.getValues("questions").map((question) => {
-      if (!question.category) return question;
+      if (!question.category) {
+        return question;
+      }
+
       return { ...question, category: categoriesOrderMap[question.category] };
     });
 
@@ -65,7 +74,7 @@ export default function DetailQuestions({
   const onNewQuestion = () => {
     searchParams.delete("questionIndex");
     searchParams.set("createFrom", "new");
-    history.push(`${window.location.pathname}?${searchParams.toString()}`);
+    navigate(`${window.location.pathname}?${searchParams.toString()}`);
   };
 
   function onSaveQBank(handler = noop) {

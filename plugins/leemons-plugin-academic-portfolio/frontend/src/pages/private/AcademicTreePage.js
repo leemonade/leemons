@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
+  Box,
+  ImageLoader,
+  LoadingOverlay,
   Select,
+  Stack,
   TotalLayoutContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
-  Stack,
-  ImageLoader,
-  Box,
-  LoadingOverlay,
 } from "@bubbles-ui/components";
 import { OpenIcon } from "@bubbles-ui/icons/outline";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { useUserCenters } from "@users/hooks";
 import { cloneDeep, sortBy } from "lodash";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 import { GroupView } from "../../components/AcademicTree/GroupView/GroupView";
@@ -44,7 +44,7 @@ const AcademicTreePage = () => {
     refetchOnWindowFocus: false,
   });
   const scrollRef = useRef();
-  const history = useHistory();
+  const navigate = useNavigate();
   const viewRef = useRef();
 
   const handleNodeClick = (nodeId) => {
@@ -209,8 +209,12 @@ const AcademicTreePage = () => {
   const searchForGroupType = useCallback(
     (nodes) =>
       nodes.some((node) => {
-        if (node.type === "group") return true;
-        if (node.children) return searchForGroupType(node.children);
+        if (node.type === "group") {
+          return true;
+        }
+        if (node.children) {
+          return searchForGroupType(node.children);
+        }
         return false;
       }),
     []
@@ -301,7 +305,7 @@ const AcademicTreePage = () => {
         Header={
           <TotalLayoutHeader
             title={t("enrollmentAndManagement").toUpperCase()}
-            onCancel={() => history.goBack()}
+            onCancel={() => navigate(-1)}
             mainActionLabel={t("cancelHeaderButton")}
             compact
             icon={
@@ -354,7 +358,7 @@ const AcademicTreePage = () => {
                 actionLabel={t("noProgramEmptyStateAction")}
                 Icon={<OpenIcon />}
                 onClick={() =>
-                  history.push("/private/academic-portfolio/programs")
+                  navigate("/private/academic-portfolio/programs")
                 }
               />
             </TotalLayoutStepContainer>

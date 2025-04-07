@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useIsStudent } from "@academic-portfolio/hooks";
 import useIsMainTeacherInSubject from "@academic-portfolio/hooks/queries/useIsMainTeacherInSubject";
@@ -19,10 +19,7 @@ import PropTypes from "prop-types";
 
 import { DocumentIcon, PrintContentButton } from "@content-creator/components";
 import prefixPN from "@content-creator/helpers/prefixPN";
-import {
-  deleteDocumentRequest,
-  duplicateDocumentRequest,
-} from "@content-creator/request";
+import { deleteDocumentRequest, duplicateDocumentRequest } from "@content-creator/request";
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -33,17 +30,10 @@ const DocumentCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const DocumentListCard = ({
-  asset,
-  selected,
-  onRefresh,
-  onShare,
-  ...props
-}) => {
+const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const isStudent = useIsStudent();
   const [t] = useTranslateLoader(prefixPN("documentCard"));
-  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] =
-    useState(false);
+  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] = useState(false);
   const { classes } = DocumentCardStyles({ selected });
   const {
     openConfirmationModal,
@@ -52,7 +42,7 @@ const DocumentListCard = ({
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { data: isMainTeacherInAssetSubjects, isLoading: teacherCheckLoading } =
     useIsMainTeacherInSubject({
@@ -61,9 +51,7 @@ const DocumentListCard = ({
           ? asset.providerData.subjects.map((item) => item.subject)
           : [],
       options: {
-        enabled:
-          enableIsTeacherInSubjectQuery &&
-          asset?.providerData?.subjects?.length > 0,
+        enabled: enableIsTeacherInSubjectQuery && asset?.providerData?.subjects?.length > 0,
         refetchOnWindowFocus: false,
       },
     });
@@ -99,14 +87,9 @@ const DocumentListCard = ({
     if (asset.providerData?.published && !isStudent) {
       const assignAction = (e) => {
         e.stopPropagation();
-        if (
-          asset.providerData?.subjects?.length > 0 &&
-          !isMainTeacherInAssetSubjects
-        ) {
+        if (asset.providerData?.subjects?.length > 0 && !isMainTeacherInAssetSubjects) {
           const updateAsset = () =>
-            history.push(
-              `/private/content-creator/${asset.providerData.id}/edit`
-            );
+            navigate(`/private/content-creator/${asset.providerData.id}/edit`);
 
           openConfirmationModal({
             title: t("cannotAssignModal.title"),
@@ -115,15 +98,11 @@ const DocumentListCard = ({
               : t("cannotAssignModal.descriptionWhenNotOwner"),
             onConfirm: isOwner ? updateAsset : undefined,
             labels: {
-              confirm: isOwner
-                ? t("cannotAssignModal.edit")
-                : t("cannotAssignModal.accept"),
+              confirm: isOwner ? t("cannotAssignModal.edit") : t("cannotAssignModal.accept"),
             },
           })();
         } else {
-          history.push(
-            `/private/content-creator/${asset.providerData.id}/assign`
-          );
+          navigate(`/private/content-creator/${asset.providerData.id}/assign`);
         }
       };
 
@@ -157,9 +136,7 @@ const DocumentListCard = ({
         children: t("edit"),
         onClick: (e) => {
           e.stopPropagation();
-          history.push(
-            `/private/content-creator/${asset.providerData.id}/edit`
-          );
+          navigate(`/private/content-creator/${asset.providerData.id}/edit`);
         },
       });
     }
@@ -174,10 +151,7 @@ const DocumentListCard = ({
             onConfirm: async () => {
               try {
                 setAppLoading(true);
-                await duplicateDocumentRequest(
-                  asset.providerData.id,
-                  asset.providerData.published
-                );
+                await duplicateDocumentRequest(asset.providerData.id, asset.providerData.published);
                 addSuccessAlert(t("duplicated"));
                 onRefresh();
               } catch (err) {

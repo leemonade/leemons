@@ -1,8 +1,8 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useSearchParams } from "@common/useSearchParams";
 import { useLayout } from "@layout/context";
-import { compact, get, isArray, omit, set, cloneDeep } from "lodash";
+import { cloneDeep, compact, get, isArray, omit, set } from "lodash";
 import PropTypes from "prop-types";
 
 import {
@@ -14,17 +14,9 @@ import {
 import DetailQuestionForm from "./DetailQuestionForm";
 import DetailQuestions from "./DetailQuestions";
 
-function DetailQuestionsRouter({
-  t,
-  form,
-  savingAs,
-  scrollRef,
-  onPrev,
-  onPublish,
-  onSaveDraft,
-}) {
+function DetailQuestionsRouter({ t, form, savingAs, scrollRef, onPrev, onPublish, onSaveDraft }) {
   const searchParams = useSearchParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { openDeleteConfirmationModal } = useLayout();
 
   const createFrom = searchParams.get("createFrom");
@@ -41,11 +33,11 @@ function DetailQuestionsRouter({
     const currentQuestions = form.getValues("questions") || [];
 
     const updatedQuestions = currentQuestions.map((question) => {
-      if (!question.category) return question;
+      if (!question.category) {
+        return question;
+      }
 
-      const categoryStillExists = newCategories.some(
-        (cat) => cat.id === question.category
-      );
+      const categoryStillExists = newCategories.some((cat) => cat.id === question.category);
 
       return {
         ...question,
@@ -74,8 +66,7 @@ function DetailQuestionsRouter({
     return [solution, cleanGlobalFeedback];
   };
 
-  const removeHideOnHelp = (answers) =>
-    answers.map((item) => omit(item, "hideOnHelp"));
+  const removeHideOnHelp = (answers) => answers.map((item) => omit(item, "hideOnHelp"));
 
   const processOpenResponseQuestions = (question) => {
     const _question = cloneDeep(question);
@@ -89,8 +80,14 @@ function DetailQuestionsRouter({
   };
 
   function processHasHelp(question, solutionKey) {
-    if (!question.hasHelp) return false;
-    if (question.clues?.length) return true;
+    if (!question.hasHelp) {
+      return false;
+    }
+
+    if (question.clues?.length) {
+      return true;
+    }
+
     return get(question, solutionKey).some((answer) => answer.hideOnHelp);
   }
 
@@ -114,17 +111,12 @@ function DetailQuestionsRouter({
     processedQuestion.clues = compact(processedQuestion.clues);
     if (!question.hasHelp) {
       if (QUESTION_TYPES_WITH_HIDDEN_ANSWERS.includes(question.type)) {
-        const solutionWithCleanHideOnHelp = removeHideOnHelp(
-          get(processedQuestion, solutionKey)
-        );
+        const solutionWithCleanHideOnHelp = removeHideOnHelp(get(processedQuestion, solutionKey));
         set(processedQuestion, solutionKey, solutionWithCleanHideOnHelp);
       }
       processedQuestion.clues = [];
     } else {
-      processedQuestion.hasHelp = processHasHelp(
-        processedQuestion,
-        solutionKey
-      );
+      processedQuestion.hasHelp = processHasHelp(processedQuestion, solutionKey);
     }
 
     return processedQuestion;
@@ -136,13 +128,13 @@ function DetailQuestionsRouter({
   function onCancel() {
     searchParams.delete("createFrom");
     searchParams.delete("questionIndex");
-    history.push(`${window.location.pathname}?${searchParams.toString()}`);
+    navigate(`${window.location.pathname}?${searchParams.toString()}`);
   }
 
   const onEditQuestion = (index) => {
     searchParams.set("questionIndex", index);
     searchParams.delete("from");
-    history.push(`${window.location.pathname}?${searchParams.toString()}`);
+    navigate(`${window.location.pathname}?${searchParams.toString()}`);
   };
 
   const onDeleteQuestion = (index) => {

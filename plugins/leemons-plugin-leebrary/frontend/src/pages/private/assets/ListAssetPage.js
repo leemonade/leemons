@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { useParams, useLocation, useHistory } from "react-router-dom";
 import { isEmpty } from "lodash";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useIsStudent, useIsTeacher } from "@academic-portfolio/hooks";
 import useAcademicFiltersForAssetList from "@assignables/hooks/useAcademicFiltersForAssetList";
@@ -17,11 +17,10 @@ function useQuery() {
 }
 
 const ListAssetPage = () => {
-  const { categories, asset, setAsset, category, selectCategory } =
-    useContext(LibraryContext);
+  const { categories, asset, setAsset, category, selectCategory } = useContext(LibraryContext);
   const params = useParams();
   const urlQuery = useQuery();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
@@ -43,22 +42,16 @@ const ListAssetPage = () => {
       : category?.key;
 
     let navigateFromOneSubjectToAnother = false;
-    if (
-      currentCategoryName === "leebrary-subject" &&
-      currentCategoryName === params?.category
-    ) {
+    if (currentCategoryName === "leebrary-subject" && currentCategoryName === params?.category) {
       const urlSegments = location.pathname.split("/");
-      const categoryIndex = urlSegments.findIndex(
-        (segment) => segment === params.category
-      );
+      const categoryIndex = urlSegments.findIndex((segment) => segment === params.category);
       const segmentAfterCategory = urlSegments[categoryIndex + 1] || null;
       navigateFromOneSubjectToAnother =
         category?.key.replace("leebrary-subject:", "") !== segmentAfterCategory;
     }
     if (
       !isEmpty(params?.category) &&
-      (currentCategoryName !== params?.category ||
-        navigateFromOneSubjectToAnother)
+      (currentCategoryName !== params?.category || navigateFromOneSubjectToAnother)
     ) {
       selectCategory(params?.category);
       if (category) {
@@ -100,24 +93,38 @@ const ListAssetPage = () => {
     const result = [];
 
     // Get current params and keep them in the url in order to combine filters
-    if (search && typeof searchCriteriaToFilterBy !== "string")
+    if (search && typeof searchCriteriaToFilterBy !== "string") {
       result.push(`search=${search}`);
-    if (_categoryFilter && !categoryToFilterBy)
+    }
+    if (_categoryFilter && !categoryToFilterBy) {
       result.push(`category-filter=${_categoryFilter}`);
-    if (mediaType && !mediaTypeToFilterBy)
+    }
+    if (mediaType && !mediaTypeToFilterBy) {
       result.push(`media-type=${mediaType}`);
-    if (status && !statusToFilterBy) result.push(`status=${status}`);
-    if (open && !assetToOpenId) result.push(`open=${open}`);
+    }
+    if (status && !statusToFilterBy) {
+      result.push(`status=${status}`);
+    }
+    if (open && !assetToOpenId) {
+      result.push(`open=${open}`);
+    }
 
     // Add new params or modify existent ones.
-    if (searchCriteriaToFilterBy)
+    if (searchCriteriaToFilterBy) {
       result.push(`search=${searchCriteriaToFilterBy}`);
-    if (categoryToFilterBy)
+    }
+    if (categoryToFilterBy) {
       result.push(`category-filter=${categoryToFilterBy}`);
-    if (mediaTypeToFilterBy) result.push(`media-type=${mediaTypeToFilterBy}`);
-    if (statusToFilterBy) result.push(`status=${statusToFilterBy}`);
-    if (assetToOpenId && assetToOpenId !== "forgetAsset")
+    }
+    if (mediaTypeToFilterBy) {
+      result.push(`media-type=${mediaTypeToFilterBy}`);
+    }
+    if (statusToFilterBy) {
+      result.push(`status=${statusToFilterBy}`);
+    }
+    if (assetToOpenId && assetToOpenId !== "forgetAsset") {
       result.push(`open=${assetToOpenId}`);
+    }
 
     return result.join("&");
   };
@@ -126,49 +133,37 @@ const ListAssetPage = () => {
   // HANDLERS
 
   const handleOnEditItem = (item) => {
-    history.push(`/private/leebrary/edit/${item.id}`);
+    navigate(`/private/leebrary/edit/${item.id}`);
   };
 
   // This filter is only appliable to multi-category sections (recent, favs, shared)
   const handleCategoryFilterChange = (categoryToFilterBy) => {
     setCategoryFilter(categoryToFilterBy);
-    history.push(
-      `${location.pathname}?${manageQueryParams({ categoryToFilterBy })}`
-    );
+    navigate(`${location.pathname}?${manageQueryParams({ categoryToFilterBy })}`);
   };
 
   const handleStatusChange = (statusToFilterBy) => {
     setStatusFilter(statusToFilterBy);
-    history.push(
-      `${location.pathname}?${manageQueryParams({ statusToFilterBy })}`
-    );
+    navigate(`${location.pathname}?${manageQueryParams({ statusToFilterBy })}`);
   };
 
   const handleSearchByCriteria = (searchCriteriaToFilterBy) => {
     setSearchCriteria(searchCriteriaToFilterBy);
-    history.push(
-      `${location.pathname}?${manageQueryParams({ searchCriteriaToFilterBy })}`
-    );
+    navigate(`${location.pathname}?${manageQueryParams({ searchCriteriaToFilterBy })}`);
   };
 
   const handleMediaTypeChange = (mediaTypeToFilterBy) => {
     setMediaTypeFilter(mediaTypeToFilterBy);
-    history.push(
-      `${location.pathname}?${manageQueryParams({ mediaTypeToFilterBy })}`
-    );
+    navigate(`${location.pathname}?${manageQueryParams({ mediaTypeToFilterBy })}`);
   };
 
   const handleOnSelectItem = (item) => {
     setAsset(item);
-    history.push(
-      `${location.pathname}?${manageQueryParams({ assetToOpenId: item.id })}`
-    );
+    navigate(`${location.pathname}?${manageQueryParams({ assetToOpenId: item.id })}`);
   };
 
   const handleUnselectItem = () => {
-    history.push(
-      `${location.pathname}?${manageQueryParams({ assetToOpenId: "forgetAsset" })}`
-    );
+    navigate(`${location.pathname}?${manageQueryParams({ assetToOpenId: "forgetAsset" })}`);
   };
 
   // --------------------------------------------------------------------------------------------
@@ -176,15 +171,10 @@ const ListAssetPage = () => {
 
   const propsAndFiltersByCategory = useMemo(() => {
     let props = {};
-    const contentAssignables = [
-      "assignables.scorm",
-      "assignables.content-creator",
-    ];
-    const isMultiCategorySection = [
-      "pins",
-      "leebrary-shared",
-      "leebrary-recent",
-    ].includes(category?.key);
+    const contentAssignables = ["assignables.scorm", "assignables.content-creator"];
+    const isMultiCategorySection = ["pins", "leebrary-shared", "leebrary-recent"].includes(
+      category?.key
+    );
     const isAssignable = category?.key?.startsWith("assignables.");
     const isContentAssignable = contentAssignables.includes(category?.key);
 
@@ -197,10 +187,7 @@ const ListAssetPage = () => {
       props = academicFilters;
       props.allowAcademicFilter = true;
     }
-    if (
-      (isStudent && category?.key === "pins") ||
-      (isAssignable && !isContentAssignable)
-    ) {
+    if ((isStudent && category?.key === "pins") || (isAssignable && !isContentAssignable)) {
       props = academicFilters;
       props.allowAcademicFilter = true;
     }
@@ -234,10 +221,7 @@ const ListAssetPage = () => {
     }
 
     // DON'T SEARCH IN PROVIDER PROP
-    if (
-      (category?.key === "media-files" || category?.key === "bookmarks") &&
-      isTeacher
-    ) {
+    if ((category?.key === "media-files" || category?.key === "bookmarks") && isTeacher) {
       props.searchInProvider = false;
     }
 

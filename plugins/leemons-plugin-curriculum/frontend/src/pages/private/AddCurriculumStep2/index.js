@@ -12,26 +12,14 @@ import {
 } from "@bubbles-ui/components";
 import { useStore } from "@common";
 import prefixPN from "@curriculum/helpers/prefixPN";
-import {
-  removeDatasetFieldRequest,
-  saveDatasetFieldRequest,
-} from "@dataset/request";
+import { removeDatasetFieldRequest, saveDatasetFieldRequest } from "@dataset/request";
 import { useLayout } from "@layout/context";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { listCentersRequest } from "@users/request";
-import _, {
-  cloneDeep,
-  find,
-  findIndex,
-  forEach,
-  forIn,
-  map,
-  orderBy,
-  take,
-} from "lodash";
+import _, { cloneDeep, find, findIndex, forEach, forIn, map, orderBy, take } from "lodash";
 import PropTypes from "prop-types";
-import React, { useEffect, useMemo } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import BranchContent from "../../../bubbles-components/BranchContent";
 import NewBranchConfig, {
   NEW_BRANCH_CONFIG_ERROR_MESSAGES,
@@ -61,7 +49,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
   const [t] = useTranslateLoader(prefixPN("addCurriculumStep2"));
   const { openDeleteConfirmationModal } = useLayout();
   const tree = useTree();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   const onlyCanAdd = curriculum.step > 2;
@@ -139,8 +127,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
   const listTypeData = useMemo(() => {
     const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.listType);
     forEach(result, ({ value }, key) => {
-      result[key].label =
-        blockTypeData[findIndex(blockTypeData, { value })].label;
+      result[key].label = blockTypeData[findIndex(blockTypeData, { value })].label;
     });
     return result;
   }, [blockTypeData]);
@@ -154,14 +141,13 @@ function AddCurriculumStep2({ onNext, curriculum }) {
   }, [t]);
 
   const parentNodeLevelsData = useMemo(() => {
-    if (store.activeNodeLevel && store.curriculum)
-      return map(
-        take(store.curriculum.nodeLevels, store.activeNodeLevel.levelOrder),
-        (item) => ({
-          label: item.name,
-          value: item.id,
-        })
-      );
+    if (store.activeNodeLevel && store.curriculum) {
+      return map(take(store.curriculum.nodeLevels, store.activeNodeLevel.levelOrder), (item) => ({
+        label: item.name,
+        value: item.id,
+      }));
+    }
+
     return [];
   }, [store.activeNodeLevel, store.curriculum]);
 
@@ -177,9 +163,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
         ];
         if (nodeLevel.schema) {
           forIn(nodeLevel.schema.jsonSchema.properties, (value, key) => {
-            if (
-              ["field", "code"].indexOf(value.frontConfig.blockData.type) >= 0
-            ) {
+            if (["field", "code"].indexOf(value.frontConfig.blockData.type) >= 0) {
               result[nodeLevel.id].push({
                 label: value.frontConfig.blockData.name,
                 value: key,
@@ -270,9 +254,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
             listType: ordered,
             levelOrder:
               store.curriculum.nodeLevels && store.curriculum.nodeLevels.length
-                ? store.curriculum.nodeLevels[
-                    store.curriculum.nodeLevels.length - 1
-                  ].levelOrder + 1
+                ? store.curriculum.nodeLevels[store.curriculum.nodeLevels.length - 1].levelOrder + 1
                 : 0,
           },
         ]);
@@ -328,7 +310,9 @@ function AddCurriculumStep2({ onNext, curriculum }) {
       },
     };
 
-    if (data.id) toSave.schemaConfig.schema.id = data.id;
+    if (data.id) {
+      toSave.schemaConfig.schema.id = data.id;
+    }
 
     switch (data.type) {
       case "field":
@@ -404,10 +388,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
         toSave.schemaLocales,
         { useDefaultLocaleCallback: false }
       );
-      const oldDataset = _.find(
-        store.curriculum.nodeLevels,
-        (l) => l?.schema?.id === dataset.id
-      );
+      const oldDataset = _.find(store.curriculum.nodeLevels, (l) => l?.schema?.id === dataset.id);
       if (!oldDataset) {
         store.newIds.push(Object.keys(dataset.jsonSchema.properties)[0]);
       } else {
@@ -445,7 +426,9 @@ function AddCurriculumStep2({ onNext, curriculum }) {
             await load(true);
             onSelect(store.activeNodeLevel);
             resolve();
-          } catch (e) {}
+          } catch (e) {
+            //
+          }
 
           store.removing = false;
           render();
@@ -456,10 +439,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
 
   let rightSection;
 
-  if (
-    store.activeRightSection === "new-branch" ||
-    store.activeRightSection === "edit-branch"
-  ) {
+  if (store.activeRightSection === "new-branch" || store.activeRightSection === "edit-branch") {
     rightSection = (
       <Box>
         <NewBranchConfig

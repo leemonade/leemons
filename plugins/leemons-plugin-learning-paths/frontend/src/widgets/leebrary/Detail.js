@@ -1,17 +1,16 @@
-import React from "react";
-import PropTypes from "prop-types";
 import { PluginLearningPathsIcon } from "@bubbles-ui/icons/outline";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import { AssetMetadataModule } from "@learning-paths/components/AssetMetadataModule";
+import { prefixPN } from "@learning-paths/helpers";
+import duplicateModuleRequest from "@learning-paths/requests/duplicateModule";
+import removeModuleRequest from "@learning-paths/requests/removeModule";
 // TODO: import from @library plugin
 import { LibraryDetail } from "@leebrary/components";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { useHistory } from "react-router-dom";
-import { useLayout } from "@layout/context";
-import duplicateModuleRequest from "@learning-paths/requests/duplicateModule";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
-import removeModuleRequest from "@learning-paths/requests/removeModule";
-import { prefixPN } from "@learning-paths/helpers";
-import { AssetMetadataModule } from "@learning-paths/components/AssetMetadataModule";
 import { isFunction } from "lodash";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 import { useListCardLocalizations } from "./ListCard";
 
 function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
@@ -28,7 +27,7 @@ function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
     openConfirmationModal,
     setLoading: setAppLoading,
   } = useLayout();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const toolbarItems = {
     toggle: t("toggle"),
@@ -66,14 +65,14 @@ function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
   }
 
   const handleView = () => {
-    history.push(`/private/learning-paths/modules/${id}/view`);
+    navigate(`/private/learning-paths/modules/${id}/view`);
   };
   const handleEdit = () => {
-    history.push(`/private/learning-paths/modules/${id}/edit`);
+    navigate(`/private/learning-paths/modules/${id}/edit`);
   };
 
   const handleAssign = () => {
-    history.push(`/private/learning-paths/modules/${id}/assign`);
+    navigate(`/private/learning-paths/modules/${id}/assign`);
   };
 
   const handleOnPin = () => {
@@ -93,18 +92,13 @@ function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
   const handleDuplicate = () => {
     openConfirmationModal({
       title: localizations?.alerts?.duplicate?.title,
-      description: localizations?.alerts?.duplicate?.message?.replace(
-        "{{name}}",
-        name
-      ),
+      description: localizations?.alerts?.duplicate?.message?.replace("{{name}}", name),
       onConfirm: async () => {
         setAppLoading(true);
         try {
           await duplicateModuleRequest(id, { published: !!published });
 
-          addSuccessAlert(
-            localizations?.alerts?.duplicate?.success?.replace("{{name}}", name)
-          );
+          addSuccessAlert(localizations?.alerts?.duplicate?.success?.replace("{{name}}", name));
           onRefresh();
         } catch (e) {
           addErrorAlert(
@@ -121,18 +115,13 @@ function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
   const handleDelete = () => {
     openDeleteConfirmationModal({
       title: localizations?.alerts?.delete?.title,
-      description: localizations?.alerts?.delete?.message?.replace(
-        "{{name}}",
-        name
-      ),
+      description: localizations?.alerts?.delete?.message?.replace("{{name}}", name),
       onConfirm: async () => {
         setAppLoading(true);
         try {
           await removeModuleRequest(id, { published: !!published });
 
-          addSuccessAlert(
-            localizations?.alerts?.delete?.success?.replace("{{name}}", name)
-          );
+          addSuccessAlert(localizations?.alerts?.delete?.success?.replace("{{name}}", name));
           onRefresh();
         } catch (e) {
           addErrorAlert(

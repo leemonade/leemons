@@ -1,54 +1,56 @@
-export function goBasePage(history, returnUrl) {
+export function goBasePage(navigate, returnUrl) {
   const uri = "/users";
-  return returnUrl === true ? uri : history.push(uri);
+  return returnUrl === true ? uri : navigate(uri);
 }
 
-export function goLoginPage(history, returnUrl) {
+export function goLoginPage(navigate, returnUrl) {
   const uri = "/users/login";
-  return returnUrl === true ? uri : history.push(uri);
+  return returnUrl === true ? uri : navigate(uri);
 }
 
-export function goResetPage(history, returnUrl) {
+export function goResetPage(navigate, returnUrl) {
   const uri = "/users/reset";
-  return returnUrl === true ? uri : history.push(uri);
+  return returnUrl === true ? uri : navigate(uri);
 }
 
-export function goRecoverPage(history, returnUrl) {
+export function goRecoverPage(navigate, returnUrl) {
   const uri = "/users/recover";
-  return returnUrl === true ? uri : history.push(uri);
+  return returnUrl === true ? uri : navigate(uri);
 }
 
-export function goRegisterPage(history, returnUrl) {
+export function goRegisterPage(navigate, returnUrl) {
   const uri = "/users/register";
-  return returnUrl === true ? uri : history.push(uri);
+  return returnUrl === true ? uri : navigate(uri);
 }
 
-export function goSelectProfilePage(history, returnUrl) {
+export function goSelectProfilePage(navigate, returnUrl) {
   const uri = "/protected/users/select-profile";
-  return returnUrl === true ? uri : history.push(uri);
+  return returnUrl === true ? uri : navigate(uri);
 }
 
-export function goListUsersPage(history, returnUrl) {
+export function goListUsersPage(navigate, returnUrl) {
   const uri = "/private/users/list";
-  return returnUrl === true ? uri : history.push(uri);
+  return returnUrl === true ? uri : navigate(uri);
 }
 
-export function goDetailUserPage(history, returnUrl) {
+export function goDetailUserPage(navigate, returnUrl) {
   const uri = "/private/users/detail";
-  return returnUrl === true ? "/users" : history.push("");
+  return returnUrl === true ? "/users" : navigate("");
 }
 
-export function goListProfilesPage(history, returnUrl) {
+export function goListProfilesPage(navigate, returnUrl) {
   const uri = "/private/users/profiles/list";
-  return returnUrl === true ? uri : history.push(uri);
+  return returnUrl === true ? uri : navigate(uri);
 }
 
-export function goDetailProfilePage(history, uri, returnUrl) {
-  if (uri)
+export function goDetailProfilePage(navigate, uri, returnUrl) {
+  if (uri) {
     return returnUrl === true
       ? `/private/users/profiles/detail/${uri}`
-      : history.push(`/private/users/profiles/detail/${uri}`);
+      : navigate(`/private/users/profiles/detail/${uri}`);
+  }
+
   return returnUrl === true
     ? "/private/users/profiles/detail"
-    : history.push("/private/users/profiles/detail");
+    : navigate("/private/users/profiles/detail");
 }

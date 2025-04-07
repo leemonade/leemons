@@ -24,12 +24,9 @@ import {
   listCentersRequest,
 } from "@users/request";
 import { filter, isEmpty, keyBy, map } from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
-import {
-  deleteCurriculumRequest,
-  listCurriculumRequest,
-} from "../../../request";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { deleteCurriculumRequest, listCurriculumRequest } from "../../../request";
 
 function getAsset(curriculum) {
   return {
@@ -54,7 +51,7 @@ function ListCurriculum() {
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const load = async () => {
     setLoading(true);
@@ -116,7 +113,7 @@ function ListCurriculum() {
   }, []);
 
   const handleOnSelect = (curriculum) => {
-    history.push(`/private/curriculum/${curriculum.id}`);
+    navigate(`/private/curriculum/${curriculum.id}`);
   };
 
   const headerValues = useMemo(
@@ -204,7 +201,7 @@ function ListCurriculum() {
       <AdminPageHeader
         values={headerValues}
         buttons={store.canAdd ? { new: tCommon("new") } : {}}
-        onNew={() => history.push(`/private/curriculum/new`)}
+        onNew={() => navigate(`/private/curriculum/new`)}
       />
 
       <Tabs usePageLayout panelColor="solid" fullHeight fullWidth>

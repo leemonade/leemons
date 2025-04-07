@@ -1,22 +1,21 @@
-import React from "react";
 import { LibraryDetail } from "@leebrary/components";
 
-import { useHistory } from "react-router-dom";
-import PropTypes from "prop-types";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "@tests/helpers/prefixPN";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
-import { deleteQuestionBankRequest } from "@tests/request";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { AssetMetadataQuestionBank } from "@tests/components/AssetMetadataQuestionBank";
+import prefixPN from "@tests/helpers/prefixPN";
+import { deleteQuestionBankRequest } from "@tests/request";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 const QuestionsBanksDetail = ({ asset, onRefresh, onShare, ...props }) => {
   const [t] = useTranslateLoader(prefixPN("testsCard"));
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const toolbarItems = {};
 
   if (asset?.id) {
@@ -41,7 +40,7 @@ const QuestionsBanksDetail = ({ asset, onRefresh, onShare, ...props }) => {
   // HANDLERS
 
   const handleEdit = () => {
-    history.push(`/private/tests/questions-banks/${asset.providerData.id}`);
+    navigate(`/private/tests/questions-banks/${asset.providerData.id}`);
   };
 
   const handleDelete = () => {

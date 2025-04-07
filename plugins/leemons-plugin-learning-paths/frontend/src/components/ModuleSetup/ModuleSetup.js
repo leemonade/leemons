@@ -1,15 +1,6 @@
-import React, {
-  cloneElement,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { cloneElement, useEffect, useMemo, useRef, useState } from "react";
 
-import {
-  TotalLayoutContainer,
-  VerticalStepperContainer,
-} from "@bubbles-ui/components";
+import { TotalLayoutContainer, VerticalStepperContainer } from "@bubbles-ui/components";
 
 import { fireEvent } from "@leemons/hooks";
 import { get, isFunction, omit } from "lodash";
@@ -22,7 +13,7 @@ import { prefixPN } from "@learning-paths/helpers";
 import createModuleRequest from "@learning-paths/requests/createModule";
 import updateModuleRequest from "@learning-paths/requests/updateModule";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BasicData } from "./components/BasicData/BasicData";
 import { Header } from "./components/Header";
 import { Resources } from "./components/Resources";
@@ -105,9 +96,7 @@ function prepareAssignable(sharedData) {
   return {
     asset: {
       ...omit(get(sharedData, "basicData"), "subjects", "program"),
-      cover:
-        get(sharedData, "basicData.cover.id") ||
-        get(sharedData, "basicData.cover"),
+      cover: get(sharedData, "basicData.cover.id") || get(sharedData, "basicData.cover"),
     },
     gradable: true,
     // TODO: Add center
@@ -145,7 +134,7 @@ function prepareSharedData(moduleData) {
   };
 }
 
-function onSaveDraft({ sharedDataRef, history, localizations }) {
+function onSaveDraft({ sharedDataRef, navigate, localizations }) {
   return addAction(`${eventBase}.onSaveDraft`, () => {
     handleOnSaveEvent()
       .then(async () => {
@@ -157,19 +146,16 @@ function onSaveDraft({ sharedDataRef, history, localizations }) {
             published: false,
           });
         } else {
-          module = await updateModuleRequest(
-            sharedData.id,
-            prepareAssignable(sharedData),
-            {
-              published: false,
-            }
-          );
+          module = await updateModuleRequest(sharedData.id, prepareAssignable(sharedData), {
+            published: false,
+          });
         }
 
         addSuccessAlert(localizations?.alert?.saveSuccess);
 
-        history.replace(
-          `/private/learning-paths/modules/${module.id}/edit${sharedData?.id ? "" : "?fromNew"}`
+        navigate(
+          `/private/learning-paths/modules/${module.id}/edit${sharedData?.id ? "" : "?fromNew"}`,
+          { replace: true }
         );
       })
       .catch((e) => {
@@ -188,22 +174,15 @@ function onSaveAndPublish({ sharedDataRef, localizations }) {
         const sharedData = sharedDataRef.current;
 
         if (!sharedData.id) {
-          const { id } = await createModuleRequest(
-            prepareAssignable(sharedData),
-            {
-              published: true,
-            }
-          );
+          const { id } = await createModuleRequest(prepareAssignable(sharedData), {
+            published: true,
+          });
 
           sharedData.id = id;
         } else {
-          const { id } = await updateModuleRequest(
-            sharedData.id,
-            prepareAssignable(sharedData),
-            {
-              published: true,
-            }
-          );
+          const { id } = await updateModuleRequest(sharedData.id, prepareAssignable(sharedData), {
+            published: true,
+          });
 
           sharedData.id = id;
         }
@@ -225,11 +204,11 @@ function onSaveAndPublish({ sharedDataRef, localizations }) {
 
 function useEventHandler({ localizations }) {
   const [, , sharedDataRef] = useModuleSetupContext();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(
-    () => onSaveDraft({ sharedDataRef, history, localizations }),
-    [history, sharedDataRef, localizations]
+    () => onSaveDraft({ sharedDataRef, navigate, localizations }),
+    [navigate, sharedDataRef, localizations]
   );
   useEffect(
     () => onSaveAndPublish({ sharedDataRef, localizations }),
@@ -280,7 +259,7 @@ export function ModuleSetup() {
   const localizations = useModuleSetupLocalizations();
   const tabs = useTabs({ localizations: localizations?.tabs });
   const scrollRef = React.useRef();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useModuleInitialization();
 
@@ -296,7 +275,7 @@ export function ModuleSetup() {
   };
 
   const onCancel = () => {
-    history.goBack();
+    navigate(-1);
   };
 
   const onSave = () => {
@@ -314,9 +293,7 @@ export function ModuleSetup() {
   return (
     <TotalLayoutContainer
       scrollRef={scrollRef}
-      Header={
-        <Header localizations={localizations?.header} onCancel={onCancel} />
-      }
+      Header={<Header localizations={localizations?.header} onCancel={onCancel} />}
     >
       <VerticalStepperContainer
         data={tabs}

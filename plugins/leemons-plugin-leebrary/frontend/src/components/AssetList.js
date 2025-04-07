@@ -1,27 +1,20 @@
 /* eslint-disable no-param-reassign */
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { useHistory } from "react-router-dom";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useIsTeacher } from "@academic-portfolio/hooks";
 import {
-  Select,
+  BaseDrawer,
   Box,
   ImageLoader,
-  Stack,
+  LoadingOverlay,
+  PaginatedList,
   SearchInput,
+  Select,
+  Stack,
+  TotalLayoutContainer,
   useDebouncedValue,
   useResizeObserver,
-  LoadingOverlay,
-  TotalLayoutContainer,
-  PaginatedList,
-  BaseDrawer,
 } from "@bubbles-ui/components";
 import { LocaleDate, unflatten, useRequestErrorMessage } from "@common";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
@@ -97,10 +90,7 @@ function handlePaginationAndDetailsLoad({
   }
 
   // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
-  if (
-    shouldInsertNewItem &&
-    !paginatedObject.items.some((item) => item.action === "new")
-  ) {
+  if (shouldInsertNewItem && !paginatedObject.items.some((item) => item.action === "new")) {
     paginatedObject.items.unshift({ action: "new" });
   }
   return paginatedObject;
@@ -189,7 +179,7 @@ const AssetList = ({
   } = useLayout();
 
   const { newAsset, newBulkUpload } = useContext(LibraryContext);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // -------------------------------------------------------------------------------------
   // QUERY HOOKS
@@ -197,7 +187,10 @@ const AssetList = ({
   const queryClient = useQueryClient();
   const assetListQuery = useMemo(() => {
     const waitForAcademicFilters = allowAcademicFilter && !academicFilters;
-    if (!category || waitForAcademicFilters) return null;
+    if (!category || waitForAcademicFilters) {
+      return null;
+    }
+
     const query = {
       providerQuery: academicFilters ? JSON.stringify(academicFilters) : null,
       criteria: searchCriteria || "",
@@ -208,8 +201,9 @@ const AssetList = ({
       preferCurrent: true,
     };
 
-    if (allowMediaTypeFilter && mediaTypeFilter !== "all")
+    if (allowMediaTypeFilter && mediaTypeFilter !== "all") {
       query.type = mediaTypeFilter;
+    }
 
     // HANDLE MULTI-CATEGORY SECTIONS
     if (category?.key?.startsWith(SUBJECT_CATEGORY)) {
@@ -238,21 +232,12 @@ const AssetList = ({
     }
 
     return query;
-  }, [
-    category,
-    searchCriteria,
-    statusFilter,
-    categoryFilter,
-    mediaTypeFilter,
-    academicFilters,
-  ]);
+  }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
 
-  const { data: assetList, isLoading: assetListIsLoading } = useSimpleAssetList(
-    {
-      query: assetListQuery,
-      enabled: !!assetListQuery,
-    }
-  );
+  const { data: assetList, isLoading: assetListIsLoading } = useSimpleAssetList({
+    query: assetListQuery,
+    enabled: !!assetListQuery,
+  });
 
   const { items: currentPageAssets } = useMemo(
     () =>
@@ -264,24 +249,29 @@ const AssetList = ({
     [assetList, page, pageSize]
   );
 
-  const { data: assetsDetails, isLoading: assetsDetailsAreLoading } =
-    useAssetsDetails({
-      ids: currentPageAssets?.map((item) => item.asset),
-      filters: {
-        published: allowStatusFilter ? statusFilter : true,
-        showPublic: category?.key === PINS_CATEGORY,
-        onlyPinned: category?.key === PINS_CATEGORY,
-      },
-      options: {
-        enabled: !isEmpty(assetList) && !assetListIsLoading,
-      },
-    });
+  const { data: assetsDetails, isLoading: assetsDetailsAreLoading } = useAssetsDetails({
+    ids: currentPageAssets?.map((item) => item.asset),
+    filters: {
+      published: allowStatusFilter ? statusFilter : true,
+      showPublic: category?.key === PINS_CATEGORY,
+      onlyPinned: category?.key === PINS_CATEGORY,
+    },
+    options: {
+      enabled: !isEmpty(assetList) && !assetListIsLoading,
+    },
+  });
 
   const lastNotEmptyPage = useMemo(() => {
     const currentPage = page;
 
-    if (currentPageAssets?.length) return currentPage;
-    if (currentPage > 1) return currentPage - 1;
+    if (currentPageAssets?.length) {
+      return currentPage;
+    }
+
+    if (currentPage > 1) {
+      return currentPage - 1;
+    }
+
     return null;
   }, [currentPageAssets, page]);
 
@@ -306,9 +296,7 @@ const AssetList = ({
   const getCategoriesSelectData = useMemo(() => {
     const filteredCategories = categories
       ?.filter((item) =>
-        Array.isArray(allowCategoryFilter)
-          ? allowCategoryFilter.includes(item.key)
-          : true
+        Array.isArray(allowCategoryFilter) ? allowCategoryFilter.includes(item.key) : true
       )
       .map((item) => ({
         value: item.key,
@@ -321,29 +309,26 @@ const AssetList = ({
               marginBottom: 5,
             })}
           >
-            <ImageLoader
-              src={item.icon}
-              style={{ width: 16, height: 16, position: "relative" }}
-            />
+            <ImageLoader src={item.icon} style={{ width: 16, height: 16, position: "relative" }} />
           </Box>
         ),
       }));
-    return [
-      { label: t("labels.allResourceTypes"), value: "all" },
-      ...filteredCategories,
-    ];
+    return [{ label: t("labels.allResourceTypes"), value: "all" }, ...filteredCategories];
   }, [allowCategoryFilter, categories, t]);
 
   const getMediaTypeSelectData = useMemo(() => {
-    if (!mediaTypes?.length) return null;
-    return [
-      { label: t("labels.allResourceTypes"), value: "all" },
-      ...mediaTypes,
-    ];
+    if (!mediaTypes?.length) {
+      return null;
+    }
+
+    return [{ label: t("labels.allResourceTypes"), value: "all" }, ...mediaTypes];
   }, [mediaTypes, t]);
 
   const getStatusSelectData = useMemo(() => {
-    if (!allowStatusFilter) return null;
+    if (!allowStatusFilter) {
+      return null;
+    }
+
     return [
       { label: t("labels.assetStatusAll"), value: "all" },
       { label: t("labels.assetStatusPublished"), value: "published" },
@@ -360,12 +345,8 @@ const AssetList = ({
       duplicate: selectedAsset?.duplicable ? t("cardToolbar.duplicate") : false,
       download: selectedAsset?.downloadable ? t("cardToolbar.download") : false,
       delete: selectedAsset?.deleteable ? t("cardToolbar.delete") : false,
-      share:
-        isTeacher && selectedAsset?.shareable ? t("cardToolbar.share") : false,
-      assign:
-        isTeacher && selectedAsset?.assignable
-          ? t("cardToolbar.assign")
-          : false,
+      share: isTeacher && selectedAsset?.shareable ? t("cardToolbar.share") : false,
+      assign: isTeacher && selectedAsset?.assignable ? t("cardToolbar.assign") : false,
       pin:
         !selectedAsset?.pinned && selectedAsset?.pinneable && published
           ? t("cardToolbar.pin")
@@ -381,14 +362,10 @@ const AssetList = ({
   const userIsFilteringOrSearching = useCallback(() => {
     const isSearchingByCriteria = searchCriteriaDebounced?.length > 0;
     const isFilteringByStatus = statusFilter?.length && statusFilter !== "all";
-    const isFilteringByAcademicFilters =
-      academicFilters && academicFilters?.program?.length > 0;
-    const isFilteringByMediaType =
-      mediaTypeFilter?.length && mediaTypeFilter !== "all";
+    const isFilteringByAcademicFilters = academicFilters && academicFilters?.program?.length > 0;
+    const isFilteringByMediaType = mediaTypeFilter?.length && mediaTypeFilter !== "all";
     const isFiltering =
-      isFilteringByStatus ||
-      isFilteringByAcademicFilters ||
-      isFilteringByMediaType;
+      isFilteringByStatus || isFilteringByAcademicFilters || isFilteringByMediaType;
 
     return isSearchingByCriteria || isFiltering;
   }, [statusFilter, academicFilters, mediaTypeFilter, searchCriteriaDebounced]);
@@ -470,7 +447,7 @@ const AssetList = ({
   };
 
   const handleOnAssign = (item) => {
-    history.push(`/private/leebrary/assign/${item.id}`);
+    navigate(`/private/leebrary/assign/${item.id}`);
   };
 
   const handleOnDelete = (item) => {
@@ -504,7 +481,7 @@ const AssetList = ({
     if (!isEmpty(category?.createUrl)) {
       const newURL = new URL(category.createUrl, window?.location);
       newURL.searchParams.set("from", "leebrary");
-      history.push(newURL.href.substring(newURL.origin.length));
+      navigate(newURL.href.substring(newURL.origin.length));
     } else {
       newAsset(null, category);
     }
@@ -520,14 +497,7 @@ const AssetList = ({
   // Every new query should reset the page to one.
   useEffect(() => {
     setPage(1);
-  }, [
-    category,
-    searchCriteria,
-    statusFilter,
-    categoryFilter,
-    mediaTypeFilter,
-    academicFilters,
-  ]);
+  }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
 
   // DELETE operations may leave the current page empty
   // Page is set to the last valid page if the current page isn't
@@ -543,7 +513,9 @@ const AssetList = ({
 
   useEffect(() => {
     if (!assetsDetailsAreLoading) {
-      if (!assetListIsLoading) setCardDetailIsLoading(false);
+      if (!assetListIsLoading) {
+        setCardDetailIsLoading(false);
+      }
     } else {
       setCardDetailIsLoading(true);
     }
@@ -555,7 +527,9 @@ const AssetList = ({
       setSelectedAsset(asset);
     } else if (typeof asset === "string" && asset.length) {
       const loadedAsset = find(pageAssetsData?.items, { id: asset });
-      if (loadedAsset) setSelectedAsset(loadedAsset);
+      if (loadedAsset) {
+        setSelectedAsset(loadedAsset);
+      }
     } else {
       setSelectedAsset(null);
     }
@@ -571,12 +545,14 @@ const AssetList = ({
     if (!assetListIsLoading) {
       const searchingOrFiltering = userIsFilteringOrSearching();
       const shouldInsertNewItem =
-        !NOT_CREATABLE_CATEGORIES.some((catKey) =>
-          category?.key?.startsWith(catKey)
-        ) && !searchingOrFiltering;
+        !NOT_CREATABLE_CATEGORIES.some((catKey) => category?.key?.startsWith(catKey)) &&
+        !searchingOrFiltering;
 
-      if (shouldInsertNewItem) setPageSize(11);
-      else setPageSize(12);
+      if (shouldInsertNewItem) {
+        setPageSize(11);
+      } else {
+        setPageSize(12);
+      }
 
       if (assetList?.length) {
         const paginated = handlePaginationAndDetailsLoad({
@@ -612,9 +588,7 @@ const AssetList = ({
       {
         Header: t("tableLabels.name"),
         accessor: "name",
-        valueRender: (_, row) => (
-          <LibraryItem asset={prepareAsset(row, published)} />
-        ),
+        valueRender: (_, row) => <LibraryItem asset={prepareAsset(row, published)} />,
       },
       {
         Header: t("tableLabels.owner"),
@@ -635,9 +609,7 @@ const AssetList = ({
   }, [category]);
 
   const offsets = childRef.current?.getBoundingClientRect() || childRect;
-  const headerOffset = Math.round(
-    offsets.top + childRect.height + childRect.top
-  );
+  const headerOffset = Math.round(offsets.top + childRect.height + childRect.top);
   const paginatedListProps = useMemo(
     () => ({
       itemRender: (p) => (
@@ -654,9 +626,7 @@ const AssetList = ({
               {...p}
               variant={cardVariant}
               category={
-                categories?.find(
-                  (_category) => _category.id === p.item.original.category
-                ) || {
+                categories?.find((_category) => _category.id === p.item.original.category) || {
                   key: "media-file",
                 }
               }
@@ -716,8 +686,7 @@ const AssetList = ({
                 disabled={assetListIsLoading || assetsDetailsAreLoading}
               />
             )}
-            {!!filterComponents &&
-              filterComponents({ loading: assetListIsLoading })}
+            {!!filterComponents && filterComponents({ loading: assetListIsLoading })}
             {!isEmpty(mediaTypes) && allowMediaTypeFilter && (
               <Select
                 data-cypress-id="search-asset-type-selector"
@@ -825,12 +794,7 @@ const AssetList = ({
                 />
               )}
             {showFilteringEmptyState && (
-              <Stack
-                justifyContent="center"
-                alignItems="center"
-                fullWidth
-                fullHeight
-              >
+              <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
                 <SearchEmpty t={t} />
               </Stack>
             )}
@@ -861,9 +825,7 @@ const AssetList = ({
               category={
                 category?.id && !category?.key?.startsWith(SUBJECT_CATEGORY)
                   ? category
-                  : categories?.find(
-                      (_category) => _category?.id === selectedAsset?.category
-                    )
+                  : categories?.find((_category) => _category?.id === selectedAsset?.category)
               }
               asset={selectedAsset}
               labels={detailLabels}

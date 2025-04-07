@@ -7,7 +7,7 @@ import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import * as _ from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // TODO: import from @common plugin
 
 import { AdminPageHeader } from "@bubbles-ui/leemons";
@@ -55,22 +55,18 @@ function ConfigAdd({ session }) {
   const [event, setEvent] = useState(null);
 
   const [toggleEventModal, EventModal] = useCalendarSimpleEventModal();
-  const [error, setError, ErrorAlert, getErrorMessage] =
-    useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   const eventTypes = useMemo(
-    () =>
-      _.map(calendars, ({ name, bgColor }) => ({ key: name, color: bgColor })),
+    () => _.map(calendars, ({ name, bgColor }) => ({ key: name, color: bgColor })),
     [calendars]
   );
 
   const getEventTypeTranslations = async () => {
-    const { items } = await getLocalizationsByArrayOfItems(
-      _.map(eventTypes, "key")
-    );
+    const { items } = await getLocalizationsByArrayOfItems(_.map(eventTypes, "key"));
     setEventTypesT(items);
   };
 
@@ -134,14 +130,11 @@ function ConfigAdd({ session }) {
     if (events && calendars && calendars.length) {
       const calendarsByName = _.keyBy(calendars, "name");
       conf.events = conf.events.concat(
-        _.map(
-          transformDBEventsToFullCalendarEvents(events, calendars),
-          (e) => ({
-            ...e,
-            display: "background",
-            backgroundColor: calendarsByName[e.originalEvent.type].bgColor,
-          })
-        )
+        _.map(transformDBEventsToFullCalendarEvents(events, calendars), (e) => ({
+          ...e,
+          display: "background",
+          backgroundColor: calendarsByName[e.originalEvent.type].bgColor,
+        }))
       );
     }
 
@@ -211,15 +204,11 @@ function ConfigAdd({ session }) {
           />
           <div className="bg-primary-content">
             <PageContainer>
-              <div className="page-description max-w-screen-sm">
-                {t("description")}
-              </div>
+              <div className="page-description max-w-screen-sm">{t("description")}</div>
 
               <div className="flex group-4">
                 <div style={{ backgroundColor: "#fff" }}>{t("school_day")}</div>
-                <div style={{ backgroundColor: "rgba(51,51,51,0.3)" }}>
-                  {t("non_school_day")}
-                </div>
+                <div style={{ backgroundColor: "rgba(51,51,51,0.3)" }}>{t("non_school_day")}</div>
                 {eventTypes.map(({ key, color }) => (
                   <div key={key} style={{ backgroundColor: color }}>
                     {getEventTypeName(key)}

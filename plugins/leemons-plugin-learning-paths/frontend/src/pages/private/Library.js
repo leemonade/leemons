@@ -1,17 +1,11 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-import {
-  Box,
-  ContextContainer,
-  createStyles,
-  TabPanel,
-  Tabs,
-} from "@bubbles-ui/components";
+import { Box, ContextContainer, TabPanel, Tabs, createStyles } from "@bubbles-ui/components";
 // TODO: import from @common plugin
 import { AdminPageHeader } from "@bubbles-ui/leemons";
 
 import { get } from "lodash";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import useAcademicFiltersForAssetList from "@assignables/hooks/useAcademicFiltersForAssetList";
 import { unflatten, useQuery as useQueryParams } from "@common";
@@ -54,7 +48,7 @@ const useLibraryStyles = createStyles((theme) => ({
 }));
 
 export default function LibraryPage() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { tab: selectedTab } = useQueryParams();
   const localizations = useLibraryPageLocalizations();
 
@@ -62,7 +56,7 @@ export default function LibraryPage() {
   const [currentAsset, setCurrentAsset] = useState(null);
 
   const handleOnNewModule = () => {
-    history.push("/private/learning-paths/modules/new");
+    navigate("/private/learning-paths/modules/new");
   };
   const handleOnSelectModule = (item) => {
     if (currentAsset?.id !== item?.id) {
@@ -89,7 +83,7 @@ export default function LibraryPage() {
         fullWidth
         activeKey={selectedTab}
         onTabClick={(tab) => {
-          history.replace(`?tab=${tab}`);
+          navigate(`?tab=${tab}`, { replace: true });
           setCurrentAsset(null);
         }}
       >

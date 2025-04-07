@@ -1,21 +1,14 @@
-import React, { useCallback } from "react";
-import { useHistory } from "react-router-dom";
 import { Button } from "@bubbles-ui/components";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
-function CorrectionButton({
-  studentData,
-  instanceData,
-  label,
-  variant = "outline",
-}) {
-  const history = useHistory();
+function CorrectionButton({ studentData, instanceData, label, variant = "outline" }) {
+  const navigate = useNavigate();
 
   const redirect = useCallback(() => {
     const urlTemplate = instanceData.assignable.roleDetails.evaluationDetailUrl;
-    const url = urlTemplate
-      .replace(":id", instanceData.id)
-      .replace(":user", studentData.user);
-    history.push(url);
+    const url = urlTemplate.replace(":id", instanceData.id).replace(":user", studentData.user);
+    navigate(url);
   }, [studentData, instanceData]);
 
   return (

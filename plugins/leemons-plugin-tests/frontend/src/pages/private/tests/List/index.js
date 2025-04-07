@@ -1,22 +1,16 @@
-import React from "react";
-import {
-  ContextContainer,
-  TabPanel,
-  Tabs,
-  Box,
-  createStyles,
-} from "@bubbles-ui/components";
+import useAcademicFiltersForAssetList from "@assignables/hooks/useAcademicFiltersForAssetList";
+import { Box, ContextContainer, TabPanel, Tabs, createStyles } from "@bubbles-ui/components";
 // TODO: import from @common plugin
 import { AdminPageHeader } from "@bubbles-ui/leemons";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "@tests/helpers/prefixPN";
 import { useStore } from "@common";
-import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
-import { useHistory } from "react-router-dom";
-import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
 import AssetList from "@leebrary/components/AssetList";
 import { prepareAsset } from "@leebrary/helpers/prepareAsset";
-import useAcademicFiltersForAssetList from "@assignables/hooks/useAcademicFiltersForAssetList";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@tests/helpers/prefixPN";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
@@ -34,7 +28,7 @@ export default function List() {
   const [currentAsset, setCurrentAsset] = React.useState(null);
   const academicFilters = useAcademicFiltersForAssetList();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -45,9 +39,7 @@ export default function List() {
   });
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
-      "tests.tests",
-    ]);
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(["tests.tests"]);
     if (permissions[0]) {
       store.canAdd =
         permissions[0].actionNames.includes("create") ||
@@ -57,11 +49,11 @@ export default function List() {
   }
 
   function goCreatePage() {
-    history.push("/private/tests/new");
+    navigate("/private/tests/new");
   }
 
   function goDetailPage(asset) {
-    // history.push(`/private/tests/${asset.id}`);
+    // navigate(`/private/tests/${asset.id}`);
     if (currentAsset?.id !== asset?.id) {
       setCurrentAsset(prepareAsset(asset));
     }

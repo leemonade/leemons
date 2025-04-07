@@ -1,23 +1,17 @@
 import { useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useHistory, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useIsTeacher } from "@academic-portfolio/hooks";
-import {
-  Box,
-  ImageLoader,
-  TotalLayoutHeader,
-  Stack,
-  Button,
-} from "@bubbles-ui/components";
+import { Box, Button, ImageLoader, Stack, TotalLayoutHeader } from "@bubbles-ui/components";
 import { OpenIcon } from "@bubbles-ui/icons/outline";
 import prepareAsset from "@leebrary/helpers/prepareAsset";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { noop } from "lodash";
 
 import {
-  ACTIVITY_HEADER_PROP_TYPES,
   ACTIVITY_HEADER_DEFAULT_PROPS,
+  ACTIVITY_HEADER_PROP_TYPES,
 } from "./ActivityHeader.constants";
 import ActivityTypeDisplay from "./components/ActivityTypeDisplay/ActivityTypeDisplay";
 import CalificationTypeDisplay from "./components/CalificationTypeDisplay/CalificationTypeDisplay";
@@ -53,7 +47,7 @@ export default function ActivityHeader({
   onTimeout = noop,
 }) {
   const form = useForm();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [t] = useTranslateLoader(PrefixPN("evaluation"));
   const isTeacher = useIsTeacher();
   /*
@@ -62,8 +56,7 @@ export default function ActivityHeader({
   const assignable = instance?.assignable;
 
   const isModule = !!instance?.metadata?.module;
-  const isModuleActivity =
-    !!isModule && instance?.metadata?.module?.type !== "module";
+  const isModuleActivity = !!isModule && instance?.metadata?.module?.type !== "module";
   const isModulePreview = window?.location?.href?.includes("moduleId");
   const modulePreviewId = window?.location?.href?.split("moduleId=")[1];
 
@@ -101,13 +94,7 @@ export default function ActivityHeader({
     }
 
     return response;
-  }, [
-    action,
-    data?.assignable?.asset?.name,
-    isModuleActivity,
-    instance,
-    showStatusBadge,
-  ]);
+  }, [action, data?.assignable?.asset?.name, isModuleActivity, instance, showStatusBadge]);
 
   const subtitle = useMemo(() => {
     const response = assignable?.asset?.name;
@@ -130,10 +117,9 @@ export default function ActivityHeader({
 
   const goToAssignmentDetail = () => {
     const url = (
-      instance?.assignable?.roleDetails?.dashboardUrl ||
-      "/private/assignables/details/:id"
+      instance?.assignable?.roleDetails?.dashboardUrl || "/private/assignables/details/:id"
     ).replace(":id", instance.id);
-    history.push(url);
+    navigate(url);
   };
 
   return (
@@ -165,19 +151,14 @@ export default function ActivityHeader({
       >
         <Box className={classes.root}>
           {goToModuleDashboard && isModulePreview && (
-            <Link
-              to={`/private/learning-paths/modules/${modulePreviewId}/view`}
-            >
+            <Link to={`/private/learning-paths/modules/${modulePreviewId}/view`}>
               <Button variant="outline">{t("goToModuleDashboard")}</Button>
             </Link>
           )}
           <ClassroomDisplay instance={instance} hidden={!showClass} />
           <Box className={classes.activityMetadata}>
             <ActivityTypeDisplay assignable={assignable} hidden={!showRole} />
-            <CalificationTypeDisplay
-              instance={instance}
-              hidden={!showEvaluationType}
-            />
+            <CalificationTypeDisplay instance={instance} hidden={!showEvaluationType} />
             {hasChat && <ChatDisplay instance={instance} />}
             <Timer
               assignation={assignation}
@@ -195,11 +176,7 @@ export default function ActivityHeader({
             />
             {showAssignmentDetailButton && (
               <Box className={classes.viewDetailButton}>
-                <Button
-                  variant="link"
-                  rightIcon={<OpenIcon />}
-                  onClick={goToAssignmentDetail}
-                >
+                <Button variant="link" rightIcon={<OpenIcon />} onClick={goToAssignmentDetail}>
                   {t("assignationHeaderButton")}
                 </Button>
               </Box>

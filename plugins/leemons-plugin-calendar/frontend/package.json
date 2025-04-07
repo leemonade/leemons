@@ -31,7 +31,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
     "react-overlays": "^5.2.1",
-    "react-router-dom": "^5.3.3",
+    "react-router-dom": "6.30.0",
     "react-to-print": "^3.0.1",
     "rrule": "^2.6.8",
     "uncontrollable": "^8.0.4"

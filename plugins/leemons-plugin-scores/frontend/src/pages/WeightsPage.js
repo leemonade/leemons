@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-import { ImageLoader, Box, TLayout } from "@bubbles-ui/components";
-import { useHistory } from "react-router-dom";
+import { Box, ImageLoader, TLayout } from "@bubbles-ui/components";
 import { useSearchParams } from "@common";
+import { useNavigate } from "react-router-dom";
 
 import { SelectProgram } from "@academic-portfolio/components";
-import { useUserCenters } from "@users/hooks";
-import Weights from "@scores/components/Weights/Weights";
-import evaluationsIcon from "@scores/../public/menu-icon.svg";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import evaluationsIcon from "@scores/../public/menu-icon.svg";
+import Weights from "@scores/components/Weights/Weights";
 import { prefixPN } from "@scores/helpers";
+import { useUserCenters } from "@users/hooks";
 
 export default function WeightsPage() {
   const [t] = useTranslateLoader(prefixPN("weighting"));
   const queryParams = useSearchParams();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [selectedProgram, setSelectedProgram] = useState(
     queryParams.get("program")
@@ -45,7 +45,7 @@ export default function WeightsPage() {
             if (program) {
               const newParams = new URLSearchParams(queryParams);
               newParams.set("program", program);
-              history.replace({ search: newParams.toString() });
+              navigate({ search: newParams.toString() }, { replace: true });
             }
           }}
         />

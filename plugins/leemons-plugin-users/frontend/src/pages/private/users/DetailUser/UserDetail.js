@@ -6,9 +6,10 @@ import {
   Stack,
   Title,
   TotalLayoutContainer,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
 } from "@bubbles-ui/components";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
 import { useStore } from "@common";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
@@ -19,12 +20,11 @@ import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
 import activeUserAgent from "@users/request/activeUserAgent";
 import disableUserAgent from "@users/request/disableUserAgent";
 import { ZoneWidgets } from "@widgets";
-import _, { find, forEach, forIn } from "lodash";
+import _, { find, forEach, forIn, noop } from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useParams, useHistory } from "react-router-dom";
-import { RemoveIcon } from "@bubbles-ui/icons/outline";
+import { useNavigate, useParams } from "react-router-dom";
 import getUserFullName from "../../../../helpers/getUserFullName";
 import {
   getSystemDataFieldsConfigRequest,
@@ -35,15 +35,14 @@ import {
 import PersonalInformation from "./PersonalInformation";
 import UserAgentTags from "./UserAgentTags";
 import UserImage from "./UserImage";
-import UserPreferredGender from "./UserPreferredGender";
 
 function DetailUser({
   session,
   centerId,
   profileId,
   userId: _userId,
-  onDisabled = () => {},
-  onActive = () => {},
+  onDisabled = noop,
+  onActive = noop,
   isDrawer,
 }) {
   const [t] = useTranslateLoader(prefixPN("detailUser"));
@@ -55,7 +54,7 @@ function DetailUser({
   });
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const scrollRef = React.useRef();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   let userId = _userId;
   const { userId: _u } = useParams();
@@ -114,20 +113,17 @@ function DetailUser({
     store.userAgent = find(
       store.userAgents,
       (userAgent) =>
-        userAgent.center?.id === store.center &&
-        userAgent.profile?.id === store.profile
+        userAgent.center?.id === store.center && userAgent.profile?.id === store.profile
     );
     render();
   }
 
   async function getPermissions() {
-    const [
-      { permissions: userPermissions },
-      { permissions: enadisPermissions },
-    ] = await Promise.all([
-      getPermissionsWithActionsIfIHaveRequest(["users.users"]),
-      getPermissionsWithActionsIfIHaveRequest(["users.enabledisable"]),
-    ]);
+    const [{ permissions: userPermissions }, { permissions: enadisPermissions }] =
+      await Promise.all([
+        getPermissionsWithActionsIfIHaveRequest(["users.users"]),
+        getPermissionsWithActionsIfIHaveRequest(["users.enabledisable"]),
+      ]);
     if (userPermissions[0]) {
       store.canUpdate =
         userPermissions[0].actionNames.includes("update") ||
@@ -183,8 +179,14 @@ function DetailUser({
       form.setValue('user.birthdate', new Date(store.user.birthdate));
       form.setValue('user.gender', store.user.gender);
       */
-      if (store.centers[0]) selectCenter(store.centers[0].value);
-      if (store.profiles[0]) selectProfile(store.profiles[0].value);
+      if (store.centers[0]) {
+        selectCenter(store.centers[0].value);
+      }
+
+      if (store.profiles[0]) {
+        selectProfile(store.profiles[0].value);
+      }
+
       render();
     } catch (error) {
       addErrorAlert(getErrorMessage(error));
@@ -241,24 +243,29 @@ function DetailUser({
 
   function cancelEdit() {
     form.reset(store.formValues);
-    if (store.centers[0]) selectCenter(store.centers[0].value);
-    if (store.profiles[0]) selectProfile(store.profiles[0].value);
+    if (store.centers[0]) {
+      selectCenter(store.centers[0].value);
+    }
+
+    if (store.profiles[0]) {
+      selectProfile(store.profiles[0].value);
+    }
+
     store.isEditMode = false;
     render();
-    history.goBack();
+    navigate(-1);
   }
 
   async function tryToSave() {
     form.handleSubmit(async (formData) => {
       try {
         const toSend = { ...formData };
-        if (
-          store.userAgent &&
-          store.datasetFormActions &&
-          store.datasetFormActions.isLoaded()
-        ) {
+        if (store.userAgent && store.datasetFormActions && store.datasetFormActions.isLoaded()) {
           await store.datasetFormActions.submit();
-          if (store.datasetFormActions.getErrors().length) return null;
+          if (store.datasetFormActions.getErrors().length) {
+            return null;
+          }
+
           toSend.dataset = store.datasetFormActions.getValues();
           store.dataset.value = toSend.dataset;
         }
@@ -299,27 +306,21 @@ function DetailUser({
     }
   }, [store.params.user]);
 
-  if (!store.user) return null;
+  if (!store.user) {
+    return null;
+  }
 
   const buttons = (
     <>
       {store.isEditMode ? (
         <>
           {store.canDisable && !store.userAgent?.disabled ? (
-            <Button
-              variant="outline"
-              onClick={disable}
-              sx={() => ({ justifySelf: "end" })}
-            >
+            <Button variant="outline" onClick={disable} sx={() => ({ justifySelf: "end" })}>
               {t("disableBtn")}
             </Button>
           ) : null}
           {store.canActive && store.userAgent?.disabled ? (
-            <Button
-              variant="outline"
-              onClick={active}
-              sx={() => ({ justifySelf: "end" })}
-            >
+            <Button variant="outline" onClick={active} sx={() => ({ justifySelf: "end" })}>
               {t("active")}
             </Button>
           ) : null}
@@ -328,20 +329,12 @@ function DetailUser({
       ) : (
         <>
           {store.canDisable && !store.userAgent?.disabled ? (
-            <Button
-              variant="outline"
-              onClick={disable}
-              sx={() => ({ justifySelf: "end" })}
-            >
+            <Button variant="outline" onClick={disable} sx={() => ({ justifySelf: "end" })}>
               {t("disableBtn")}
             </Button>
           ) : null}
           {store.canActive && store.userAgent?.disabled ? (
-            <Button
-              variant="outline"
-              onClick={active}
-              sx={() => ({ justifySelf: "end" })}
-            >
+            <Button variant="outline" onClick={active} sx={() => ({ justifySelf: "end" })}>
               {t("active")}
             </Button>
           ) : null}
@@ -364,8 +357,7 @@ function DetailUser({
             padding: `${theme.spacing[1]}px ${theme.spacing[5]}px`,
             height: 70,
             overflow: "hidden",
-            backgroundColor:
-              theme.other.global.background.color.surface.default,
+            backgroundColor: theme.other.global.background.color.surface.default,
           })}
           fullWidth
           direction="row"
@@ -373,11 +365,7 @@ function DetailUser({
           justifyContent="space-between"
           spacing={5}
         >
-          <ContextContainer
-            direction="row"
-            alignItems="center"
-            justifyContent="start"
-          >
+          <ContextContainer direction="row" alignItems="center" justifyContent="start">
             <Box style={{ marginTop: 2 }}>
               <UserImage
                 t={t}
@@ -407,11 +395,7 @@ function DetailUser({
             )}
           </ContextContainer>
           <Box>
-            <Button
-              variant="link"
-              leftIcon={<RemoveIcon />}
-              onClick={cancelEdit}
-            >
+            <Button variant="link" leftIcon={<RemoveIcon />} onClick={cancelEdit}>
               {t("cancel")}
             </Button>
           </Box>
@@ -428,17 +412,13 @@ function DetailUser({
         <TotalLayoutStepContainer
           Footer={
             store.isEditMode && (
-              <TotalLayoutFooterContainer
-                scrollRef={scrollRef}
-                fixed
-                rightZone={buttons}
-              />
+              <TotalLayoutFooterContainer scrollRef={scrollRef} fixed rightZone={buttons} />
             )
           }
         >
           <ContextContainer>
             <ContextContainer divided>
-              {/* 
+              {/*
               <UserPreferredGender
                 t={t}
                 user={store.user}

@@ -1,20 +1,20 @@
-import React, { useMemo, useState } from "react";
-import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
+import useIsMainTeacherInSubject from "@academic-portfolio/hooks/queries/useIsMainTeacherInSubject";
 import { createStyles } from "@bubbles-ui/components";
-import { LibraryCard } from "@leebrary/components";
+import { unflatten } from "@common";
 import { addSuccessAlert } from "@layout/alert";
 import { useLayout } from "@layout/context";
-import _, { noop } from "lodash";
-import { unflatten } from "@common";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { LibraryCard } from "@leebrary/components";
 import { AssignIcon } from "@leebrary/components/LibraryDetailToolbar/icons/AssignIcon";
 import { DeleteIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon";
-import { EditIcon } from "@leebrary/components/LibraryDetailToolbar/icons/EditIcon";
 import { DuplicateIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon";
+import { EditIcon } from "@leebrary/components/LibraryDetailToolbar/icons/EditIcon";
 import { ShareIcon } from "@leebrary/components/LibraryDetailToolbar/icons/ShareIcon";
-import useIsMainTeacherInSubject from "@academic-portfolio/hooks/queries/useIsMainTeacherInSubject";
 import { useIsOwner } from "@leebrary/hooks/useIsOwner";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import _, { noop } from "lodash";
+import PropTypes from "prop-types";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ExpressTaskIcon } from "../../components/Icons/ExpressTaskIcon";
 import { TaskIcon } from "../../components/Icons/TaskIcon";
 import { prefixPN } from "../../helpers/prefixPN";
@@ -28,18 +28,9 @@ const ListCardStyles = createStyles((theme, { single, selected }) => ({
   },
 }));
 
-const ListCard = ({
-  asset,
-  selected,
-  embedded,
-  single,
-  onShare,
-  onRefresh = () => {},
-  ...props
-}) => {
-  const history = useHistory();
-  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] =
-    useState(false);
+const ListCard = ({ asset, selected, embedded, single, onShare, onRefresh = noop, ...props }) => {
+  const navigate = useNavigate();
+  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] = useState(false);
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
@@ -74,10 +65,7 @@ const ListCard = ({
 
   const { data: isMainTeacherInAssetSubjects, isLoading: teacherCheckLoading } =
     useIsMainTeacherInSubject({
-      subjectIds:
-        asset.subjects?.length > 0
-          ? asset.subjects.map((item) => item.subject)
-          : [],
+      subjectIds: asset.subjects?.length > 0 ? asset.subjects.map((item) => item.subject) : [],
       options: {
         enabled: enableIsTeacherInSubjectQuery && asset.subjects?.length > 0,
         refetchOnWindowFocus: false,
@@ -100,7 +88,7 @@ const ListCard = ({
 
   const handleClick = (url, target = "self", callback = noop) => {
     if (target === "self") {
-      history.push(url);
+      navigate(url);
       return callback("redirected", url);
     }
 
@@ -148,8 +136,7 @@ const ListCard = ({
         const assignAction = (e) => {
           e.stopPropagation();
           if (asset.subjects?.length > 0 && !isMainTeacherInAssetSubjects) {
-            const updateAsset = () =>
-              handleClick(`/private/tasks/library/edit/${taskId}`);
+            const updateAsset = () => handleClick(`/private/tasks/library/edit/${taskId}`);
 
             openConfirmationModal({
               title: menuLabels?.cannotAssignModal.title,
@@ -193,15 +180,11 @@ const ListCard = ({
             openConfirmationModal({
               onConfirm: () => {
                 setAppLoading(true);
-                handleClick(
-                  `POST://v1/tasks/tasks/${taskId}/duplicate`,
-                  "api",
-                  () => {
-                    addSuccessAlert("Task duplicated");
-                    setAppLoading(false);
-                    onRefresh();
-                  }
-                );
+                handleClick(`POST://v1/tasks/tasks/${taskId}/duplicate`, "api", () => {
+                  addSuccessAlert("Task duplicated");
+                  setAppLoading(false);
+                  onRefresh();
+                });
               },
             })();
           },
@@ -235,14 +218,7 @@ const ListCard = ({
     }
 
     return items;
-  }, [
-    asset,
-    embedded,
-    menuLabels,
-    onRefresh,
-    isMainTeacherInAssetSubjects,
-    isOwner,
-  ]);
+  }, [asset, embedded, menuLabels, onRefresh, isMainTeacherInAssetSubjects, isOwner]);
 
   // ·········································································
   // RENDER

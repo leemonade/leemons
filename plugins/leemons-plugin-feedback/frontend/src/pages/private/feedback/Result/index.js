@@ -1,42 +1,39 @@
-import React, { useRef } from "react";
-import { useHistory, useParams, Link } from "react-router-dom";
+import React, { useRef } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { useIsTeacher } from "@academic-portfolio/hooks";
-import ActivityHeader from "@assignables/components/ActivityHeader/index";
-import useNextActivityUrl from "@assignables/hooks/useNextActivityUrl";
-import getAssignableInstance from "@assignables/requests/assignableInstances/getAssignableInstance";
-import useInstances from "@assignables/requests/hooks/queries/useInstances";
+import { useIsTeacher } from '@academic-portfolio/hooks';
+import ActivityHeader from '@assignables/components/ActivityHeader/index';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
+import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import {
   Badge,
   Box,
   Button,
+  ContextContainer,
   Stack,
   Text,
   TextClamp,
   Title,
-  ContextContainer,
   TotalLayoutContainer,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from "@bubbles-ui/components";
-import { ChevRightIcon, DownloadIcon } from "@bubbles-ui/icons/outline";
-import { htmlToText, useSearchParams, useStore } from "@common";
-import { addErrorAlert } from "@layout/alert";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { prefixPN as tasksPrefixPN } from "@tasks/helpers";
-import { useUserAgents } from "@users/hooks";
+  TotalLayoutStepContainer,
+} from '@bubbles-ui/components';
+import { ChevRightIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
+import { htmlToText, useSearchParams, useStore } from '@common';
+import { addErrorAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { prefixPN as tasksPrefixPN } from '@tasks/helpers';
+import { useUserAgents } from '@users/hooks';
 
-import ResultStyles from "./Result.styles";
-import { OpenResponse, SelectResponse } from "./components";
+import ResultStyles from './Result.styles';
+import { OpenResponse, SelectResponse } from './components';
 
-import { createDatasheet } from "@feedback/helpers/createDatasheet";
-import prefixPN from "@feedback/helpers/prefixPN";
-import { LikertStatistics } from "@feedback/pages/private/feedback/Result/components/LikertStatistics";
-import { NPSStatistics } from "@feedback/pages/private/feedback/Result/components/NPSStatistics";
-import {
-  getFeedbackRequest,
-  getFeedbackResultsRequest,
-} from "@feedback/request";
+import { createDatasheet } from '@feedback/helpers/createDatasheet';
+import prefixPN from '@feedback/helpers/prefixPN';
+import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
+import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
+import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 
 const questionsByType = {
   likertScale: <LikertStatistics />,
@@ -47,24 +44,22 @@ const questionsByType = {
 };
 
 function padTo2Digits(num) {
-  return num.toString().padStart(2, "0");
+  return num.toString().padStart(2, '0');
 }
 
 export default function Result() {
-  const [t] = useTranslateLoader(prefixPN("feedbackResult"));
-  const [buttonsT] = useTranslateLoader(
-    tasksPrefixPN("task_realization.buttons")
-  );
+  const [t] = useTranslateLoader(prefixPN('feedbackResult'));
+  const [buttonsT] = useTranslateLoader(tasksPrefixPN('task_realization.buttons'));
 
   const [store, render] = useStore({
     loading: true,
   });
 
   const searchParams = useSearchParams();
-  const fromExecution = useRef(searchParams.has("fromExecution")).current;
+  const fromExecution = useRef(searchParams.has('fromExecution')).current;
 
   const isTeacher = useIsTeacher();
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
   const scrollRef = useRef();
 
@@ -75,7 +70,7 @@ export default function Result() {
   });
 
   const { data: dynamicInstance } = useInstances({ id: params.id });
-  const { classes } = ResultStyles({}, { name: "Result" });
+  const { classes } = ResultStyles({}, { name: 'Result' });
 
   async function init() {
     try {
@@ -100,31 +95,27 @@ export default function Result() {
     } catch (err) {
       await addErrorAlert(err.code ? t(`errorCode${err.code}`) : err.message);
       if (err.code === 6001) {
-        history.push("/private/assignables/ongoing");
+        navigate('/private/assignables/ongoing');
       }
     }
   }
 
   const getQuestionBadges = (question) => {
     const questionTypes = {
-      likertScale: "Likert",
-      singleResponse: t("singleResponse"),
-      multiResponse: t("multiResponse"),
-      netPromoterScore: "NPS",
-      openResponse: t("openResponse"),
+      likertScale: 'Likert',
+      singleResponse: t('singleResponse'),
+      multiResponse: t('multiResponse'),
+      netPromoterScore: 'NPS',
+      openResponse: t('openResponse'),
     };
     return (
       <Stack spacing={2}>
         <Badge closable={false} size="xs" className={classes.badge}>
-          <Text className={classes.badgeText}>
-            {questionTypes[question.type]?.toUpperCase()}
-          </Text>
+          <Text className={classes.badgeText}>{questionTypes[question.type]?.toUpperCase()}</Text>
         </Badge>
         <Badge className={classes.badge} closable={false} size="xs">
           <Text className={classes.badgeText}>
-            {question.required
-              ? t("required").toUpperCase()
-              : t("notRequired").toUpperCase()}
+            {question.required ? t('required').toUpperCase() : t('notRequired').toUpperCase()}
           </Text>
         </Badge>
       </Stack>
@@ -133,11 +124,7 @@ export default function Result() {
 
   const renderQuestions = () =>
     store.feedback.questions.map((question, index) => (
-      <ContextContainer
-        key={question.id}
-        spacing={3}
-        className={classes.questionContainer}
-      >
+      <ContextContainer key={question.id} spacing={3} className={classes.questionContainer}>
         <Stack justifyContent="space-between" alignItems="center" fullWidth>
           <TextClamp>
             <Title
@@ -171,16 +158,10 @@ export default function Result() {
   }
 
   function downloadDatasheet(format) {
-    createDatasheet(
-      store.feedback.name,
-      store.feedback.questions,
-      store.instanceId,
-      format,
-      {
-        timeMarkerLabel: t("timeMarker"),
-        option: t("optionPlaceholder"),
-      }
-    );
+    createDatasheet(store.feedback.name, store.feedback.questions, store.instanceId, format, {
+      timeMarkerLabel: t('timeMarker'),
+      option: t('optionPlaceholder'),
+    });
   }
 
   React.useEffect(() => {
@@ -200,18 +181,14 @@ export default function Result() {
           showEvaluationType
           showTime
           showDeadline
-          action={t("evaluation")}
+          action={t('evaluation')}
           showCloseButtons={isTeacher}
           showDeleteButton={isTeacher}
           allowEditDeadline={isTeacher}
         />
       }
     >
-      <Stack
-        justifyContent="center"
-        ref={scrollRef}
-        style={{ overflowY: "auto" }}
-      >
+      <Stack justifyContent="center" ref={scrollRef} style={{ overflowY: 'auto' }}>
         <TotalLayoutStepContainer
           Footer={
             isTeacher ? (
@@ -223,7 +200,7 @@ export default function Result() {
                     <Button
                       variant="outline"
                       rightIcon={<DownloadIcon />}
-                      onClick={() => downloadDatasheet("csv")}
+                      onClick={() => downloadDatasheet('csv')}
                     >
                       CSV
                     </Button>
@@ -231,7 +208,7 @@ export default function Result() {
                     <Button
                       variant="outline"
                       rightIcon={<DownloadIcon />}
-                      onClick={() => downloadDatasheet("xls")}
+                      onClick={() => downloadDatasheet('xls')}
                     >
                       XLS
                     </Button>
@@ -251,12 +228,8 @@ export default function Result() {
                         `/private/learning-paths/modules/dashboard/${store.instance?.metadata?.module?.id}`
                       }
                     >
-                      <Button
-                        rightIcon={!!nextActivityUrl && <ChevRightIcon />}
-                      >
-                        {nextActivityUrl
-                          ? buttonsT("nextActivity")
-                          : buttonsT("goToModule")}
+                      <Button rightIcon={!!nextActivityUrl && <ChevRightIcon />}>
+                        {nextActivityUrl ? buttonsT('nextActivity') : buttonsT('goToModule')}
                       </Button>
                     </Link>
                   }
@@ -266,40 +239,29 @@ export default function Result() {
           }
         >
           <Box>
-            <ContextContainer title={t("responsesTitleLabel")} spacing={7}>
+            <ContextContainer title={t('responsesTitleLabel')} spacing={7}>
               {/* General Information */}
-              <ContextContainer
-                spacing={0}
-                className={classes.questionContainer}
-              >
+              <ContextContainer spacing={0} className={classes.questionContainer}>
                 <TextClamp>
                   <Title
                     sx={(theme) => ({
                       ...theme.other.global.content.typo.heading.md,
                     })}
                   >
-                    {t("generalInformation")}
+                    {t('generalInformation')}
                   </Title>
                 </TextClamp>
-                <Stack
-                  fullWidth
-                  spacing={2}
-                  className={classes.generalInformation}
-                >
+                <Stack fullWidth spacing={2} className={classes.generalInformation}>
                   <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-                    <Text className={classes.infoText}>
-                      {store.result.generalInfo.started}
-                    </Text>
+                    <Text className={classes.infoText}>{store.result.generalInfo.started}</Text>
                     <Text role="productive" color="primary" size="xs">
-                      {t("started")}
+                      {t('started')}
                     </Text>
                   </Box>
                   <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-                    <Text className={classes.infoText}>
-                      {store.result.generalInfo.finished}
-                    </Text>
+                    <Text className={classes.infoText}>{store.result.generalInfo.finished}</Text>
                     <Text role="productive" color="primary" size="xs">
-                      {t("sent")}
+                      {t('sent')}
                     </Text>
                   </Box>
                   <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
@@ -307,13 +269,13 @@ export default function Result() {
                       store.result.generalInfo.completionPercentage || 0
                     }%`}</Text>
                     <Text role="productive" color="primary" size="xs">
-                      {t("completed")}
+                      {t('completed')}
                     </Text>
                   </Box>
                   <Box className={classes.infoBox}>
                     <Text className={classes.infoText}>{getAvgTime()}</Text>
                     <Text role="productive" color="primary" size="xs">
-                      {t("timeToComplete")}
+                      {t('timeToComplete')}
                     </Text>
                   </Box>
                 </Stack>

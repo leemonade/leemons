@@ -1,17 +1,16 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { LibraryDetail } from "@leebrary/components";
-import { useHistory } from "react-router-dom";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { PluginAssignmentsIcon } from "@bubbles-ui/icons/outline";
+import { LibraryDetail } from "@leebrary/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 import { addSuccessAlert } from "@layout/alert";
 import { useLayout } from "@layout/context";
-import { prefixPN } from "@tasks/helpers";
 import AssetMetadataTask from "@tasks/components/AssetMetadataTask/AssetMetadataTask";
+import { prefixPN } from "@tasks/helpers";
 
 const Detail = ({ asset, onRefresh, onShare, ...props }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [t] = useTranslateLoader(prefixPN("cardMenu"));
   const {
     openDeleteConfirmationModal,
@@ -26,7 +25,7 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
 
   const handleClick = (url, target = "self", callback) => {
     if (target === "self") {
-      history.push(url);
+      navigate(url);
       return typeof callback === "function" && callback("redirected", url);
     }
 
@@ -72,7 +71,7 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
   }
 
   const handleView = () => {
-    history.push(`/private/tasks/library/view/${asset.providerData.id}`);
+    navigate(`/private/tasks/library/view/${asset.providerData.id}`);
   };
 
   const handleOnShare = () => {
@@ -80,26 +79,22 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
   };
 
   const handleEdit = () => {
-    history.push(`/private/tasks/library/edit/${asset.providerData.id}`);
+    navigate(`/private/tasks/library/edit/${asset.providerData.id}`);
   };
 
   const handleAssign = () => {
-    history.push(`/private/tasks/library/assign/${asset.providerData.id}`);
+    navigate(`/private/tasks/library/assign/${asset.providerData.id}`);
   };
 
   const handleDuplicate = () => {
     openConfirmationModal({
       onConfirm: () => {
         setAppLoading(true);
-        handleClick(
-          `POST://v1/tasks/tasks/${asset.providerData.id}/duplicate`,
-          "api",
-          () => {
-            addSuccessAlert("Task duplicated");
-            setAppLoading(false);
-            onRefresh();
-          }
-        );
+        handleClick(`POST://v1/tasks/tasks/${asset.providerData.id}/duplicate`, "api", () => {
+          addSuccessAlert("Task duplicated");
+          setAppLoading(false);
+          onRefresh();
+        });
       },
     })();
   };
@@ -108,15 +103,11 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
     openDeleteConfirmationModal({
       onConfirm: () => {
         setAppLoading(true);
-        handleClick(
-          `DELETE://v1/tasks/tasks/${asset.providerData.id}`,
-          "api",
-          () => {
-            addSuccessAlert("Task deleted");
-            setAppLoading(false);
-            onRefresh();
-          }
-        );
+        handleClick(`DELETE://v1/tasks/tasks/${asset.providerData.id}`, "api", () => {
+          addSuccessAlert("Task deleted");
+          setAppLoading(false);
+          onRefresh();
+        });
       },
     })();
   };

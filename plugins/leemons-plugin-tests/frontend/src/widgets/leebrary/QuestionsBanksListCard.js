@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { createStyles } from "@bubbles-ui/components";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
@@ -26,19 +26,13 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const QuestionsBanksListCard = ({
-  asset,
-  selected,
-  onRefresh,
-  onShare,
-  ...props
-}) => {
+const QuestionsBanksListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const [t] = useTranslateLoader(prefixPN("testsCard"));
   const { classes } = ListCardStyles({ selected });
   const { openDeleteConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const menuItems = React.useMemo(() => {
     const items = [];
@@ -50,9 +44,7 @@ const QuestionsBanksListCard = ({
           children: t("edit"),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(
-              `/private/tests/questions-banks/${asset.providerData.id}`
-            );
+            navigate(`/private/tests/questions-banks/${asset.providerData.id}`);
           },
         });
       }

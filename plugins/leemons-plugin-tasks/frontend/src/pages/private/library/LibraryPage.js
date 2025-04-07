@@ -1,19 +1,13 @@
-import React, { useMemo } from "react";
-import { useHistory } from "react-router-dom";
-import {
-  Box,
-  ContextContainer,
-  createStyles,
-  TabPanel,
-  Tabs,
-} from "@bubbles-ui/components";
+import useAcademicFiltersForAssetList from "@assignables/hooks/useAcademicFiltersForAssetList";
+import { Box, ContextContainer, TabPanel, Tabs, createStyles } from "@bubbles-ui/components";
 // TODO: import from @feedback plugin maybe?
 import { AdminPageHeader } from "@bubbles-ui/leemons";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
 import AssetList from "@leebrary/components/AssetList";
 import { prepareAsset } from "@leebrary/helpers/prepareAsset";
-import useAcademicFiltersForAssetList from "@assignables/hooks/useAcademicFiltersForAssetList";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { prefixPN } from "../../../helpers";
 
 const LibraryPageStyles = createStyles((theme) => ({
@@ -39,17 +33,17 @@ export default function LibraryPage() {
   const [currentAsset, setCurrentAsset] = React.useState(null);
   const academicFilters = useAcademicFiltersForAssetList();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // ·········································································
   // HANDLERS
 
   const handleOnNewTask = () => {
-    history.push("/private/tasks/library/create");
+    navigate("/private/tasks/library/create");
   };
 
   const handleOnSelectTask = (item) => {
-    // history.push(`/private/tasks/library/edit/${item.providerData?.id}`);
+    // navigate(`/private/tasks/library/edit/${item.providerData?.id}`);
     if (currentAsset?.id !== item?.id) {
       setCurrentAsset(prepareAsset(item));
     }

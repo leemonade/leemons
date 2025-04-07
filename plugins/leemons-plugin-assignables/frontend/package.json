@@ -20,7 +20,7 @@
     "react-countdown-hook": "^1.1.3",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
-    "react-router-dom": "^5.3.3",
+    "react-router-dom": "6.30.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

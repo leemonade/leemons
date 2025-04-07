@@ -1,36 +1,40 @@
-import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
-import loadable from "@loadable/component";
-import pMinDelay from "p-min-delay";
 import { LoadingOverlay } from "@bubbles-ui/components";
-import { useSession } from "@users/session";
+import loadable from "@loadable/component";
 import { goLoginPage } from "@users/navigate";
-import AssignAssetPage from "@leebrary/pages/private/assignables/AssignAssetPage";
-import Execution from "@leebrary/pages/private/assignables/Execution";
-import Correction from "@leebrary/pages/private/assignables/Correction";
+import { useSession } from "@users/session";
+import pMinDelay from "p-min-delay";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-const HomePage = loadable(() =>
-  pMinDelay(import("./src/pages/private/library/Library"), 500)
-);
+const Library = loadable(() => pMinDelay(import("./src/pages/private/Library"), 500));
+const Detail = loadable(() => pMinDelay(import("./src/pages/private/Detail"), 500));
+const List = loadable(() => pMinDelay(import("./src/pages/private/List"), 500));
+const New = loadable(() => pMinDelay(import("./src/pages/private/New"), 500));
 
 export default function Private() {
-  const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <Switch>
-      <Route path={`${path}/assign/:id`}>
-        <AssignAssetPage fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/activities/student-detail/:id/:user`}>
-        <Execution />
-      </Route>
-      <Route path={`${path}/activities/correction/:id/:user`}>
-        <Correction />
-      </Route>
-      <Route path={`${path}/`}>
-        <HomePage session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route
+        path=":category/list"
+        element={<List session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path=":category/new"
+        element={<New session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path=":category/:id/edit"
+        element={<Detail session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path=":category/:id/view"
+        element={<Detail session={session} fallback={<LoadingOverlay visible />} readOnly />}
+      />
+      <Route
+        path=""
+        element={<Navigate to="leebrary-recent/list" replace />}
+      />
+    </Routes>
   );
 }

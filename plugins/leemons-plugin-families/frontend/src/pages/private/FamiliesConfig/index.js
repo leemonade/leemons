@@ -1,37 +1,29 @@
-import React, { useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useMemo, useState } from "react";
 
 import {
-  Button,
-  PageContainer,
-  Table,
-  Modal,
-  Text,
-  Box,
-  Stack,
-  ContextContainer,
-  Tabs,
-  TabPanel,
-  Paper,
   ActionButton,
+  Box,
+  Button,
+  ContextContainer,
+  Modal,
+  PageContainer,
+  Paper,
+  Stack,
+  TabPanel,
+  Table,
+  Tabs,
+  Text,
 } from "@bubbles-ui/components";
 
 // TODO: fix this import from @common plugin
-import {
-  CheckIcon,
-  AddIcon,
-  ExpandDiagonalIcon,
-} from "@bubbles-ui/icons/outline";
+import { AddIcon, CheckIcon, ExpandDiagonalIcon } from "@bubbles-ui/icons/outline";
 import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
 import { AdminPageHeader } from "@bubbles-ui/leemons";
 import { useAsync } from "@common/useAsync";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
 import getDatasetAsArrayOfProperties from "@dataset/helpers/getDatasetAsArrayOfProperties";
 import { useDatasetItemDrawer } from "@dataset/hooks/useDatasetItemDrawer";
-import {
-  getDatasetSchemaRequest,
-  removeDatasetFieldRequest,
-} from "@dataset/request";
+import { getDatasetSchemaRequest, removeDatasetFieldRequest } from "@dataset/request";
 import prefixPN from "@families/helpers/prefixPN";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import loadable from "@loadable/component";
@@ -40,11 +32,8 @@ import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { PackageManagerService } from "@package-manager/services";
 
 function dynamicImport(component) {
-  return loadable(
-    () =>
-      import(
-        /* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@app/plugins${component}.js`
-      )
+  return loadable(() =>
+    import(/* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@app/plugins${component}.js`)
   );
 }
 
@@ -55,8 +44,7 @@ function DatasetTabs({ t }) {
   const [itemToRemove, setItemToRemove] = useState(null);
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
   const { t: tCommonTypes } = useCommonTranslate("form_field_types");
-  const [error, setError, ErrorAlert, getErrorMessage] =
-    useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const [removeOpened, setRemoveOpened] = useState(false);
 
   function newItem() {
@@ -93,8 +81,7 @@ function DatasetTabs({ t }) {
         Header: t("dataset_tab.table.name"),
         accessor: (field) => (
           <Text>
-            {field.schema.frontConfig.name}{" "}
-            {field.schema.frontConfig.required ? "*" : ""}
+            {field.schema.frontConfig.name} {field.schema.frontConfig.required ? "*" : ""}
           </Text>
         ),
       },
@@ -104,9 +91,7 @@ function DatasetTabs({ t }) {
       },
       {
         Header: t("dataset_tab.table.type"),
-        accessor: (field) => (
-          <Text>{tCommonTypes(field.schema.frontConfig.type)}</Text>
-        ),
+        accessor: (field) => <Text>{tCommonTypes(field.schema.frontConfig.type)}</Text>,
       },
       {
         Header: t("dataset_tab.table.actions"),
@@ -129,10 +114,7 @@ function DatasetTabs({ t }) {
     [t, tCommonTypes]
   );
 
-  const load = useMemo(
-    () => () => getDatasetSchemaRequest(`families-data`, "families"),
-    []
-  );
+  const load = useMemo(() => () => getDatasetSchemaRequest(`families-data`, "families"), []);
 
   const onSuccess = useMemo(
     () =>
@@ -170,11 +152,7 @@ function DatasetTabs({ t }) {
             <Button
               onClick={async () => {
                 try {
-                  await removeDatasetFieldRequest(
-                    `families-data`,
-                    "families",
-                    itemToRemove.id
-                  );
+                  await removeDatasetFieldRequest(`families-data`, "families", itemToRemove.id);
                   addSuccessAlert(t("dataset_tab.deleted_done"));
                   setRemoveOpened(false);
                   await reload();
@@ -231,21 +209,15 @@ function DatasetTabs({ t }) {
 }
 
 function Config() {
-  const history = useHistory();
-  const [installingEmergencyNumber, setInstallingEmergencyNumber] =
-    useState(false);
-  const [emergencyNumberInstalled, setEmergencyNumberInstalled] =
-    useState(false);
-  const [error, setError, ErrorAlert, getErrorMessage] =
-    useRequestErrorMessage();
+  const [installingEmergencyNumber, setInstallingEmergencyNumber] = useState(false);
+  const [emergencyNumberInstalled, setEmergencyNumberInstalled] = useState(false);
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const [opened, setOpened] = useState(false);
   const [t] = useTranslateLoader(prefixPN("config_page"));
 
   const load = useMemo(
     () => () =>
-      PackageManagerService.isPluginInstalled(
-        "leemons-plugin-families-emergency-numbers"
-      ),
+      PackageManagerService.isPluginInstalled("leemons-plugin-families-emergency-numbers"),
     []
   );
 
@@ -256,7 +228,12 @@ function Config() {
     []
   );
 
-  const onError = useMemo(() => () => {}, []);
+  const onError = useMemo(
+    () => () => {
+      // Nothing
+    },
+    []
+  );
 
   useAsync(load, onSuccess, onError);
 
@@ -285,9 +262,7 @@ function Config() {
 
   let EmergencyNumbersTabs = null;
   if (emergencyNumberInstalled && !installingEmergencyNumber) {
-    EmergencyNumbersTabs = dynamicImport(
-      "/families-emergency-numbers/src/components/config"
-    );
+    EmergencyNumbersTabs = dynamicImport("/families-emergency-numbers/src/components/config");
   }
 
   return (
@@ -295,12 +270,7 @@ function Config() {
       <Modal opened={opened} title={t} onClose={() => setOpened(false)}>
         {installingEmergencyNumber ? (
           <Stack>
-            <Button
-              color="primary"
-              className="btn-xl"
-              loading={!emergencyNumberInstalled}
-              text
-            >
+            <Button color="primary" className="btn-xl" loading={!emergencyNumberInstalled} text>
               {emergencyNumberInstalled && <CheckIcon />}
               <Text className="text-secondary">
                 {emergencyNumberInstalled
@@ -323,26 +293,18 @@ function Config() {
               >
                 {t("phone_modal.cancel")}
               </Button>
-              <Button onClick={installPhoneAddon}>
-                {t("phone_modal.action")}
-              </Button>
+              <Button onClick={installPhoneAddon}>{t("phone_modal.action")}</Button>
             </Stack>
           </Stack>
         )}
       </Modal>
-      <AdminPageHeader
-        values={{ title: t("title"), description: t("description1") }}
-      />
+      <AdminPageHeader values={{ title: t("title"), description: t("description1") }} />
       <PageContainer>
         {!emergencyNumberInstalled && (
           <ContextContainer>
             <Text>{t("phone_description")}</Text>
             <Box>
-              <Button
-                color="primary"
-                className="mt-4"
-                onClick={openInstallPhoneModal}
-              >
+              <Button color="primary" className="mt-4" onClick={openInstallPhoneModal}>
                 {t("phone_button")}
               </Button>
             </Box>

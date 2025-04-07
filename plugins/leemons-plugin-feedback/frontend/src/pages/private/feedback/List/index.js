@@ -1,21 +1,21 @@
-import React from "react";
 import {
   Box,
   ContextContainer,
-  createStyles,
   TabPanel,
   Tabs,
+  createStyles,
 } from "@bubbles-ui/components";
 // TODO: fix this import from @common plugin
 import { AdminPageHeader } from "@bubbles-ui/leemons";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "@feedback/helpers/prefixPN";
 import { useStore } from "@common";
-import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
-import { useHistory } from "react-router-dom";
-import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import prefixPN from "@feedback/helpers/prefixPN";
 import AssetList from "@leebrary/components/AssetList";
 import { prepareAsset } from "@leebrary/helpers/prepareAsset";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
@@ -32,7 +32,7 @@ export default function List() {
   const { t: tCommon } = useCommonTranslate("page_header");
   const [currentAsset, setCurrentAsset] = React.useState(null);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -55,7 +55,7 @@ export default function List() {
   }
 
   function goCreatePage() {
-    history.push("/private/feedback/new");
+    navigate("/private/feedback/new");
   }
 
   function goDetailPage(asset) {

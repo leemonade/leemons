@@ -1,12 +1,12 @@
-import React from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { Button, Stack, Loader } from "@bubbles-ui/components";
-import { useStore } from "@common";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import Form from "@assignables/components/Assignment/Form";
+import { Loader } from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { prefixPN } from "@scorm/helpers";
 import { assignPackageRequest, getPackageRequest } from "@scorm/request";
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Assign() {
   const [t] = useTranslateLoader(prefixPN("scormAssign"));
@@ -21,7 +21,7 @@ export default function Assign() {
     },
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   async function send({ value: taskInstanceData }) {
@@ -32,7 +32,7 @@ export default function Assign() {
       await assignPackageRequest(params.id, taskInstanceData);
 
       addSuccessAlert(t("assignDone"));
-      history.push("/private/assignables/ongoing");
+      navigate("/private/assignables/ongoing");
     } catch (e) {
       addErrorAlert(e.message);
     }
@@ -51,7 +51,9 @@ export default function Assign() {
   }
 
   React.useEffect(() => {
-    if (params?.id && !store.package) init();
+    if (params?.id && !store.package) {
+      init();
+    }
   }, [params]);
 
   const isGradable = !!store.package?.gradable;
@@ -64,9 +66,7 @@ export default function Assign() {
     <Form
       assignable={store.package}
       evaluationType={isGradable ? "auto" : "none"}
-      evaluationTypes={
-        isGradable ? ["calificable", "punctuable"] : ["nonEvaluable"]
-      }
+      evaluationTypes={isGradable ? ["calificable", "punctuable"] : ["nonEvaluable"]}
       hideMaxTime
       onSubmit={send}
       showEvaluation={isGradable}

@@ -4,11 +4,11 @@ import React, { useMemo } from "react";
 import { detailProgramRequest } from "@academic-portfolio/request";
 import {
   Box,
-  createStyles,
   HorizontalStepper,
   LoadingOverlay,
   PageContainer,
   Title,
+  createStyles,
 } from "@bubbles-ui/components";
 import { useStore } from "@common";
 import prefixPN from "@curriculum/helpers/prefixPN";
@@ -17,12 +17,9 @@ import AddCurriculumStep1 from "@curriculum/pages/private/AddCurriculumStep1";
 import AddCurriculumStep2 from "@curriculum/pages/private/AddCurriculumStep2";
 import AddCurriculumStep3 from "@curriculum/pages/private/AddCurriculumStep3";
 import { detailCurriculumRequest } from "@curriculum/request";
-import {
-  getPermissionsWithActionsIfIHaveRequest,
-  listCentersRequest,
-} from "@users/request";
+import { getPermissionsWithActionsIfIHaveRequest, listCentersRequest } from "@users/request";
 import { find } from "lodash";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const useStyle = createStyles((theme) => ({
   title: {
@@ -38,7 +35,7 @@ const useStyle = createStyles((theme) => ({
 
 function AddCurriculum() {
   const { classes } = useStyle();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [t, , , tLoading] = useTranslateLoader(prefixPN("addCurriculumBase"));
   const [store, render] = useStore({
     currentStep: 0,
@@ -46,7 +43,7 @@ function AddCurriculum() {
   const { id } = useParams();
 
   function onStep0({ curriculum }) {
-    history.push(`/private/curriculum/${curriculum.id}`);
+    navigate(`/private/curriculum/${curriculum.id}`);
   }
 
   function onStep1() {
@@ -85,8 +82,7 @@ function AddCurriculum() {
         getPermissionsWithActionsIfIHaveRequest(["curriculum.curriculum"]),
       ]);
 
-      const isEditMode =
-        actionNames.includes("admin") || actionNames.includes("edit");
+      const isEditMode = actionNames.includes("admin") || actionNames.includes("edit");
 
       const { program } = await detailProgramRequest(c.program);
 
@@ -118,8 +114,10 @@ function AddCurriculum() {
   );
 
   const title = React.useMemo(() => {
-    if (store.curriculum)
+    if (store.curriculum) {
       return `${store.curriculum.program.name} - ${store.curriculum.name} (${store.curriculum.center.name})`;
+    }
+
     return t("newCurriculum");
   }, [store.curriculum, tLoading]);
 
@@ -127,16 +125,8 @@ function AddCurriculum() {
     () =>
       [
         <AddCurriculumStep0 key="0" onNext={onStep0} />,
-        <AddCurriculumStep1
-          key="1"
-          onNext={onStep1}
-          curriculum={store.curriculum}
-        />,
-        <AddCurriculumStep2
-          key="2"
-          onNext={onStep2}
-          curriculum={store.curriculum}
-        />,
+        <AddCurriculumStep1 key="1" onNext={onStep1} curriculum={store.curriculum} />,
+        <AddCurriculumStep2 key="2" onNext={onStep2} curriculum={store.curriculum} />,
         <AddCurriculumStep3
           key="3"
           onPrev={onPrev3}
@@ -148,10 +138,14 @@ function AddCurriculum() {
   );
 
   React.useEffect(() => {
-    if (id) load();
+    if (id) {
+      load();
+    }
   }, [id]);
 
-  if (store.loading) return <LoadingOverlay visible />;
+  if (store.loading) {
+    return <LoadingOverlay visible />;
+  }
 
   return (
     <PageContainer>

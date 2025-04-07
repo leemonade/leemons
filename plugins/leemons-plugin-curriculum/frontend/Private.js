@@ -1,10 +1,9 @@
-import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
-import loadable from "@loadable/component";
-import pMinDelay from "p-min-delay";
 import { LoadingOverlay } from "@bubbles-ui/components";
-import { useSession } from "@users/session";
+import loadable from "@loadable/component";
 import { goLoginPage } from "@users/navigate";
+import { useSession } from "@users/session";
+import pMinDelay from "p-min-delay";
+import { Route, Routes } from "react-router-dom";
 
 const AddCurriculum = loadable(() =>
   pMinDelay(import("./src/pages/private/AddCurriculum"), 500)
@@ -17,35 +16,46 @@ const ListCurriculum = loadable(() =>
 );
 
 export default function Private() {
-  const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <Switch>
-      <Route path={`${path}/new`}>
-        <AddCurriculum
-          session={session}
-          fallback={<LoadingOverlay visible />}
-        />
-      </Route>
-      <Route path={`${path}/list`}>
-        <ListCurriculum
-          session={session}
-          fallback={<LoadingOverlay visible />}
-        />
-      </Route>
-      <Route path={`${path}/:id/view`}>
-        <CurriculumView
-          session={session}
-          fallback={<LoadingOverlay visible />}
-        />
-      </Route>
-      <Route path={`${path}/:id`}>
-        <AddCurriculum
-          session={session}
-          fallback={<LoadingOverlay visible />}
-        />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route
+        path="new"
+        element={
+          <AddCurriculum
+            session={session}
+            fallback={<LoadingOverlay visible />}
+          />
+        }
+      />
+      <Route
+        path="list"
+        element={
+          <ListCurriculum
+            session={session}
+            fallback={<LoadingOverlay visible />}
+          />
+        }
+      />
+      <Route
+        path=":id/view"
+        element={
+          <CurriculumView
+            session={session}
+            fallback={<LoadingOverlay visible />}
+          />
+        }
+      />
+      <Route
+        path=":id"
+        element={
+          <AddCurriculum
+            session={session}
+            fallback={<LoadingOverlay visible />}
+          />
+        }
+      />
+    </Routes>
   );
 }

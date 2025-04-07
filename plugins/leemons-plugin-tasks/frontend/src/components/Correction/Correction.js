@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useForm, Controller, useWatch } from "react-hook-form";
-import { useHistory } from "react-router-dom";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 import { SubjectItemDisplay } from "@academic-portfolio/components";
 import { useClassesSubjects } from "@academic-portfolio/hooks";
@@ -11,17 +10,17 @@ import useAssignationComunicaRoom from "@assignables/hooks/useAssignationComunic
 import useProgramEvaluationSystem from "@assignables/hooks/useProgramEvaluationSystem";
 import {
   Box,
+  Button,
+  ContextContainer,
+  NumberInput,
+  Select,
+  Stack,
+  TabPanel,
   Tabs,
   Text,
-  Stack,
-  Button,
-  Select,
-  TabPanel,
-  NumberInput,
-  ContextContainer,
-  VerticalContainer,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
+  VerticalContainer,
 } from "@bubbles-ui/components";
 import { TextEditorInput } from "@bubbles-ui/editors";
 import { PluginComunicaIcon, SendMessageIcon } from "@bubbles-ui/icons/outline";
@@ -39,6 +38,7 @@ import LinkSubmission from "./components/LinkSubmission/LinkSubmission";
 
 import { prefixPN } from "@tasks/helpers";
 import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
+import { useNavigate } from "react-router-dom";
 
 function useLetterEvaluationData({ evaluationSystem }) {
   return useMemo(() => {
@@ -55,28 +55,15 @@ function useLetterEvaluationData({ evaluationSystem }) {
   }, [evaluationSystem]);
 }
 
-function useOnEvaluationChange({
-  form,
-  instance,
-  assignation,
-  subject,
-  evaluationSystem,
-}) {
+function useOnEvaluationChange({ form, instance, assignation, subject, evaluationSystem }) {
   const { requiresScoring } = instance ?? {};
-  const {
-    score: _score,
-    feedback: _feedback,
-    showFeedback,
-  } = useWatch({ control: form.control });
+  const { score: _score, feedback: _feedback, showFeedback } = useWatch({ control: form.control });
 
   const score = isNil(_score) ? null : Number(_score);
   const feedback = !showFeedback || isNil(_feedback) ? null : _feedback;
 
   const previousScore = useMemo(
-    () =>
-      assignation?.grades?.find(
-        (grade) => grade.type === "main" && grade.subject === subject
-      ),
+    () => assignation?.grades?.find((grade) => grade.type === "main" && grade.subject === subject),
     [assignation?.grades, subject]
   );
 
@@ -119,11 +106,7 @@ function useOnEvaluationChange({
 
     if (!gradeIsDirty && !isNil(grade) && grade !== score) {
       form.setValue("score", grade);
-    } else if (
-      isNil(score) &&
-      evaluationSystem?.minScale &&
-      !!requiresScoring
-    ) {
+    } else if (isNil(score) && evaluationSystem?.minScale && !!requiresScoring) {
       form.setValue("score", evaluationSystem.minScale?.number);
     }
 
@@ -179,10 +162,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
             name="score"
             control={form.control}
             render={({ field }) => {
-              if (
-                evaluationSystem?.type === "number" ||
-                evaluationSystem?.type === "numeric"
-              ) {
+              if (evaluationSystem?.type === "number" || evaluationSystem?.type === "numeric") {
                 return (
                   <NumberInput
                     {...field}
@@ -192,10 +172,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
                     precision={2}
                     formatter={(userInput) => {
                       let _value = userInput;
-                      const precision = trimEnd(
-                        _value.toString().split(".")[1] || "",
-                        "0"
-                      ).length;
+                      const precision = trimEnd(_value.toString().split(".")[1] || "", "0").length;
 
                       if (_value.endsWith(".")) {
                         return _value;
@@ -237,12 +214,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
                   {...showFeedbackField}
                   checked={!!showFeedbackField.value}
                   label={t("add_feedback")}
-                  render={() => (
-                    <TextEditorInput
-                      {...field}
-                      editorStyles={{ minHeight: "96px" }}
-                    />
-                  )}
+                  render={() => <TextEditorInput {...field} editorStyles={{ minHeight: "96px" }} />}
                 />
               )}
             />
@@ -292,7 +264,7 @@ CorrectionSubjectTab.propTypes = {
 export default function Correction({ assignation, instance }) {
   const [t] = useTranslateLoader(prefixPN("task_correction.teacher"));
   const scrollRef = useRef();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const subjects = useClassesSubjects(instance?.classes);
 
@@ -306,7 +278,7 @@ export default function Correction({ assignation, instance }) {
   });
   const onChangeUser = (user) => {
     if (user) {
-      history.push(`/private/tasks/correction/${instance?.id}/${user ?? null}`);
+      navigate(`/private/tasks/correction/${instance?.id}/${user ?? null}`);
     }
   };
   return (

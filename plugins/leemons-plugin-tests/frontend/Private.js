@@ -3,8 +3,7 @@ import loadable from "@loadable/component";
 import { goLoginPage } from "@users/navigate";
 import { useSession } from "@users/session";
 import pMinDelay from "p-min-delay";
-import React from "react";
-import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 const TestsList = loadable(() =>
   pMinDelay(import("./src/pages/private/tests/List"), 500)
@@ -19,73 +18,71 @@ const TestsDetail = loadable(() =>
   pMinDelay(import("./src/pages/private/tests/Detail"), 500)
 );
 const TestsResult = loadable(() =>
-  pMinDelay(import("./src/pages/private/tests/Result"), 500)
+  pMinDelay(import("./src/pages/private/TestsResult"), 500)
 );
 const QuestionBanksList = loadable(() =>
   pMinDelay(import("./src/pages/private/questions-banks/List"), 500)
 );
 const QuestionBankDetail = loadable(() =>
-  pMinDelay(import("./src/pages/private/questions-banks/Detail"), 500)
+  pMinDelay(import("./src/pages/private/QuestionBankDetail"), 500)
 );
 const StudentInstance = loadable(() =>
-  pMinDelay(import("./src/pages/private/tests/StudentInstance/index"), 500)
+  pMinDelay(import("./src/pages/private/StudentInstance"), 500)
 );
 
 export default function Private() {
-  const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <Switch>
-      <Route path={`${path}/result/:id/:user`}>
-        <TestsResult session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/result/:id`}>
-        <TestsResult session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/student/:id/:user`}>
-        <StudentInstance
-          session={session}
-          fallback={<LoadingOverlay visible />}
-        />
-      </Route>
-      <Route path={`${path}/student/:id`}>
-        <StudentInstance
-          session={session}
-          fallback={<LoadingOverlay visible />}
-        />
-      </Route>
-      <Route path={`${path}/questions-banks/draft`}>
-        <Redirect
-          to={"/private/leebrary/tests-questions-banks/list?activeTab=draft"}
-        />
-      </Route>
-      <Route path={`${path}/questions-banks/:id`}>
-        <QuestionBankDetail
-          session={session}
-          fallback={<LoadingOverlay visible />}
-        />
-      </Route>
-      <Route path={`${path}/questions-banks`}>
-        <Redirect to={"/private/leebrary/tests-questions-banks/list"} />
-      </Route>
-      <Route path={`${path}/detail/:id`}>
-        <TestsDetail session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/assign/:id`}>
-        <TestsAssign session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/draft`}>
-        <Redirect
-          to={"/private/leebrary/assignables.tests/list?activeTab=draft"}
-        />
-      </Route>
-      <Route path={`${path}/:id`}>
-        <TestsEdit session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}`}>
-        <Redirect to={"/private/leebrary/assignables.tests/list"} />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route
+        path="result/:id/:user"
+        element={<TestsResult session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="result/:id"
+        element={<TestsResult session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="student/:id/:user"
+        element={<StudentInstance session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="student/:id"
+        element={<StudentInstance session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="questions-banks/draft"
+        element={<Navigate to="/private/leebrary/tests-questions-banks/list?activeTab=draft" replace />}
+      />
+      <Route
+        path="questions-banks/:id"
+        element={<QuestionBankDetail session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="questions-banks"
+        element={<Navigate to="/private/leebrary/tests-questions-banks/list" replace />}
+      />
+      <Route
+        path="detail/:id"
+        element={<TestsDetail session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="assign/:id"
+        element={<TestsAssign session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="draft"
+        element={<Navigate to="/private/leebrary/assignables.tests/list?activeTab=draft" replace />}
+      />
+      <Route
+        path=":id"
+        element={<TestsEdit session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path=""
+        element={<Navigate to="/private/leebrary/assignables.tests/list" replace />}
+      />
+    </Routes>
   );
 }

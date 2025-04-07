@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   Button,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
 } from "@bubbles-ui/components";
 import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
 import { addErrorAlert } from "@layout/alert";
@@ -15,10 +15,7 @@ import { Config } from "./components/Config";
 import { useModuleAssignContext } from "@learning-paths/contexts/ModuleAssignContext";
 import assignModuleRequest from "@learning-paths/requests/assignModule";
 
-function onAssign(
-  id,
-  { assignationForm, state: { activities, time, type, deleted, order } }
-) {
+function onAssign(id, { assignationForm, state: { activities, time, type, deleted, order } }) {
   const activitiesWithState = {};
   Object.keys(type).forEach((key) => {
     const activity = activities[key];
@@ -48,7 +45,7 @@ function onAssign(
 }
 
 function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { getValues, setValue, useWatch } = useModuleAssignContext();
   const assignButtonIsLoading = useWatch({ name: "assignButtonIsLoading" });
   const activitiesLoaded = useWatch({ name: "state.activities.loaded" });
@@ -65,11 +62,7 @@ function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
           scrollRef={scrollRef}
           fixed
           leftZone={
-            <Button
-              leftIcon={<ChevLeftIcon />}
-              variant="outline"
-              onClick={onPrevStep}
-            >
+            <Button leftIcon={<ChevLeftIcon />} variant="outline" onClick={onPrevStep}>
               {localizations?.buttons?.previous}
             </Button>
           }
@@ -77,24 +70,17 @@ function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
             <Button
               disabled={
                 activitiesLength !== activitiesLoadedCount ||
-                (deleted &&
-                  activitiesLength -
-                    Object.values(deleted).filter(Boolean).length <
-                    2)
+                (deleted && activitiesLength - Object.values(deleted).filter(Boolean).length < 2)
               }
               loading={assignButtonIsLoading}
               onClick={() => {
                 setValue("assignButtonIsLoading", true);
                 onAssign(id, getValues())
                   .then(({ assignation: { module } }) =>
-                    history.push(
-                      `/private/learning-paths/modules/dashboard/${module}`
-                    )
+                    navigate(`/private/learning-paths/modules/dashboard/${module}`)
                   )
                   .catch((e) =>
-                    addErrorAlert(
-                      `${localizations?.alert?.failedToAssign}: ${e.message}`
-                    )
+                    addErrorAlert(`${localizations?.alert?.failedToAssign}: ${e.message}`)
                   )
                   .finally(() => setValue("assignButtonIsLoading", false));
               }}

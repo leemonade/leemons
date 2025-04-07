@@ -1,21 +1,15 @@
-import React from "react";
-import {
-  Box,
-  PageHeader,
-  createStyles,
-  TabPanel,
-  Tabs,
-} from "@bubbles-ui/components";
-// import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { Box, PageHeader, TabPanel, Tabs, createStyles } from "@bubbles-ui/components";
+import { useQuery, useStore } from "@common";
+import { DocumentIcon } from "@content-creator/components";
 import prefixPN from "@content-creator/helpers/prefixPN";
-import { useStore, useQuery } from "@common";
-import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
-import { useHistory } from "react-router-dom";
-import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
 import AssetList from "@leebrary/components/AssetList";
 import { prepareAsset } from "@leebrary/helpers/prepareAsset";
-import { DocumentIcon } from "@content-creator/components";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+// import { AdminPageHeader } from '@bubbles-ui/leemons';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
@@ -32,7 +26,7 @@ export default function List() {
   const [currentAsset, setCurrentAsset] = React.useState(null);
   const { fromDraft } = useQuery();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -55,7 +49,7 @@ export default function List() {
   }
 
   function goCreatePage() {
-    history.push("/private/content-creator/new");
+    navigate("/private/content-creator/new");
   }
 
   function goDetailPage(asset) {

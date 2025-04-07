@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import ActivityHeader from "@assignables/components/ActivityHeader";
 import {
@@ -32,7 +32,7 @@ export default function Execution() {
   const [t] = useTranslateLoader(prefixPN("assignableExecution"));
   const { id, user } = useParams();
   const scrollRef = useRef();
-  const history = useHistory();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,23 +84,17 @@ export default function Execution() {
           showEvaluationType
           showRole
           showCountdown
-          onTimeout={() => history.push(correctionUrl)}
+          onTimeout={() => navigate(correctionUrl)}
         />
       }
     >
-      <Stack
-        justifyContent="center"
-        style={{ overflowY: "auto" }}
-        ref={scrollRef}
-      >
+      <Stack justifyContent="center" style={{ overflowY: "auto" }} ref={scrollRef}>
         <TotalLayoutStepContainerWithAccordion
           accordion={
             !!instance?.metadata?.statement && {
               title: t("instructions"),
               icon: (
-                <AlertInformationCircleIcon
-                  color={theme.other.global.content.color.icon.default}
-                />
+                <AlertInformationCircleIcon color={theme.other.global.content.color.icon.default} />
               ),
               children: <HtmlText>{instance?.metadata?.statement}</HtmlText>,
             }
@@ -116,9 +110,7 @@ export default function Execution() {
                     <Button
                       leftIcon={<DownloadIcon />}
                       variant="outline"
-                      onClick={() =>
-                        window.open(asset.url, "_blank", "noopener")
-                      }
+                      onClick={() => window.open(asset.url, "_blank", "noopener")}
                     >
                       {t("download")}
                     </Button>
@@ -130,7 +122,7 @@ export default function Execution() {
                       setIsSubmitting(true);
                       await updateTimestamps("end");
                       setIsSubmitting(false);
-                      history.push(correctionUrl);
+                      navigate(correctionUrl);
                     }}
                   >
                     {t("finish")}
@@ -141,19 +133,9 @@ export default function Execution() {
           }
         >
           {isUnavailable ? (
-            <ActivityUnavailable
-              instance={instance}
-              user={user}
-              scrollRef={scrollRef}
-              clean
-            />
+            <ActivityUnavailable instance={instance} user={user} scrollRef={scrollRef} clean />
           ) : (
-            <Stack
-              fullWidth
-              fullHeight
-              justifyContent="center"
-              alignItems="center"
-            >
+            <Stack fullWidth fullHeight justifyContent="center" alignItems="center">
               <AssetPlayerWrapperExecution asset={asset} />
             </Stack>
           )}

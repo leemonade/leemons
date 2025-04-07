@@ -1,22 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { forIn } from "lodash";
+import { getProfilesRequest } from "@academic-portfolio/request";
 import {
-  ContextContainer,
-  PageContainer,
-  Button,
   Box,
-  Stack,
-  Grid,
+  Button,
   Col,
+  ContextContainer,
+  Grid,
+  PageContainer,
+  Stack,
 } from "@bubbles-ui/components";
-import { useForm, Controller } from "react-hook-form";
 // TODO: import from @feedback plugin maybe?
 import { AdminPageHeader } from "@bubbles-ui/leemons";
-import { SelectProfile } from "@users/components/SelectProfile";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { getProfilesRequest } from "@academic-portfolio/request";
+import { SelectProfile } from "@users/components/SelectProfile";
+import { forIn } from "lodash";
+import { useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { prefixPN } from "../../../helpers";
 import { getProfiles, setProfiles } from "../../../request/profiles";
 
@@ -29,7 +29,7 @@ export default function ProfilesPage() {
     setValue,
     formState: { errors },
   } = useForm();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   // ----------------------------------------------------------------------
@@ -54,12 +54,10 @@ export default function ProfilesPage() {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      await setProfiles(
-        Object.entries(data).map(([key, profile]) => ({ key, profile }))
-      );
+      await setProfiles(Object.entries(data).map(([key, profile]) => ({ key, profile })));
       addSuccessAlert(t("profileSaved"));
 
-      history.push("/private/tasks/welcome");
+      navigate("/private/tasks/welcome");
     } catch (e) {
       setLoading(false);
       addErrorAlert(e.message);

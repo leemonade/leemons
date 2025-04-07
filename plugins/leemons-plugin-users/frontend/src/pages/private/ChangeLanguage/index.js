@@ -1,35 +1,27 @@
-import React from "react";
-import { map } from "lodash";
-import PropTypes from "prop-types";
 import {
+  Box,
   Button,
   ContextContainer,
   Select,
-  Box,
   Stack,
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
 } from "@bubbles-ui/components";
-import { SettingsIcon } from "@bubbles-ui/icons/solid";
 import { useStore } from "@common";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import SocketIoService from "@mqtt-socket-io/service";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import prefixPN from "@users/helpers/prefixPN";
 import { getPlatformLocalesRequest, updateUserRequest } from "@users/request";
-import { useHistory } from "react-router-dom";
+import { map } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 function HeaderIcon() {
   return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -53,7 +45,7 @@ export default function ChangeLanguage({ session }) {
     locales: [],
     locale: session.locale,
   });
-  const history = useHistory();
+  const navigate = useNavigate();
 
   async function load() {
     const { locales } = await getPlatformLocalesRequest();
@@ -90,7 +82,7 @@ export default function ChangeLanguage({ session }) {
       Header={
         <TotalLayoutHeader
           title={t("title")}
-          onCancel={() => history.goBack()}
+          onCancel={() => navigate(-1)}
           icon={<HeaderIcon />}
           mainActionLabel={t("cancel")}
         />
@@ -99,9 +91,7 @@ export default function ChangeLanguage({ session }) {
       <Stack justifyContent="center">
         <TotalLayoutStepContainer
           Footer={
-            <TotalLayoutFooterContainer
-              rightZone={<Button onClick={save}>{t("save")}</Button>}
-            />
+            <TotalLayoutFooterContainer rightZone={<Button onClick={save}>{t("save")}</Button>} />
           }
         >
           <Box>

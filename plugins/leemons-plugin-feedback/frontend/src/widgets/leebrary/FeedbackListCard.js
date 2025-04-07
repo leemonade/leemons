@@ -1,41 +1,32 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { createStyles } from "@bubbles-ui/components";
-import { LibraryCard } from "@leebrary/components/LibraryCard";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "@feedback/helpers/prefixPN";
-import { useHistory } from "react-router-dom";
-import { useLayout } from "@layout/context";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
-import useRequestErrorMessage from "@common/useRequestErrorMessage";
-import {
-  deleteFeedbackRequest,
-  duplicateFeedbackRequest,
-} from "@feedback/request";
-import { AssignIcon } from "@leebrary/components/LibraryDetailToolbar/icons/AssignIcon";
-import { ShareIcon } from "@leebrary/components/LibraryDetailToolbar/icons/ShareIcon";
-import { DeleteIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon";
-import { EditIcon } from "@leebrary/components/LibraryDetailToolbar/icons/EditIcon";
-import { DuplicateIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon";
-import { FeedbackCardIcon } from "../../components/FeedbackCardIcon";
+import { createStyles } from '@bubbles-ui/components';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import prefixPN from '@feedback/helpers/prefixPN';
+import { deleteFeedbackRequest, duplicateFeedbackRequest } from '@feedback/request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import { LibraryCard } from '@leebrary/components/LibraryCard';
+import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
+import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
+import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FeedbackCardIcon } from '../../components/FeedbackCardIcon';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
-    cursor: "pointer",
-    borderColor: selected && theme.other.core.color.primary["400"],
-    borderWidth: selected && "1px",
+    cursor: 'pointer',
+    borderColor: selected && theme.other.core.color.primary['400'],
+    borderWidth: selected && '1px',
     boxShadow: selected && theme.shadows.shadow03,
   },
 }));
 
-const FeedbackListCard = ({
-  asset,
-  selected,
-  onRefresh,
-  onShare,
-  ...props
-}) => {
-  const [t] = useTranslateLoader(prefixPN("feedbackCard"));
+const FeedbackListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
+  const [t] = useTranslateLoader(prefixPN('feedbackCard'));
   const { classes } = ListCardStyles({ selected });
   const {
     openConfirmationModal,
@@ -44,7 +35,7 @@ const FeedbackListCard = ({
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const menuItems = React.useMemo(() => {
     const items = [];
@@ -56,17 +47,14 @@ const FeedbackListCard = ({
       //     children: t('view'),
       //     onClick: (e) => {
       //       e.stopPropagation();
-      //       history.push(`/private/feedback/preview/${asset.providerData.id}`);
+      //       navigate(`/private/feedback/preview/${asset.providerData.id}`);
       //     },
       //   });
       // }
-      if (
-        asset.shareable &&
-        (asset.providerData?.published || asset.providerData === undefined)
-      ) {
+      if (asset.shareable && (asset.providerData?.published || asset.providerData === undefined)) {
         items.push({
           icon: <ShareIcon />,
-          children: t("share"),
+          children: t('share'),
           onClick: (e) => {
             e.stopPropagation();
             onShare(asset);
@@ -76,20 +64,20 @@ const FeedbackListCard = ({
       if (asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
-          children: t("assign"),
+          children: t('assign'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/feedback/assign/${asset.providerData.id}`);
+            navigate(`/private/feedback/assign/${asset.providerData.id}`);
           },
         });
       }
       if (asset.editable) {
         items.push({
           icon: <EditIcon />,
-          children: t("edit"),
+          children: t('edit'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/feedback/${asset.providerData.id}`);
+            navigate(`/private/feedback/${asset.providerData.id}`);
           },
         });
       }
@@ -97,7 +85,7 @@ const FeedbackListCard = ({
       if (asset.duplicable && asset.providerData) {
         items.push({
           icon: <DuplicateIcon />,
-          children: t("duplicate"),
+          children: t('duplicate'),
           onClick: (e) => {
             e.stopPropagation();
             openConfirmationModal({
@@ -108,7 +96,7 @@ const FeedbackListCard = ({
                     asset.providerData.id,
                     asset.providerData.published
                   );
-                  addSuccessAlert(t("duplicated"));
+                  addSuccessAlert(t('duplicated'));
                   onRefresh();
                 } catch (err) {
                   addErrorAlert(getErrorMessage(err));
@@ -122,7 +110,7 @@ const FeedbackListCard = ({
       if (asset.deleteable) {
         items.push({
           icon: <DeleteIcon />,
-          children: t("delete"),
+          children: t('delete'),
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({
@@ -130,7 +118,7 @@ const FeedbackListCard = ({
                 try {
                   setAppLoading(true);
                   await deleteFeedbackRequest(asset.providerData.id);
-                  addSuccessAlert(t("deleted"));
+                  addSuccessAlert(t('deleted'));
                   onRefresh();
                 } catch (err) {
                   addErrorAlert(getErrorMessage(err));
@@ -144,7 +132,7 @@ const FeedbackListCard = ({
       if (asset.shareable) {
         items.push({
           icon: <ShareIcon />,
-          children: t("share"),
+          children: t('share'),
           onClick: (e) => {
             e.stopPropagation();
             onShare(asset);
@@ -159,10 +147,10 @@ const FeedbackListCard = ({
   return (
     <LibraryCard
       {...props}
-      asset={{ ...asset, fileType: "feedback" }}
+      asset={{ ...asset, fileType: 'feedback' }}
       menuItems={menuItems}
       variant="feedback"
-      variantTitle={t("feedback")}
+      variantTitle={t('feedback')}
       variantIcon={<FeedbackCardIcon />}
       className={classes.root}
     />

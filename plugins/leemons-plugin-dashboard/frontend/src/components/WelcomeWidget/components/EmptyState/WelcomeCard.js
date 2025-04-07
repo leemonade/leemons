@@ -1,19 +1,22 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import { Box, Text, Title, ImageLoader } from "@bubbles-ui/components";
+import { Box, ImageLoader, Text, Title } from "@bubbles-ui/components";
 import PropTypes from "prop-types";
 
 import { WelcomeCardStyles } from "./WelcomeCard.styles";
 
 const WelcomeCard = ({ cover, title, description, linkTo, imageStyles }) => {
   const { classes } = WelcomeCardStyles({ linkTo }, { name: "WelcomeCard" });
-  const history = useHistory();
+  const navigate = useNavigate();
   const handleLinkTo = () => {
-    if (!linkTo) return;
+    if (!linkTo) {
+      return;
+    }
+
     if (linkTo.includes("http")) {
       window.open(linkTo, "_blank");
     } else {
-      history.push(linkTo);
+      navigate(linkTo);
     }
   };
   return (

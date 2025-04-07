@@ -1,42 +1,38 @@
-/* eslint-disable no-param-reassign */
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
-import { find, isEmpty, isString } from "lodash";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
-import {
-  getAssetRequest,
-  newAssetRequest,
-  updateAssetRequest,
-} from "@leebrary/request";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
-import { useLayout } from "@layout/context";
-import { useQueryClient } from "@tanstack/react-query";
-import { allGetSimpleAssetListKey } from "@leebrary/request/hooks/keys/simpleAssetList";
-import { allGetAssetsKey } from "@leebrary/request/hooks/keys/assets";
 import {
   AssetBookmarkIcon,
   AssetMediaIcon,
-  TotalLayoutContainer,
-  TotalLayoutHeader,
-  TotalLayoutFooterContainer,
   Button,
-  Stack,
   DropdownButton,
+  Stack,
+  TotalLayoutContainer,
+  TotalLayoutFooterContainer,
+  TotalLayoutHeader,
 } from "@bubbles-ui/components";
 import { useRequestErrorMessage } from "@common";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
+import { getAssetRequest, newAssetRequest, updateAssetRequest } from "@leebrary/request";
+import { allGetAssetsKey } from "@leebrary/request/hooks/keys/assets";
+import { allGetSimpleAssetListKey } from "@leebrary/request/hooks/keys/simpleAssetList";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { find, isEmpty, isString } from "lodash";
+/* eslint-disable no-param-reassign */
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { z } from "zod";
 
-import imageUrlToFile from "@leebrary/helpers/imageUrlToFile";
-import compressImage from "@leebrary/helpers/compressImage";
 import { useIsTeacher } from "@academic-portfolio/hooks";
-import prefixPN from "../../../helpers/prefixPN";
-import LibraryContext from "../../../context/LibraryContext";
-import { prepareAsset } from "../../../helpers/prepareAsset";
+import compressImage from "@leebrary/helpers/compressImage";
+import imageUrlToFile from "@leebrary/helpers/imageUrlToFile";
 import { BasicData } from "../../../components/AssetSetup";
 import { UploadingFileModal } from "../../../components/UploadingFileModal";
+import LibraryContext from "../../../context/LibraryContext";
+import prefixPN from "../../../helpers/prefixPN";
+import { prepareAsset } from "../../../helpers/prepareAsset";
 
 const AssetPage = () => {
   const { category, categories, selectCategory, setCategory, setAsset, asset } =
@@ -46,7 +42,7 @@ const AssetPage = () => {
   const [t] = useTranslateLoader(prefixPN("assetSetup"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const { openConfirmationModal } = useLayout();
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
   const queryClient = useQueryClient();
   const scrollRef = useRef(null);
@@ -56,10 +52,16 @@ const AssetPage = () => {
 
   useEffect(() => {
     if (params) {
-      if (!isEmpty(params.category)) selectCategory(params.category);
+      if (!isEmpty(params.category)) {
+        selectCategory(params.category);
+      }
+
       const query = {};
-      if (params.category) query.key = params.category;
-      else query.id = asset?.category;
+      if (params.category) {
+        query.key = params.category;
+      } else {
+        query.id = asset?.category;
+      }
 
       const item = find(categories, query);
       setCategory(item);
@@ -125,10 +127,7 @@ const AssetPage = () => {
     form.setValue("color", asset?.color || null);
     form.setValue("cover", asset?.cover || null);
     form.setValue("program", asset?.program || solvedProgram || null);
-    form.setValue(
-      "subjects",
-      asset?.subjects?.map((subject) => subject.subject) || null
-    );
+    form.setValue("subjects", asset?.subjects?.map((subject) => subject.subject) || null);
     form.setValue("tags", asset?.tags);
     if (category?.key === "bookmarks") {
       form.setValue("url", asset?.url);
@@ -137,8 +136,7 @@ const AssetPage = () => {
 
   // HANDLERS & FUNCTIONS -------------------------------------------------------
   const handleOnCancel = () => {
-    const formHasBeenTouched =
-      Object.keys(form.formState.touchedFields).length > 0;
+    const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
     if (formHasBeenTouched) {
       openConfirmationModal({
         title: t("cancelModal.title"),
@@ -147,10 +145,10 @@ const AssetPage = () => {
           confim: t("cancelModal.confirm"),
           cancel: t("cancelModal.cancel"),
         },
-        onConfirm: () => history.goBack(),
+        onConfirm: () => navigate(-1),
       })();
     } else {
-      history.goBack();
+      navigate(-1);
     }
   };
 
@@ -161,11 +159,9 @@ const AssetPage = () => {
     currentFormValues,
   }) {
     const coverIsAUrl =
-      isString(currentFormValues.cover) &&
-      currentFormValues.cover?.startsWith("http");
+      isString(currentFormValues.cover) && currentFormValues.cover?.startsWith("http");
 
-    const isBookmarkWithValidCover =
-      coverIsAUrl && categoryName === "bookmarks";
+    const isBookmarkWithValidCover = coverIsAUrl && categoryName === "bookmarks";
     if (isBookmarkWithValidCover && !isEditing) {
       setUploadingFileInfo({ state: "processingImage" });
       const coverFile = await imageUrlToFile(currentFormValues.cover);
@@ -268,27 +264,22 @@ const AssetPage = () => {
       // REQUEST
       try {
         const assetData = { ...currentFormValues, cover, file };
-        if (editing) assetData.id = params.id;
+        if (editing) {
+          assetData.id = params.id;
+        }
 
-        const { asset: newAsset } = await requestMethod(
-          assetData,
-          category?.id,
-          category?.key,
-          {
-            onProgress: (info) => {
-              setUploadingFileInfo(info);
-            },
-          }
-        );
+        const { asset: newAsset } = await requestMethod(assetData, category?.id, category?.key, {
+          onProgress: (info) => {
+            setUploadingFileInfo(info);
+          },
+        });
         const response = await getAssetRequest(newAsset.id);
         setAsset(prepareAsset(response.asset));
         setLoading(false);
         queryClient.invalidateQueries(allGetSimpleAssetListKey);
         queryClient.invalidateQueries(allGetAssetsKey);
         addSuccessAlert(
-          editing
-            ? t("basicData.labels.updatedSuccess")
-            : t("basicData.labels.createdSuccess")
+          editing ? t("basicData.labels.updatedSuccess") : t("basicData.labels.createdSuccess")
         );
 
         if (originalExternalResource) {
@@ -296,13 +287,11 @@ const AssetPage = () => {
         }
 
         if (goToAssign) {
-          history.push(`/private/leebrary/assign/${newAsset.id}`);
+          navigate(`/private/leebrary/assign/${newAsset.id}`);
         } else {
-          history.push(
+          navigate(
             `/private/leebrary/${
-              response.asset?.fileType === "bookmark"
-                ? "bookmarks"
-                : "media-files"
+              response.asset?.fileType === "bookmark" ? "bookmarks" : "media-files"
             }/list`
           );
         }
@@ -320,19 +309,17 @@ const AssetPage = () => {
   // HEADER & FOOTER --------------------------------------------------------
   const getAssetInfoHeader = () => {
     const editing = params.id?.length;
-    if (category?.key === "bookmarks")
+    if (category?.key === "bookmarks") {
       return {
-        title: editing
-          ? t("basicData.bookmark.titleEdit")
-          : t("basicData.bookmark.titleNew"),
+        title: editing ? t("basicData.bookmark.titleEdit") : t("basicData.bookmark.titleNew"),
         subTitle: t("basicData.bookmark.subTitle"),
         icon: <AssetBookmarkIcon width={24} height={24} color={"#878D96"} />,
         placeHolder: t("basicData.placeholders.bookmarkName"),
       };
+    }
+
     return {
-      title: editing
-        ? t("basicData.header.titleEdit")
-        : t("basicData.header.titleNew"),
+      title: editing ? t("basicData.header.titleEdit") : t("basicData.header.titleNew"),
       subTitle: t("basicData.header.subTitle"),
       icon: <AssetMediaIcon width={24} height={24} color={"#878D96"} />,
       placeHolder: t("basicData.placeholders.name"),
@@ -348,9 +335,7 @@ const AssetPage = () => {
             <TotalLayoutHeader
               title={getAssetInfoHeader().title}
               icon={getAssetInfoHeader().icon}
-              formTitlePlaceholder={
-                formValues.name || getAssetInfoHeader().placeHolder
-              }
+              formTitlePlaceholder={formValues.name || getAssetInfoHeader().placeHolder}
               onCancel={handleOnCancel}
               mainActionLabel={t("header.cancel")}
             />
@@ -429,10 +414,7 @@ const AssetPage = () => {
           </Stack>
         </TotalLayoutContainer>
       </FormProvider>
-      <UploadingFileModal
-        opened={uploadingFileInfo !== null}
-        info={uploadingFileInfo}
-      />
+      <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </>
   );
 };

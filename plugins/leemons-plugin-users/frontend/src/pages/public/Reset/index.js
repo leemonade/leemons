@@ -1,20 +1,20 @@
-import React, { useMemo } from "react";
-import { useSession } from "@users/session";
-import constants from "@users/constants";
-import { goLoginPage, goRecoverPage } from "@users/navigate";
-import { useHistory } from "react-router-dom";
-import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
 import { Alert, Box, Button, ContextContainer } from "@bubbles-ui/components";
-import { RegisterPasswordForm } from "@users/components/RegisterPasswordForm";
-import useTranslate from "@multilanguage/useTranslate";
-import prefixPN from "@users/helpers/prefixPN";
-import tLoader from "@multilanguage/helpers/tLoader";
-import { useStore } from "@common";
-import { canResetRequest, resetRequest } from "@users/request";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
 import { useNotifications } from "@bubbles-ui/notifications";
-import { AuthLayout } from "@users/layout/AuthLayout";
-import { AuthContainer } from "@users/components/AuthContainer";
+import { useStore } from "@common";
+import tLoader from "@multilanguage/helpers/tLoader";
 import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslate from "@multilanguage/useTranslate";
+import { AuthContainer } from "@users/components/AuthContainer";
+import { RegisterPasswordForm } from "@users/components/RegisterPasswordForm";
+import constants from "@users/constants";
+import prefixPN from "@users/helpers/prefixPN";
+import { AuthLayout } from "@users/layout/AuthLayout";
+import { goLoginPage, goRecoverPage } from "@users/navigate";
+import { canResetRequest, resetRequest } from "@users/request";
+import { useSession } from "@users/session";
+import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Reset() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
@@ -30,7 +30,7 @@ export default function Reset() {
   const trp = tLoader(prefixPN("registerPassword"), rpTranslations);
   const { t: tCommon } = useCommonTranslate("forms");
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const notifications = useNotifications();
 
   function getToken() {
@@ -56,7 +56,10 @@ export default function Reset() {
   }
 
   React.useEffect(() => {
-    if (!getToken()) history.push(`/${constants.base}`);
+    if (!getToken()) {
+      navigate(`/${constants.base}`);
+    }
+
     checkIfCanResetIfNotRedirect();
   }, []);
 
@@ -75,7 +78,7 @@ export default function Reset() {
       });
 
       setTimeout(() => {
-        goLoginPage(history);
+        goLoginPage(navigate);
       }, 1000);
     } catch (err) {
       store.cantReset = true;
@@ -134,7 +137,7 @@ export default function Reset() {
               labels={labels}
               placeholders={placeholders}
               errorMessages={errorMessages}
-              recoverUrl={goRecoverPage(history, true)}
+              recoverUrl={goRecoverPage(navigate, true)}
               onSubmit={onSubmit}
               loading={store.loading}
             />
@@ -143,7 +146,7 @@ export default function Reset() {
               <Button
                 leftIcon={<ChevLeftIcon />}
                 variant="link"
-                onClick={() => goLoginPage(history)}
+                onClick={() => goLoginPage(navigate)}
               >
                 {t("returnLogin")}
               </Button>

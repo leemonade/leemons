@@ -1,4 +1,4 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useIsStudent } from "@academic-portfolio/hooks";
 import { ViewOnIcon } from "@bubbles-ui/icons/outline";
@@ -11,21 +11,11 @@ import PropTypes from "prop-types";
 
 import { AssetMetadataContentCreator } from "@content-creator/components/AssetMetadataContentCreator";
 import prefixPN from "@content-creator/helpers/prefixPN";
-import {
-  deleteDocumentRequest,
-  duplicateDocumentRequest,
-} from "@content-creator/request";
+import { deleteDocumentRequest, duplicateDocumentRequest } from "@content-creator/request";
 
-const DocumentDetail = ({
-  asset,
-  onRefresh,
-  onPin,
-  onUnpin,
-  onShare,
-  ...props
-}) => {
+const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props }) => {
   const isStudent = useIsStudent();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [t] = useTranslateLoader(prefixPN("documentCard"));
   const {
     openConfirmationModal,
@@ -77,11 +67,11 @@ const DocumentDetail = ({
   };
 
   const handleView = () => {
-    history.push(`/private/content-creator/${asset.providerData.id}/view`);
+    navigate(`/private/content-creator/${asset.providerData.id}/view`);
   };
 
   const handleEdit = () => {
-    history.push(`/private/content-creator/${asset.providerData.id}/edit`);
+    navigate(`/private/content-creator/${asset.providerData.id}/edit`);
   };
 
   const handleDelete = () => {
@@ -105,10 +95,7 @@ const DocumentDetail = ({
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          await duplicateDocumentRequest(
-            asset.providerData.id,
-            asset.providerData.published
-          );
+          await duplicateDocumentRequest(asset.providerData.id, asset.providerData.published);
           addSuccessAlert(t("duplicated"));
           onRefresh();
         } catch (err) {
@@ -120,7 +107,7 @@ const DocumentDetail = ({
   };
 
   const handleAssign = () => {
-    history.push(`/private/content-creator/${asset.providerData.id}/assign`);
+    navigate(`/private/content-creator/${asset.providerData.id}/assign`);
   };
 
   // ·········································································

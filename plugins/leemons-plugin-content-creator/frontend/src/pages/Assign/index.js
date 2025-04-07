@@ -1,15 +1,14 @@
-import React from "react";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { useStore } from "@common";
-import { useHistory, useParams } from "react-router-dom";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import Form from "@assignables/components/Assignment/Form";
+import useAssignables from "@assignables/requests/hooks/queries/useAssignables";
+import { useStore } from "@common";
 import prefixPN from "@content-creator/helpers/prefixPN";
 import { assignDocumentRequest } from "@content-creator/request";
-import useAssignables from "@assignables/requests/hooks/queries/useAssignables";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Assign() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   const [t] = useTranslateLoader(prefixPN("contentCreatorAssign"));
@@ -32,7 +31,7 @@ export default function Assign() {
       await assignDocumentRequest(params.id, taskInstanceData);
 
       addSuccessAlert(t("assignDone"));
-      history.push("/private/assignables/ongoing");
+      navigate("/private/assignables/ongoing");
     } catch (e) {
       addErrorAlert(e.message);
     }

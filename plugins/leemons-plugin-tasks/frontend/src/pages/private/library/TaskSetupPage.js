@@ -1,35 +1,32 @@
-import React, { useEffect, useMemo, useState } from "react";
-import PropTypes from "prop-types";
-import { isArray, isEmpty, isNil, isString } from "lodash";
-import { useHistory, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import {
-  TotalLayoutContainer,
-  TotalLayoutHeader,
   AssetTaskIcon,
   Stack,
+  TotalLayoutContainer,
+  TotalLayoutHeader,
 } from "@bubbles-ui/components";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import { unflatten, useProcessTextEditor, useQuery, useStore } from "@common";
-import {
-  ObservableContextProvider,
-  useObservableContext,
-} from "@common/context/ObservableContext";
-import { getAssetsByIdsRequest } from "@leebrary/request";
+import { ObservableContextProvider, useObservableContext } from "@common/context/ObservableContext";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import prepareAsset from "@leebrary/helpers/prepareAsset";
+import { getAssetsByIdsRequest } from "@leebrary/request";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isArray, isEmpty, isNil, isString } from "lodash";
+import PropTypes from "prop-types";
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   BasicData,
   ContentData,
-  InstructionData,
   EvaluationData,
+  InstructionData,
   Setup,
 } from "../../../components/TaskSetupPage";
 import { prefixPN } from "../../../helpers";
-import saveTaskRequest from "../../../request/task/saveTask";
-import publishTaskRequest from "../../../request/task/publishTask";
-import getTaskRequest from "../../../request/task/getTask";
 import useObserver from "../../../helpers/useObserver";
+import getTaskRequest from "../../../request/task/getTask";
+import publishTaskRequest from "../../../request/task/publishTask";
+import saveTaskRequest from "../../../request/task/saveTask";
 
 async function processDevelopment({ values, store, processTextEditor }) {
   if (!values?.metadata?.hasDevelopment) {
@@ -42,10 +39,7 @@ async function processDevelopment({ values, store, processTextEditor }) {
 
   const developments = values?.metadata?.development;
 
-  if (
-    developments?.length ||
-    store.currentTask?.metadata?.development?.length
-  ) {
+  if (developments?.length || store.currentTask?.metadata?.development?.length) {
     const length = Math.max(
       developments?.length ?? 0,
       store.currentTask?.metadata?.development?.length ?? 0
@@ -54,8 +48,7 @@ async function processDevelopment({ values, store, processTextEditor }) {
 
     for (let i = 0; i < length; i++) {
       const html = developments[i]?.development;
-      const oldHtml =
-        store.currentTask?.metadata?.development?.[i]?.development;
+      const oldHtml = store.currentTask?.metadata?.development?.[i]?.development;
 
       promises.push(
         processTextEditor(html, oldHtml, { force }).then(
@@ -87,7 +80,7 @@ function useHeaderLabels(t) {
 
 function TaskSetupHeader({ t, store }) {
   const headerLabels = useHeaderLabels(t);
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <TotalLayoutHeader
       icon={
@@ -97,7 +90,7 @@ function TaskSetupHeader({ t, store }) {
       }
       title={t(!isEmpty(store?.currentTask) ? "edit_title" : "title")}
       formTitlePlaceholder={headerLabels.title}
-      onCancel={() => history.goBack()}
+      onCancel={() => navigate(-1)}
       mainActionLabel={t("cancel")}
     />
   );
@@ -108,15 +101,7 @@ TaskSetupHeader.propTypes = {
   store: PropTypes.object,
 };
 
-function useSetupProps({
-  t,
-  labels,
-  store,
-  useSaveObserver,
-  scrollRef,
-  loading,
-  setLoading,
-}) {
+function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, setLoading }) {
   const { useWatch } = useObservableContext();
   const isExpress = !!useWatch({ name: "isExpress" });
   const sharedData = useWatch({ name: "sharedData" });
@@ -149,10 +134,7 @@ function useSetupProps({
     []
   );
   const completedSteps = useMemo(
-    () =>
-      store.currentTask?.metadata?.visitedSteps?.map((step) =>
-        steps.indexOf(step)
-      ) || [],
+    () => store.currentTask?.metadata?.visitedSteps?.map((step) => steps.indexOf(step)) || [],
     []
   );
 
@@ -182,17 +164,14 @@ function useSetupProps({
     };
     if (contentData) {
       contentData.labels.buttonPublish = instructionData?.labels?.buttonPublish;
-      contentData.labels.buttonPublishAndAssign =
-        instructionData?.labels?.buttonPublishAndAssign;
+      contentData.labels.buttonPublishAndAssign = instructionData?.labels?.buttonPublishAndAssign;
     }
 
     const showAttachmentsAndInstructions =
-      !isExpress &&
-      (configValues.hasInstructions || configValues.hasAttachments);
+      !isExpress && (configValues.hasInstructions || configValues.hasAttachments);
 
     const showEvaluation =
-      !isExpress &&
-      (configValues.hasCurriculum || configValues.hasCustomObjectives);
+      !isExpress && (configValues.hasCurriculum || configValues.hasCustomObjectives);
 
     return {
       editable: isEmpty(store.currentTask),
@@ -257,9 +236,7 @@ function useSetupProps({
               t={t}
               showCurriculum={configValues.hasCurriculum}
               showCustomObjectives={configValues.hasCustomObjectives}
-              isLastStep={
-                !configValues.hasAttachments && !configValues.hasInstructions
-              }
+              isLastStep={!configValues.hasAttachments && !configValues.hasInstructions}
             />
           ),
           status: "OK",
@@ -308,22 +285,14 @@ function TaskSetup() {
 
   const processTextEditor = useProcessTextEditor();
 
-  const {
-    useObserver: useSaveObserver,
-    emitEvent,
-    subscribe,
-    unsubscribe,
-  } = useObserver();
+  const { useObserver: useSaveObserver, emitEvent, subscribe, unsubscribe } = useObserver();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // ·········································································
   // API CALLS
 
-  const saveTask = async (
-    { program, curriculum, ...values },
-    redirectTo = "library"
-  ) => {
+  const saveTask = async ({ program, curriculum, ...values }, redirectTo = "library") => {
     try {
       await processDevelopment({ values, store, processTextEditor });
 
@@ -337,12 +306,8 @@ function TaskSetup() {
                 program,
                 subject,
                 curriculum: curriculum && {
-                  objectives: curriculum[subject]?.objectives?.map(
-                    ({ objective }) => objective
-                  ),
-                  curriculum: curriculum[subject]?.curriculum?.map(
-                    (item) => item.curriculum
-                  ),
+                  objectives: curriculum[subject]?.objectives?.map(({ objective }) => objective),
+                  curriculum: curriculum[subject]?.curriculum?.map((item) => item.curriculum),
                 },
               }
             : subject
@@ -368,9 +333,9 @@ function TaskSetup() {
       addSuccessAlert(t(`common.${messageKey}`));
 
       if (redirectTo === "library") {
-        history.push("/private/leebrary/assignables.task/list");
+        navigate("/private/leebrary/assignables.task/list");
       } else {
-        history.replace(`/private/tasks/library/edit/${fullId}`);
+        navigate(`/private/tasks/library/edit/${fullId}`);
       }
 
       emitEvent("taskSaved");
@@ -518,12 +483,10 @@ function TaskSetup() {
       try {
         if (event === "publishTaskAndLibrary") {
           await handleOnPublishTask();
-          history.push(
-            `/private/leebrary/assignables.task/list?activeTab=published`
-          );
+          navigate(`/private/leebrary/assignables.task/list?activeTab=published`);
         } else if (event === "publishTaskAndAssign") {
           await handleOnPublishTask();
-          history.push(`/private/tasks/library/assign/${store.currentTask.id}`);
+          navigate(`/private/tasks/library/assign/${store.currentTask.id}`);
         } else if (event === "saveTaskFailed" && !!loading) {
           setLoading(null);
         }
@@ -555,10 +518,7 @@ function TaskSetup() {
   // COMPONENT
 
   return (
-    <TotalLayoutContainer
-      scrollRef={scrollRef}
-      Header={<TaskSetupHeader t={t} store={store} />}
-    >
+    <TotalLayoutContainer scrollRef={scrollRef} Header={<TaskSetupHeader t={t} store={store} />}>
       {!isEmpty(setupProps) && isArray(setupProps.steps) && (
         <Setup
           {...setupProps}

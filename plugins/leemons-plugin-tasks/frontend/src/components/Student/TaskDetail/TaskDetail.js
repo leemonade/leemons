@@ -1,20 +1,20 @@
-import React, { useMemo, useRef } from "react";
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
+import { useSubjectDetails } from "@academic-portfolio/hooks";
+import ActivityHeader from "@assignables/components/ActivityHeader";
+import { getMultiClassData } from "@assignables/helpers/getClassData";
 import useClassData from "@assignables/hooks/useClassDataQuery";
+import useAssignables from "@assignables/requests/hooks/queries/useAssignables";
+import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
+import { Loader, TotalLayoutContainer } from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { prefixPN } from "@tasks/helpers";
-import { unflatten } from "@common";
-import _, { map } from "lodash";
-import { getFileUrl } from "@leebrary/helpers/prepareAsset";
-import { Loader, TotalLayoutContainer } from "@bubbles-ui/components";
-import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
-import useAssignables from "@assignables/requests/hooks/queries/useAssignables";
-import { useSubjectDetails } from "@academic-portfolio/hooks";
-import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
-import { getMultiClassData } from "@assignables/helpers/getClassData";
-import ActivityHeader from "@assignables/components/ActivityHeader";
-import { useHistory, useLocation } from "react-router-dom";
 import useUserAgents from "@users/hooks/useUserAgents";
+import _, { map } from "lodash";
 import PropTypes from "prop-types";
+import React, { useMemo, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import StepContainer from "./components/StepContainer/StepContainer";
 
 function useTaskDetailLocalizations() {
@@ -37,27 +37,20 @@ function useTaskDetailLocalizations() {
 }
 
 function useTaskData({ id, user, localizations }) {
-  const { data: assignation, isLoading: assignationIsLoading } =
-    useAssignations({
-      query: {
-        instance: id,
-        user,
-      },
-      fetchInstance: true,
-      details: true,
-    });
+  const { data: assignation, isLoading: assignationIsLoading } = useAssignations({
+    query: {
+      instance: id,
+      user,
+    },
+    fetchInstance: true,
+    details: true,
+  });
   const instance = assignation?.instance;
   const assignable = instance?.assignable;
   const asset = assignable?.asset;
 
-  const { data: classData, isLoading: classDataIsLoading } = useClassData(
-    instance,
-    localizations
-  );
-  const coverUrl = React.useMemo(
-    () => getFileUrl(asset?.cover),
-    [asset?.cover]
-  );
+  const { data: classData, isLoading: classDataIsLoading } = useClassData(instance, localizations);
+  const coverUrl = React.useMemo(() => getFileUrl(asset?.cover), [asset?.cover]);
 
   return {
     assignation,
@@ -116,8 +109,7 @@ function useTaskPreviewData({ id, localizations }) {
   const subjectsData = useSubjectsData(instance);
   const multiClassData = getMultiClassData(localizations);
 
-  const classData =
-    subjectsData?.length > 1 ? multiClassData : subjectsData?.[0];
+  const classData = subjectsData?.length > 1 ? multiClassData : subjectsData?.[0];
 
   return {
     assignable: task,
@@ -132,15 +124,12 @@ function useTaskPreviewData({ id, localizations }) {
 export default function TaskDetail({ id, student, preview }) {
   const scrollRef = useRef();
   const localizations = useTaskDetailLocalizations();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const currentUrl = location.pathname;
   const isViewMode = currentUrl.includes("view");
 
-  const useData = useMemo(
-    () => (preview ? useTaskPreviewData : useTaskData),
-    [preview]
-  );
+  const useData = useMemo(() => (preview ? useTaskPreviewData : useTaskData), [preview]);
 
   const { assignation, instance, isLoading } = useData({
     id,
@@ -166,7 +155,7 @@ export default function TaskDetail({ id, student, preview }) {
           showCountdown
           goToModuleDashboard
           onTimeout={() =>
-            history.push(
+            navigate(
               `/private/tasks/correction/${instance.id}/${assignation?.user}?fromExecution&fromTimeout`
             )
           }

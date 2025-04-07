@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import { TLayout, Stack, Button } from "@bubbles-ui/components";
+import { Button, Stack, TLayout } from "@bubbles-ui/components";
 import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import propTypes from "prop-types";
@@ -18,20 +18,13 @@ import getResourceTypeDisplay from "@leebrary/helpers/getResourceTypeDisplay";
 import useBulkAssetsColumns from "@leebrary/hooks/useBulkAssetsColumns";
 import { updateAssetRequest } from "@leebrary/request";
 
-const ManageBulkAssets = ({
-  initialData,
-  assets: initialAssets,
-  onAssetsUpdate,
-  t,
-}) => {
-  const history = useHistory();
+const ManageBulkAssets = ({ initialData, assets: initialAssets, onAssetsUpdate, t }) => {
+  const navigate = useNavigate();
   const [assets, setAssets] = useState(initialAssets);
   const [selectedAssets, setSelectedAssets] = useState([]);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isShareDrawerOpen, setIsShareDrawerOpen] = useState(false);
-  const [filteredAssets, setFilteredAssets] = useState(
-    initialData || initialAssets
-  );
+  const [filteredAssets, setFilteredAssets] = useState(initialData || initialAssets);
   const [search, setSearch] = useState("");
   const {
     control,
@@ -73,9 +66,7 @@ const ManageBulkAssets = ({
       let updatedAssets = [...assets];
 
       for (const assetId of selectedAssets) {
-        const assetToUpdate = preparedAssets.find(
-          (asset) => asset.id === assetId
-        );
+        const assetToUpdate = preparedAssets.find((asset) => asset.id === assetId);
         const updatedAsset = await updateAssetRequest(
           assetToUpdate,
           assetToUpdate.category,
@@ -126,15 +117,11 @@ const ManageBulkAssets = ({
     t,
   });
 
-  const areAllAssetsSelectedImages = assets.every((asset) =>
-    asset?.file?.type.includes("image")
-  );
+  const areAllAssetsSelectedImages = assets.every((asset) => asset?.file?.type.includes("image"));
 
   const handlePermissionsUpdate = (updatedAssets) => {
     const newAssets = assets.map((asset) => {
-      const updatedAsset = updatedAssets.find(
-        (updated) => updated.id === asset.id
-      );
+      const updatedAsset = updatedAssets.find((updated) => updated.id === asset.id);
       return updatedAsset || asset;
     });
 
@@ -177,21 +164,13 @@ const ManageBulkAssets = ({
     <TLayout.Content
       TopZone={
         <Stack mt={16} mb={16}>
-          <Button
-            variant="linkInline"
-            leftIcon={<ChevLeftIcon />}
-            onClick={() => history.goBack()}
-          >
+          <Button variant="linkInline" leftIcon={<ChevLeftIcon />} onClick={() => navigate(-1)}>
             {t("backToLibraryLabel")}
           </Button>
         </Stack>
       }
     >
-      <Filters
-        assets={initialData || initialAssets}
-        onFiltersChange={handleFiltersChange}
-        t={t}
-      />
+      <Filters assets={initialData || initialAssets} onFiltersChange={handleFiltersChange} t={t} />
       <BulkActions
         onEdit={() => setIsEditDrawerOpen(true)}
         onShare={() => setIsShareDrawerOpen(true)}

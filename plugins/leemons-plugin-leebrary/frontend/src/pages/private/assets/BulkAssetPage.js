@@ -1,15 +1,15 @@
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
-  TotalLayoutContainer,
-  TotalLayoutHeader,
+  Button,
+  LoadingOverlay,
+  Stack,
   TLayout,
   Text,
-  Button,
-  Stack,
-  LoadingOverlay,
+  TotalLayoutContainer,
+  TotalLayoutHeader,
 } from "@bubbles-ui/components";
 import { addErrorAlert } from "@layout/alert";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
@@ -21,12 +21,12 @@ import { ManageBulkAssets } from "@leebrary/components/ManageBulkAssets/ManageBu
 import compressImage from "@leebrary/helpers/compressImage";
 import prefixPN from "@leebrary/helpers/prefixPN";
 import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
-import { newAssetRequest, getAssetsByIdsRequest } from "@leebrary/request";
+import { getAssetsByIdsRequest, newAssetRequest } from "@leebrary/request";
 
 const BulkAssetPage = () => {
   const [t] = useTranslateLoader(prefixPN("bulkUpload"));
   const scrollRef = useRef(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   const formForAssets = useForm({
     defaultValues: {
       file: null,
@@ -50,9 +50,7 @@ const BulkAssetPage = () => {
   useEffect(() => {
     if (assetFiles?.length) {
       const newQueue = assetFiles.filter(
-        (file) =>
-          !uploadStatus[file.name] &&
-          !currentBatch.find((f) => f.name === file.name)
+        (file) => !uploadStatus[file.name] && !currentBatch.find((f) => f.name === file.name)
       );
       setUploadQueue(newQueue);
     }
@@ -60,8 +58,13 @@ const BulkAssetPage = () => {
 
   useEffect(() => {
     const processQueue = async () => {
-      if (currentBatch.length > 0) return;
-      if (uploadQueue.length === 0) return;
+      if (currentBatch.length > 0) {
+        return;
+      }
+
+      if (uploadQueue.length === 0) {
+        return;
+      }
 
       const batch = uploadQueue.slice(0, 2);
       const remainingQueue = uploadQueue.slice(2);
@@ -200,9 +203,7 @@ const BulkAssetPage = () => {
 
   const handleAssetsUpdate = async (updatedAssets) => {
     try {
-      const refreshedAssets = await getAssetsByIdsRequest(
-        updatedAssets.map((asset) => asset.id)
-      );
+      const refreshedAssets = await getAssetsByIdsRequest(updatedAssets.map((asset) => asset.id));
       if (refreshedAssets?.assets) {
         setCreatedAssets(refreshedAssets.assets);
       }
@@ -218,7 +219,7 @@ const BulkAssetPage = () => {
         <TotalLayoutHeader
           title={t("title").toUpperCase()}
           icon={<ScormCardIcon />}
-          onCancel={() => history.goBack()}
+          onCancel={() => navigate(-1)}
           direction="column"
           formTitlePlaceholder={
             <Text color="soft" style={{ fontSize: 18 }}>

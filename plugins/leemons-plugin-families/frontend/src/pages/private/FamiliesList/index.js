@@ -1,36 +1,34 @@
-import * as _ from "lodash";
-import React, { useMemo, useRef, useState } from "react";
-// TODO: fix this import from @common plugin
-import { AdminPageHeader } from "@bubbles-ui/leemons";
 import {
-  PageContainer,
-  Pager,
   Badge,
   Box,
-  SearchInput,
+  ContextContainer,
+  PageContainer,
   Paper,
+  SearchInput,
   Table,
   Text,
-  ContextContainer,
 } from "@bubbles-ui/components";
-import { listFamiliesRequest } from "@families/request";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+// TODO: fix this import from @common plugin
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import { useAsync } from "@common/useAsync";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
 import prefixPN from "@families/helpers/prefixPN";
-import { Link, useHistory } from "react-router-dom";
-import { useAsync } from "@common/useAsync";
+import { listFamiliesRequest } from "@families/request";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import * as _ from "lodash";
+import { useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function List() {
   const config = useRef({
     page: 0,
     size: 10,
   });
-  const history = useHistory();
+  const navigate = useNavigate();
   const [t] = useTranslateLoader(prefixPN("list_page"));
   const { t: tCommon } = useCommonTranslate("page_header");
-  const [loadingError, setLoadingError, LoadingErrorAlert] =
-    useRequestErrorMessage();
+  const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState(null);
   const [searchValue, setSearchValue] = useState("");
@@ -68,10 +66,7 @@ function List() {
             item.name = <Text strong>{item.name}</Text>;
             item.actions = (
               <Box>
-                <Link
-                  to={`/private/families/detail/${item.id}`}
-                  className="text-sm text-primary"
-                >
+                <Link to={`/private/families/detail/${item.id}`} className="text-sm text-primary">
                   {t("view")}
                 </Link>
               </Box>
@@ -88,7 +83,7 @@ function List() {
   }
 
   const goDetailPage = () => {
-    history.push("/private/families/detail");
+    navigate("/private/families/detail");
   };
 
   const load = useMemo(

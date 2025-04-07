@@ -1,30 +1,20 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
+  Box,
+  Button,
+  ContextContainer,
+  ImageLoader,
+  LoadingOverlay,
   Select,
+  Stack,
+  TabPanel,
+  Tabs,
   TotalLayoutContainer,
   TotalLayoutHeader,
-  Stack,
-  LoadingOverlay,
   TotalLayoutStepContainer,
-  Tabs,
-  TabPanel,
-  Box,
-  ContextContainer,
-  Button,
-  ImageLoader,
 } from "@bubbles-ui/components";
-import {
-  AddCircleIcon,
-  RedirectIcon,
-  ReportPageIcon,
-} from "@bubbles-ui/icons/solid";
+import { AddCircleIcon, RedirectIcon, ReportPageIcon } from "@bubbles-ui/icons/solid";
 import { unflatten } from "@common";
 import useCenterEvaluationSystems from "@grades/hooks/queries/useCenterEvaluationSystems";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
@@ -33,7 +23,7 @@ import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserCenters } from "@users/hooks";
 import { cloneDeep } from "lodash";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useNavigate } from "react-router-dom";
 
 import { EmptyState } from "@academic-portfolio/components/EmptyState";
 import ProgramSetupDrawer from "@academic-portfolio/components/ProgramSetupDrawer/ProgramSetupDrawer";
@@ -47,9 +37,7 @@ import {
 import useProgramsByCenter from "@academic-portfolio/hooks/queries/useCenterPrograms";
 
 const ProgramsPage = () => {
-  const [t, translations, , tLoading] = useTranslateLoader(
-    prefixPN("programs_page")
-  );
+  const [t, translations, , tLoading] = useTranslateLoader(prefixPN("programs_page"));
   const [selectedCenter, setSelectedCenter] = useState("");
   const [activeTab, setActiveTab] = useState("0");
   const [showEmptyState, setShowEmptyState] = useState(false);
@@ -57,14 +45,12 @@ const ProgramsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const { openConfirmationModal } = useLayout();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { data: centersQuery, isLoading: areCentersLoading } = useUserCenters({
     refetchOnWindowFocus: false,
   });
-  const { mutate: archiveProgram, isLoading: archiveProgramLoading } =
-    useArchiveProgram();
-  const { mutate: duplicateProgram, isLoading: duplicateProgramLoading } =
-    useDuplicateProgram();
+  const { mutate: archiveProgram, isLoading: archiveProgramLoading } = useArchiveProgram();
+  const { mutate: duplicateProgram, isLoading: duplicateProgramLoading } = useDuplicateProgram();
   const queryClient = useQueryClient();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
@@ -96,15 +82,14 @@ const ProgramsPage = () => {
     return {};
   }, [activeTab]);
 
-  const { data: programsQuery, isLoading: areProgramsLoading } =
-    useProgramsByCenter({
-      center: selectedCenter,
-      filters: queryFilters,
-      options: {
-        enabled: selectedCenter?.length > 0,
-        refetchOnWindowFocus: false,
-      },
-    });
+  const { data: programsQuery, isLoading: areProgramsLoading } = useProgramsByCenter({
+    center: selectedCenter,
+    filters: queryFilters,
+    options: {
+      enabled: selectedCenter?.length > 0,
+      refetchOnWindowFocus: false,
+    },
+  });
 
   const isLoading = useMemo(
     () =>
@@ -165,15 +150,23 @@ const ProgramsPage = () => {
   // HANDLERS ------------------------------------------------------------------------------------------------ ||
   const handleOnAdd = useCallback(() => {
     setSelectedProgram(null);
-    if (isEditing) setIsEditing(false);
+    if (isEditing) {
+      setIsEditing(false);
+    }
+
     setAddDrawerIsOpen(true);
   }, [isEditing]);
 
   const handleOnEdit = useCallback(
     (program) => {
       setSelectedProgram(cloneDeep(program));
-      if (!addDrawerIsOpen) setAddDrawerIsOpen(true);
-      if (!isEditing) setIsEditing(true);
+      if (!addDrawerIsOpen) {
+        setAddDrawerIsOpen(true);
+      }
+
+      if (!isEditing) {
+        setIsEditing(true);
+      }
     },
     [addDrawerIsOpen, isEditing, setSelectedProgram]
   );
@@ -209,14 +202,7 @@ const ProgramsPage = () => {
         onConfirm,
       })();
     },
-    [
-      archiveProgram,
-      t,
-      selectedCenter,
-      queryClient,
-      openConfirmationModal,
-      localizations,
-    ]
+    [archiveProgram, t, selectedCenter, queryClient, openConfirmationModal, localizations]
   );
 
   const handleDuplicate = useCallback(
@@ -251,7 +237,7 @@ const ProgramsPage = () => {
   );
 
   function handleOnReports() {
-    history.push(`/private/academic-portfolio/reports`);
+    navigate(`/private/academic-portfolio/reports`);
   }
 
   const ProgramsDetailTableToRender = useMemo(() => {
@@ -267,21 +253,14 @@ const ProgramsPage = () => {
         labels={localizations?.labels}
       />
     );
-  }, [
-    activeTab,
-    programsIds,
-    handleOnEdit,
-    handleArchive,
-    handleDuplicate,
-    localizations,
-  ]);
+  }, [activeTab, programsIds, handleOnEdit, handleArchive, handleDuplicate, localizations]);
 
   const emtpyStateToRender = useMemo(() => {
     if (activeTab === "0") {
       if (noEvaluationSystems) {
         return (
           <EmptyState
-            onClick={() => history.push("/private/grades/evaluations")}
+            onClick={() => navigate("/private/grades/evaluations")}
             Icon={<RedirectIcon />}
             actionLabel={localizations?.emptyStates?.createAcademicRules}
             description={localizations?.emptyStates?.noAcademicRules}
@@ -298,15 +277,13 @@ const ProgramsPage = () => {
         />
       );
     }
-    return (
-      <EmptyState
-        description={localizations?.emptyStates?.noProgramsArchived}
-        noAction
-      />
-    );
-  }, [noEvaluationSystems, activeTab, handleOnAdd, localizations, history]);
+    return <EmptyState description={localizations?.emptyStates?.noProgramsArchived} noAction />;
+  }, [noEvaluationSystems, activeTab, handleOnAdd, localizations, navigate]);
 
-  if (!translations) return null;
+  if (!translations) {
+    return null;
+  }
+
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -339,11 +316,7 @@ const ProgramsPage = () => {
                 value={selectedCenter}
                 sx={{ width: 262 }}
               />
-              <Button
-                variant="link"
-                leftIcon={<ReportPageIcon />}
-                onClick={handleOnReports}
-              >
+              <Button variant="link" leftIcon={<ReportPageIcon />} onClick={handleOnReports}>
                 {t("reports")}
               </Button>
             </Stack>
@@ -357,9 +330,7 @@ const ProgramsPage = () => {
           sx={{ overflowY: "auto", backgroundColor: "#f8f9fb", paddingTop: 24 }}
         >
           <TotalLayoutStepContainer
-            stepName={
-              centersQuery?.find((item) => item.id === selectedCenter)?.name
-            }
+            stepName={centersQuery?.find((item) => item.id === selectedCenter)?.name}
             clean
           >
             <Tabs
@@ -372,11 +343,7 @@ const ProgramsPage = () => {
                 {!showEmptyState ? (
                   <ContextContainer sx={{ padding: "24px 24px" }}>
                     <Box sx={{ justifySelf: "start", width: 160, height: 40 }}>
-                      <Button
-                        variant="link"
-                        leftIcon={<AddCircleIcon />}
-                        onClick={handleOnAdd}
-                      >
+                      <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
                         {t("labels.addNewProgram")}
                       </Button>
                     </Box>

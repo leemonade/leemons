@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
+  Box,
+  Button,
+  ContextContainer,
+  ImageLoader,
+  LoadingOverlay,
   Select,
+  Stack,
   TotalLayoutContainer,
   TotalLayoutHeader,
-  Stack,
-  LoadingOverlay,
   TotalLayoutStepContainer,
-  Box,
-  ContextContainer,
-  Button,
-  ImageLoader,
 } from "@bubbles-ui/components";
 import { AddCircleIcon, RedirectIcon } from "@bubbles-ui/icons/solid";
 import { unflatten } from "@common";
@@ -20,7 +20,7 @@ import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserCenters } from "@users/hooks";
 import { cloneDeep, sortBy } from "lodash";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useNavigate } from "react-router-dom";
 
 import { EmptyState } from "@academic-portfolio/components/EmptyState";
 import SubjectSetupDrawer from "@academic-portfolio/components/SubjectSetupDrawer/SubjectSetupDrawer";
@@ -35,9 +35,7 @@ import useProgramsByCenter from "@academic-portfolio/hooks/queries/useCenterProg
 import useProgramSubjects from "@academic-portfolio/hooks/queries/useProgramSubjects";
 
 const SubjectPage = () => {
-  const [t, translations, , tLoading] = useTranslateLoader(
-    prefixPN("newSubjectsPage")
-  );
+  const [t, translations, , tLoading] = useTranslateLoader(prefixPN("newSubjectsPage"));
   const [selectedCenter, setSelectedCenter] = useState("");
   const [selectedProgram, setSelectedProgram] = useState("");
   const [showEmptyState, setShowEmptyState] = useState(false);
@@ -45,7 +43,7 @@ const SubjectPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const { openConfirmationModal } = useLayout();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
   const { mutate: deleteSubject } = useDeleteSubject();
   const { mutate: duplicateSubject } = useDuplicateSubject();
@@ -72,21 +70,17 @@ const SubjectPage = () => {
     [userCenters]
   );
 
-  const { data: centerProgramsQuery, isLoading: areCenterProgramsLoading } =
-    useProgramsByCenter({
-      center: selectedCenter,
-      filters: { onlyActive: true },
-      options: {
-        enabled: selectedCenter?.length > 0,
-      },
-    });
+  const { data: centerProgramsQuery, isLoading: areCenterProgramsLoading } = useProgramsByCenter({
+    center: selectedCenter,
+    filters: { onlyActive: true },
+    options: {
+      enabled: selectedCenter?.length > 0,
+    },
+  });
 
   const programSelectData = useMemo(() => {
     if (centerProgramsQuery?.length) {
-      const sortedCenterProgramsQuery = sortBy(
-        centerProgramsQuery,
-        "createdAt"
-      );
+      const sortedCenterProgramsQuery = sortBy(centerProgramsQuery, "createdAt");
       return [
         ...sortedCenterProgramsQuery.map((program) => ({
           value: program.id,
@@ -97,10 +91,7 @@ const SubjectPage = () => {
     return [];
   }, [centerProgramsQuery]);
 
-  const noProgramsCreated = useMemo(
-    () => !centerProgramsQuery?.length,
-    [centerProgramsQuery]
-  );
+  const noProgramsCreated = useMemo(() => !centerProgramsQuery?.length, [centerProgramsQuery]);
 
   const { data: subjectsQuery } = useProgramSubjects({
     program: selectedProgram,
@@ -125,10 +116,7 @@ const SubjectPage = () => {
   useEffect(() => {
     if (subjectsQuery?.length) {
       setShowEmptyState(false);
-    } else if (
-      (!subjectsQuery?.length || !centerProgramsQuery?.length) &&
-      dataFetched
-    ) {
+    } else if ((!subjectsQuery?.length || !centerProgramsQuery?.length) && dataFetched) {
       setShowEmptyState(true);
     }
   }, [centerProgramsQuery, programSelectData, subjectsQuery, dataFetched]);
@@ -223,7 +211,7 @@ const SubjectPage = () => {
     if (noProgramsCreated) {
       return (
         <EmptyState
-          onClick={() => history.push("/private/academic-portfolio/programs")}
+          onClick={() => navigate("/private/academic-portfolio/programs")}
           Icon={<RedirectIcon />}
           actionLabel={localizations?.emptyStates?.createProgram}
           description={localizations?.emptyStates?.noProgramsCreated}
@@ -239,13 +227,7 @@ const SubjectPage = () => {
         description={localizations?.emptyStates?.noSubjectsCreated}
       />
     );
-  }, [
-    selectedCenter,
-    selectedProgram,
-    noProgramsCreated,
-    handleOnAdd,
-    localizations,
-  ]);
+  }, [selectedCenter, selectedProgram, noProgramsCreated, handleOnAdd, localizations, navigate]);
 
   return (
     <>
@@ -255,7 +237,7 @@ const SubjectPage = () => {
         Header={
           <TotalLayoutHeader
             title={t("title")}
-            onCancel={() => history.goBack()}
+            onCancel={() => navigate(-1)}
             mainActionLabel={t("labels.cancel")}
             compact
             icon={
@@ -298,22 +280,12 @@ const SubjectPage = () => {
           sx={{ overflowY: "auto", backgroundColor: "#f8f9fb", paddingTop: 24 }}
         >
           <TotalLayoutStepContainer
-            stepName={
-              centerProgramsQuery?.find((item) => item.id === selectedProgram)
-                ?.name
-            }
+            stepName={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.name}
           >
             {!showEmptyState ? (
               <ContextContainer>
-                <Box
-                  noFlex
-                  sx={{ justifySelf: "start", width: 160, height: 40 }}
-                >
-                  <Button
-                    variant="link"
-                    leftIcon={<AddCircleIcon />}
-                    onClick={handleOnAdd}
-                  >
+                <Box noFlex sx={{ justifySelf: "start", width: 160, height: 40 }}>
+                  <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
                     {t("labels.addNewSubject")}
                   </Button>
                 </Box>

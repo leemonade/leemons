@@ -1,40 +1,40 @@
-import React, { useRef, useState, useEffect } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { Controller, FormProvider, useForm } from "react-hook-form";
-import JSZip from "jszip";
-import { isEmpty } from "lodash";
 import {
-  LoadingOverlay,
-  Stack,
+  AssetScormIcon,
   Box,
   DropdownButton,
-  TotalLayoutHeader,
-  TotalLayoutFooterContainer,
-  TotalLayoutContainer,
-  AssetScormIcon,
+  LoadingOverlay,
   Select,
+  Stack,
+  TotalLayoutContainer,
+  TotalLayoutFooterContainer,
+  TotalLayoutHeader,
 } from "@bubbles-ui/components";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { useLayout } from "@layout/context";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
-import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
+import { useLayout } from "@layout/context";
 import { BasicData, UploadingFileModal } from "@leebrary/components";
-import usePackage from "@scorm/request/hooks/queries/usePackage";
+import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { prefixPN } from "@scorm/helpers";
+import {
+  getDefaultOrganization,
+  getLaunchURL,
+  getVersionFromMetadata,
+  xml2json,
+} from "@scorm/lib/utilities";
 import { getSupportedVersionsRequest } from "@scorm/request";
 import useMutatePackage from "@scorm/request/hooks/mutations/useMutatePackage";
-import {
-  xml2json,
-  getVersionFromMetadata,
-  getLaunchURL,
-  getDefaultOrganization,
-} from "@scorm/lib/utilities";
+import usePackage from "@scorm/request/hooks/queries/usePackage";
+import JSZip from "jszip";
+import { isEmpty } from "lodash";
+import { useEffect, useRef, useState } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Detail() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN("scormSetup"));
   const scrollRef = useRef(null);
   const params = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [isNew, setIsNew] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [supportedVersions, setSupportedVersions] = useState([]);
@@ -96,9 +96,11 @@ export default function Detail() {
         onSuccess: (data) => {
           addSuccessAlert(t("published"));
           setIsLoading(false);
-          if (assigning)
-            history.push(`/private/scorm/assign/${data.package?.id}`);
-          else history.push("/private/leebrary/assignables.scorm/list");
+          if (assigning) {
+            navigate(`/private/scorm/assign/${data.package?.id}`);
+          } else {
+            navigate("/private/leebrary/assignables.scorm/list");
+          }
         },
         onError: (error) => {
           addErrorAlert(error.message);
@@ -110,12 +112,16 @@ export default function Detail() {
 
   const handlePublish = async () => {
     const formIsValid = await form.trigger();
-    if (formIsValid) await savePackage({ publishing: true });
+    if (formIsValid) {
+      await savePackage({ publishing: true });
+    }
   };
 
   const handlePublishAndAssign = async () => {
     const formIsValid = await form.trigger();
-    if (formIsValid) await savePackage({ publishing: true, assigning: true });
+    if (formIsValid) {
+      await savePackage({ publishing: true, assigning: true });
+    }
   };
 
   const handleFileLoad = async (file) => {
@@ -174,8 +180,7 @@ export default function Detail() {
   };
 
   const handleOnCancel = () => {
-    const formHasBeenTouched =
-      Object.keys(form.formState.touchedFields).length > 0;
+    const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
     if (formHasBeenTouched) {
       openConfirmationModal({
         title: t("cancelModalTitle"),
@@ -184,10 +189,10 @@ export default function Detail() {
           confim: t("cancelModalConfirm"),
           cancel: t("cancelModalCancel"),
         },
-        onConfirm: () => history.goBack(),
+        onConfirm: () => navigate(-1),
       })();
     } else {
-      history.goBack();
+      navigate(-1);
     }
   };
 
@@ -235,12 +240,7 @@ export default function Detail() {
           />
         }
       >
-        <Stack
-          key="step-1"
-          ref={scrollRef}
-          justifyContent="center"
-          style={{ overflowY: "auto" }}
-        >
+        <Stack key="step-1" ref={scrollRef} justifyContent="center" style={{ overflowY: "auto" }}>
           <BasicData
             advancedConfig={{
               alwaysOpen: false,
@@ -293,10 +293,7 @@ export default function Detail() {
           />
         </Stack>
       </TotalLayoutContainer>
-      <UploadingFileModal
-        opened={uploadingFileInfo !== null}
-        info={uploadingFileInfo}
-      />
+      <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </FormProvider>
   );
 }

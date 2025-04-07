@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getProgramEvaluationSystemRequest } from "@academic-portfolio/request";
 import ActivityHeader from "@assignables/components/ActivityHeader";
@@ -23,16 +23,13 @@ import {
   TotalLayoutContainer,
   VerticalStepperContainer,
 } from "@bubbles-ui/components";
-import {
-  ChevronRightIcon,
-  ExpandDiagonalIcon,
-} from "@bubbles-ui/icons/outline";
+import { ChevronRightIcon, ExpandDiagonalIcon } from "@bubbles-ui/icons/outline";
 import { useStore } from "@common";
 import { addErrorAlert } from "@layout/alert";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCentersWithToken } from "@users/session";
-import { forEach, intersectionBy } from "lodash";
+import { forEach, intersectionBy, noop } from "lodash";
 
 import {
   getQuestionByIdsRequest,
@@ -83,20 +80,19 @@ function StudentInstance() {
     { name: "TaskDoing" }
   );
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   function getUserId() {
-    if (params.user) return params.user;
+    if (params.user) {
+      return params.user;
+    }
+
     return getCentersWithToken()[0].userAgentId;
   }
 
   async function onStartQuestions() {
-    const { timestamps } = await updateTimestamp(
-      params.id,
-      "start",
-      getUserId()
-    );
+    const { timestamps } = await updateTimestamp(params.id, "start", getUserId());
     store.timestamps = timestamps;
     store.assignation.timestamps = timestamps;
     render();
@@ -105,7 +101,7 @@ function StudentInstance() {
   function closeForceFinishModal() {
     store.showForceFinishModal = false;
     render();
-    history.push(`/private/tests/result/${params.id}/${getUserId()}`);
+    navigate(`/private/tests/result/${params.id}/${getUserId()}`);
   }
 
   function prevStep() {
@@ -125,17 +121,11 @@ function StudentInstance() {
     await Promise.allSettled(store.questionResponsesPromises);
 
     if (store.viewMode) {
-      history.push(`/private/tests/result/${params.id}/${getUserId()}`);
+      navigate(`/private/tests/result/${params.id}/${getUserId()}`);
     } else {
       // store.showFinishModal = true;
-      const { timestamps } = await updateTimestamp(
-        params.id,
-        "end",
-        getUserId()
-      );
-      history.push(
-        `/private/tests/result/${params.id}/${getUserId()}?fromTest`
-      );
+      const { timestamps } = await updateTimestamp(params.id, "end", getUserId());
+      navigate(`/private/tests/result/${params.id}/${getUserId()}?fromTest`);
       store.timestamps = timestamps;
       render();
     }
@@ -148,26 +138,27 @@ function StudentInstance() {
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
 
-      const [
-        { evaluationSystem },
-        classe,
-        { questions },
-        { responses },
-        { timestamps },
-      ] = await Promise.all([
-        getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
-        getClassData(store.instance.classes, {
-          multiSubject: t("multiSubject"),
-          groupName: store.instance?.metadata?.groupName,
-        }),
-        getQuestionByIdsRequest(store.instance.metadata.questions),
-        getUserQuestionResponsesRequest(params.id, getUserId()),
-        updateTimestamp(params.id, "open", getUserId()),
-      ]);
-      if (store.assignation.finished) store.viewMode = true;
+      const [{ evaluationSystem }, classe, { questions }, { responses }, { timestamps }] =
+        await Promise.all([
+          getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
+          getClassData(store.instance.classes, {
+            multiSubject: t("multiSubject"),
+            groupName: store.instance?.metadata?.groupName,
+          }),
+          getQuestionByIdsRequest(store.instance.metadata.questions),
+          getUserQuestionResponsesRequest(params.id, getUserId()),
+          updateTimestamp(params.id, "open", getUserId()),
+        ]);
+      if (store.assignation.finished) {
+        store.viewMode = true;
+      }
+
       store.questionResponses = responses;
       store.questionMax = Object.keys(responses).length - 1;
-      if (store.questionMax < 0) store.questionMax = 0;
+      if (store.questionMax < 0) {
+        store.questionMax = 0;
+      }
+
       forEach(questions, ({ id }) => {
         if (!store.questionResponses[id]) {
           store.questionResponses[id] = {
@@ -182,8 +173,8 @@ function StudentInstance() {
 
       store.nextActivityUrl = await getNextActivityUrl(store.assignation);
       store.hasNextActivity =
-        store.assignation?.instance?.relatedAssignableInstances?.after?.length >
-          0 && store.nextActivityUrl;
+        store.assignation?.instance?.relatedAssignableInstances?.after?.length > 0 &&
+        store.nextActivityUrl;
       store.timestamps = timestamps;
       store.config = getConfigByInstance(store.instance);
       store.questionsInfo = calculeInfoValues(
@@ -250,7 +241,9 @@ function StudentInstance() {
   });
 
   React.useEffect(() => {
-    if (params?.id && translations && store.idLoaded !== params?.id) init();
+    if (params?.id && translations && store.idLoaded !== params?.id) {
+      init();
+    }
   }, [params, translations]);
 
   const verticalStepperProps = React.useMemo(() => {
@@ -270,11 +263,7 @@ function StudentInstance() {
       const steps = [];
 
       const curriculumValues = getIfCurriculumSubjectsHaveValues(
-        intersectionBy(
-          store.instance.assignable.subjects,
-          store.instance.subjects,
-          "subject"
-        )
+        intersectionBy(store.instance.assignable.subjects, store.instance.subjects, "subject")
       );
       /*
       if (
@@ -325,8 +314,7 @@ function StudentInstance() {
 
   React.useEffect(() => {
     if (verticalStepperProps.data) {
-      store.isFirstStep =
-        !verticalStepperProps.data[store.currentStep].isQuestion;
+      store.isFirstStep = !verticalStepperProps.data[store.currentStep].isQuestion;
       render();
     }
   }, [store.currentStep, verticalStepperProps]);
@@ -336,24 +324,19 @@ function StudentInstance() {
   }
 
   const goToOnGoing = () => {
-    history.push("/private/assignables/ongoing");
+    navigate("/private/assignables/ongoing");
   };
 
   const goToModuleDashboard = () => {
-    history.push(store.moduleDashboardUrl);
+    navigate(store.moduleDashboardUrl);
   };
 
   const goToResults = (e, openInNewTab = false, fromTimeout = false) => {
-    if (openInNewTab)
-      window.open(
-        `/private/tests/result/${params?.id}/${getUserId()}${fromTimeout ? "?fromTimeout" : ""}`,
-        "_blank",
-        "noopener"
-      );
-    else
-      history.push(
-        `/private/tests/result/${params?.id}/${getUserId()}${fromTimeout ? "?fromTimeout" : ""}`
-      );
+    if (openInNewTab) {
+      window.open(`/private/tests/result/${params.id}/${getUserId()}`, "_blank");
+    } else {
+      navigate(`/private/tests/result/${params.id}/${getUserId()}`);
+    }
   };
 
   return (
@@ -384,26 +367,20 @@ function StudentInstance() {
         >
           {isUnavailable ? (
             <Stack fullHeight>
-              <ActivityUnavailable
-                instance={store.instance}
-                user={getUserId()}
-              />
+              <ActivityUnavailable instance={store.instance} user={getUserId()} />
             </Stack>
           ) : null}
           {!isUnavailable && verticalStepperProps.data[store.currentStep]
-            ? React.cloneElement(
-                verticalStepperProps.data[store.currentStep].component,
-                {
-                  isFirstStep: !store.currentStep,
-                }
-              )
+            ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
+                isFirstStep: !store.currentStep,
+              })
             : null}
         </VerticalStepperContainer>
       </TotalLayoutContainer>
       <Modal
         title={t("finishTestModalTitle")}
         opened={store.showFinishModal}
-        onClose={() => {}}
+        onClose={noop}
         centerTitle
         centered
         withCloseButton={false}
@@ -482,7 +459,7 @@ function StudentInstance() {
               onClick={() => {
                 store.showForceFinishModal = false;
                 render();
-                history.push(`/private/assignables/ongoing`);
+                navigate(`/private/assignables/ongoing`);
               }}
             >
               {t("activitiesInCourse")}
@@ -491,9 +468,7 @@ function StudentInstance() {
               onClick={() => {
                 store.showForceFinishModal = false;
                 render();
-                history.push(
-                  `/private/tests/result/${params.id}/${getUserId()}`
-                );
+                navigate(`/private/tests/result/${params.id}/${getUserId()}`);
               }}
             >
               {t("reviewResults")}

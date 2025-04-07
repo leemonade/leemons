@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useMemo } from "react";
-import { useParams, useHistory } from "react-router-dom";
-import { Loader, Text } from "@bubbles-ui/components";
 import { useIsTeacher } from "@academic-portfolio/hooks";
-import useInstances from "@assignables/requests/hooks/queries/useInstances";
 import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
+import { Loader, Text } from "@bubbles-ui/components";
+import { useEffect, useMemo, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Correction from "../../../components/Correction";
 import StudentCorrection from "../../../components/StudentCorrection";
 
 export default function CorrectionPage() {
   const isTeacher = useIsTeacher();
   const isFirstUser = useRef(true);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { instance: instanceId } = useParams();
   let { student } = useParams();
 
@@ -18,11 +18,7 @@ export default function CorrectionPage() {
     student = null;
   }
 
-  const {
-    data: instance,
-    error,
-    isLoading: loading,
-  } = useInstances({ id: instanceId });
+  const { data: instance, error, isLoading: loading } = useInstances({ id: instanceId });
 
   const { data: assignation } = useAssignations({
     query: { instance: instanceId, user: student },
@@ -42,7 +38,7 @@ export default function CorrectionPage() {
     if (instance && isFirstUser.current && !student) {
       const studentToUse = instance?.students?.[0]?.user;
       if (studentToUse) {
-        history.push(`/private/tasks/correction/${instanceId}/${studentToUse}`);
+        navigate(`/private/tasks/correction/${instanceId}/${studentToUse}`);
       }
     }
   }, [instance]);
@@ -54,7 +50,7 @@ export default function CorrectionPage() {
   }, [assignation]);
 
   const onStudentChange = (user) => {
-    history.push(`/private/tasks/correction/${instanceId}/${user}`);
+    navigate(`/private/tasks/correction/${instanceId}/${user}`);
   };
 
   useEffect(() => {
@@ -74,13 +70,7 @@ export default function CorrectionPage() {
     if (!assignation) {
       return null;
     }
-    return (
-      <Correction
-        assignation={fullAssignation}
-        instance={instance}
-        loading={loading}
-      />
-    );
+    return <Correction assignation={fullAssignation} instance={instance} loading={loading} />;
   }
   return <StudentCorrection assignation={fullAssignation} />;
 }

@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  PageHeader,
-  createStyles,
-  TabPanel,
-  Tabs,
-} from "@bubbles-ui/components";
-import { useHistory } from "react-router-dom";
-import { useStore, useQuery } from "@common";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
-import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import { Box, PageHeader, TabPanel, Tabs, createStyles } from "@bubbles-ui/components";
+import { useQuery, useStore } from "@common";
 import AssetList from "@leebrary/components/AssetList";
 import { prepareAsset } from "@leebrary/helpers/prepareAsset";
-import { prefixPN } from "@scorm/helpers";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { DocumentIcon } from "@scorm/components/icons";
+import { prefixPN } from "@scorm/helpers";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
@@ -32,7 +26,7 @@ export default function List() {
   const [currentAsset, setCurrentAsset] = useState(null);
   const { fromDraft } = useQuery();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -47,9 +41,7 @@ export default function List() {
   // INIT DATA LOADING
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
-      "scorm.creator",
-    ]);
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(["scorm.creator"]);
     if (permissions[0]) {
       store.canAdd =
         permissions[0].actionNames.includes("create") ||
@@ -66,7 +58,7 @@ export default function List() {
   // METHODS
 
   function goCreatePage() {
-    history.push("/private/scorm/new");
+    navigate("/private/scorm/new");
   }
 
   function goDetailPage(asset) {

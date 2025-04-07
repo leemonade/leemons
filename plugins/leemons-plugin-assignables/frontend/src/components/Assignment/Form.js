@@ -1,14 +1,14 @@
 import React, { useMemo, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   Box,
   ImageLoader,
+  LoadingOverlay,
+  Stack,
   TotalLayoutContainer,
   TotalLayoutHeader,
   VerticalStepperContainer,
-  Stack,
-  LoadingOverlay,
 } from "@bubbles-ui/components";
 import { unflatten } from "@common";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
@@ -41,16 +41,14 @@ export function useFormLocalizations() {
 export default function FormWithLayout({ assignable, children, ...props }) {
   const roleIcon = assignable?.roleDetails?.icon;
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const scrollRef = useRef();
 
   /*
     === Localizations ===
   */
   const localizations = useFormLocalizations();
-  const roleLocalizations = useRolesLocalizations([
-    assignable?.roleDetails?.name,
-  ]);
+  const roleLocalizations = useRolesLocalizations([assignable?.roleDetails?.name]);
 
   /*
     === Handle steps ===
@@ -96,17 +94,14 @@ export default function FormWithLayout({ assignable, children, ...props }) {
     }
   };
 
-  const StepComponent = React.cloneElement(
-    steps[currentStep]?.component || formComponent,
-    {
-      onNextStep,
-      onPrevStep,
-      scrollRef,
+  const StepComponent = React.cloneElement(steps[currentStep]?.component || formComponent, {
+    onNextStep,
+    onPrevStep,
+    scrollRef,
 
-      hasNextStep: currentStep + 1 < steps.length,
-      hasPrevStep: currentStep - 1 >= 0,
-    }
-  );
+    hasNextStep: currentStep + 1 < steps.length,
+    hasPrevStep: currentStep - 1 >= 0,
+  });
 
   /*
     === Render ===
@@ -122,7 +117,7 @@ export default function FormWithLayout({ assignable, children, ...props }) {
       Header={
         <TotalLayoutHeader
           cancelable
-          onCancel={history.goBack}
+          onCancel={navigate(-1)}
           title={`${localizations?.steps?.action} ${
             roleLocalizations[assignable?.roleDetails?.name]?.singular
           }`}
@@ -144,11 +139,7 @@ export default function FormWithLayout({ assignable, children, ...props }) {
           {StepComponent}
         </Stack>
       ) : (
-        <VerticalStepperContainer
-          scrollRef={scrollRef}
-          data={steps}
-          currentStep={currentStep}
-        >
+        <VerticalStepperContainer scrollRef={scrollRef} data={steps} currentStep={currentStep}>
           {StepComponent}
         </VerticalStepperContainer>
       )}

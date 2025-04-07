@@ -1,33 +1,33 @@
-import React, { useRef } from "react";
 import {
   ActionButton,
   ActivityAccordion,
   ActivityAccordionPanel,
+  AssetFeedbackIcon,
   Badge,
   Box,
   Button,
   ContextContainer,
-  createStyles,
   ImageLoader,
   PageContainer,
   Stack,
   Table,
   TotalLayoutContainer,
-  TotalLayoutStepContainer,
   TotalLayoutHeader,
-  AssetFeedbackIcon,
+  TotalLayoutStepContainer,
+  createStyles,
 } from "@bubbles-ui/components";
+import { ChevronRightIcon, EditIcon } from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import { getQuestionForTable } from "@feedback/helpers/getQuestionForTable";
+import prefixPN from "@feedback/helpers/prefixPN";
+import QuestionsCard from "@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard";
+import { getFeedbackRequest } from "@feedback/request";
+import { addErrorAlert } from "@layout/alert";
 // TODO: fix this import from @common plugin
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "@feedback/helpers/prefixPN";
-import { getQuestionForTable } from "@feedback/helpers/getQuestionForTable";
-import { useStore } from "@common";
-import { useHistory, useParams } from "react-router-dom";
-import { addErrorAlert } from "@layout/alert";
-import { ChevronRightIcon, EditIcon } from "@bubbles-ui/icons/outline";
-import { getFeedbackRequest } from "@feedback/request";
 import { map } from "lodash";
-import QuestionsCard from "@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard";
+import React, { useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const PreviewPageStyles = createStyles((theme, { viewMode }) => ({
   firstTableHeader: {
@@ -69,7 +69,7 @@ export default function Preview() {
     statusAccordion: { 0: true },
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   const tableHeaders = [
@@ -185,11 +185,11 @@ export default function Preview() {
   }
 
   function goAssignPage() {
-    history.push(`/private/feedback/assign/${store.feedback.id}`);
+    navigate(`/private/feedback/assign/${store.feedback.id}`);
   }
 
   function goEditPage() {
-    history.push(`/private/feedback/${store.feedback.id}`);
+    navigate(`/private/feedback/${store.feedback.id}`);
   }
 
   function toggleQuestionMode() {
@@ -198,13 +198,9 @@ export default function Preview() {
   }
 
   React.useEffect(() => {
-    if (
-      params?.id &&
-      (!store.currentId || store.currentId !== params.id) &&
-      t1V &&
-      t2V
-    )
+    if (params?.id && (!store.currentId || store.currentId !== params.id) && t1V && t2V) {
       init();
+    }
   }, [params, t1V, t2V]);
 
   const editQuestion = () => {
@@ -321,20 +317,14 @@ export default function Preview() {
                           </Box>
                           <Table
                             columns={tableHeaders}
-                            data={map(
-                              store.feedback?.questions,
-                              (question) => ({
-                                ...getQuestionForTable(question, tD),
-                                actions: (
-                                  <Stack justifyContent="end" fullWidth>
-                                    <ActionButton
-                                      icon={<EditIcon />}
-                                      onClick={editQuestion}
-                                    />
-                                  </Stack>
-                                ),
-                              })
-                            )}
+                            data={map(store.feedback?.questions, (question) => ({
+                              ...getQuestionForTable(question, tD),
+                              actions: (
+                                <Stack justifyContent="end" fullWidth>
+                                  <ActionButton icon={<EditIcon />} onClick={editQuestion} />
+                                </Stack>
+                              ),
+                            }))}
                           />
                         </>
                       )}

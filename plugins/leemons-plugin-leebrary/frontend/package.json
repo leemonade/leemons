@@ -29,7 +29,7 @@
     "react-hook-form": "^7.46.1",
     "react-pdf": "7.7.3",
     "react-player": "^2.9.0",
-    "react-router-dom": "^5.3.3",
+    "react-router-dom": "6.30.0",
     "wavesurfer-react": "^3.0.2",
     "wavesurfer.js": "^7.7.11",
     "zod": "^3.22.4"

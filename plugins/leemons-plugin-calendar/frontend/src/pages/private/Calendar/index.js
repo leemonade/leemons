@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 
 import CalendarKey from "@academic-calendar/components/CalendarKey";
@@ -24,10 +24,7 @@ import hooks from "@leemons/hooks";
 import loadable from "@loadable/component";
 import tKeys from "@multilanguage/helpers/tKeys";
 import tLoader from "@multilanguage/helpers/tLoader";
-import {
-  getLocalizations,
-  getLocalizationsByArrayOfItems,
-} from "@multilanguage/useTranslate";
+import { getLocalizations, getLocalizationsByArrayOfItems } from "@multilanguage/useTranslate";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { PackageManagerService } from "@package-manager/services";
 import { currentProfileIsAdmin, getCentersWithToken } from "@users/session";
@@ -42,23 +39,17 @@ import { useCalendarEventModal } from "@calendar/components/calendar-event-modal
 import getClassScheduleAsEvents from "@calendar/helpers/getClassScheduleAsEvents";
 import prefixPN from "@calendar/helpers/prefixPN";
 import transformDBEventsToFullCalendarEvents from "@calendar/helpers/transformDBEventsToFullCalendarEvents";
-import {
-  getCalendarsToFrontendRequest,
-  getScheduleToFrontendRequest,
-} from "@calendar/request";
+import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from "@calendar/request";
 
 function academicCalendarImport(component) {
-  return loadable(
-    () =>
-      import(
-        /* webpackInclude: /(academic-calendar.+)\.js/ */ `@academic-calendar/${component}.js`
-      )
+  return loadable(() =>
+    import(/* webpackInclude: /(academic-calendar.+)\.js/ */ `@academic-calendar/${component}.js`)
   );
 }
 
 function Calendar({ session }) {
   const locale = useLocale();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [store, render] = useStore({
     processCalendarConfigForBigCalendar: () => ({ events: [] }),
     loading: true,
@@ -75,8 +66,7 @@ function Calendar({ session }) {
   const [t] = useTranslateLoader(prefixPN("calendar"));
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const [toggleEventModal, EventModal, { openModal: openEventModal }] =
-    useCalendarEventModal();
+  const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
   let AcademicCalendar = null;
   if (store.academicCalendarInstalled) {
@@ -84,13 +74,11 @@ function Calendar({ session }) {
   }
 
   async function getCalendarsForCenter(center) {
-    const [
-      { calendars, events, userCalendar, ownerCalendars, calendarConfig },
-      schedule,
-    ] = await Promise.all([
-      getCalendarsToFrontendRequest(center.token, { showHiddenColumns: true }),
-      getScheduleToFrontendRequest(center.token),
-    ]);
+    const [{ calendars, events, userCalendar, ownerCalendars, calendarConfig }, schedule] =
+      await Promise.all([
+        getCalendarsToFrontendRequest(center.token, { showHiddenColumns: true }),
+        getScheduleToFrontendRequest(center.token),
+      ]);
 
     if (!_.isObject(store.scheduleCenter)) {
       store.scheduleCenter = {};
@@ -136,14 +124,11 @@ function Calendar({ session }) {
     const calendarData = store.scheduleCenter[data.center];
 
     if (calendarData.config && calendarData.allCourses.length) {
-      const calendarEvents = store.processCalendarConfigForBigCalendar(
-        calendarData.config,
-        {
-          course: map(calendarData.allCourses, "id"),
-          locale,
-          forCalendar: true,
-        }
-      );
+      const calendarEvents = store.processCalendarConfigForBigCalendar(calendarData.config, {
+        course: map(calendarData.allCourses, "id"),
+        locale,
+        forCalendar: true,
+      });
       processEvents = calendarEvents.events;
     }
     _.forEach(data.events, (event) => {
@@ -154,11 +139,7 @@ function Calendar({ session }) {
       }
 
       if (canShowInCalendar) {
-        if (
-          event.type === "calendar.task" &&
-          event.data &&
-          event.data.classes?.length
-        ) {
+        if (event.type === "calendar.task" && event.data && event.data.classes?.length) {
           // eslint-disable-next-line consistent-return
           _.forEach(event.data.classes, (calendar) => {
             if (calendarsByKey[calendar]?.showEvents) {
@@ -204,36 +185,27 @@ function Calendar({ session }) {
         map(store.centers, (center) => getCalendarsForCenter(center))
       );
 
-      store.academicCalendarInstalled =
-        await PackageManagerService.isPluginInstalled(
-          "leemons-plugin-academic-calendar"
-        );
+      store.academicCalendarInstalled = await PackageManagerService.isPluginInstalled(
+        "leemons-plugin-academic-calendar"
+      );
 
       if (store.academicCalendarInstalled) {
-        const impor = academicCalendarImport(
-          "helpers/useProcessCalendarConfigForBigCalendar"
-        );
+        const impor = academicCalendarImport("helpers/useProcessCalendarConfigForBigCalendar");
         const translations = await getLocalizations({
           keysStartsWith: prefixPN("transformEvent"),
         });
         const trans = tLoader(prefixPN("transformEvent"), translations);
-        [store.processCalendarConfigForBigCalendar] = (
-          await impor.load()
-        ).default(trans);
+        [store.processCalendarConfigForBigCalendar] = (await impor.load()).default(trans);
       }
 
-      store.calendarNamesTranslations =
-        await getTranslationDataCalendars(centersData);
-      store.calendarSectionNamesTranslations =
-        await getTranslationSections(centersData);
+      store.calendarNamesTranslations = await getTranslationDataCalendars(centersData);
+      store.calendarSectionNamesTranslations = await getTranslationSections(centersData);
 
       forEach(centersData, (data) => {
         forEach(data.calendars, (calendar) => {
           const calendarClassId = calendar.key.replace("calendar.class.", "");
           const { allClasses } = store.scheduleCenter[store.center.id];
-          const matchingClass = allClasses?.find(
-            (classe) => classe.id === calendarClassId
-          );
+          const matchingClass = allClasses?.find((classe) => classe.id === calendarClassId);
 
           const classIcon = matchingClass?.subject?.icon?.cover?.uri || "";
           const subjectIcon = prepareAsset(matchingClass?.subject?.icon)?.cover;
@@ -251,13 +223,10 @@ function Calendar({ session }) {
           );
         });
         // eslint-disable-next-line no-param-reassign
-        data.classCalendars = _.map(
-          _.filter(data.calendars, { isClass: true }),
-          (calendar) => ({
-            label: calendar.name,
-            value: calendar.id,
-          })
-        );
+        data.classCalendars = _.map(_.filter(data.calendars, { isClass: true }), (calendar) => ({
+          label: calendar.name,
+          value: calendar.id,
+        }));
       });
 
       // Eventos
@@ -275,10 +244,7 @@ function Calendar({ session }) {
         _.forIn(calendarsBySection, (calendars, sectionName) => {
           calendarSections.push({
             calendars: _.orderBy(calendars, ["metadata.internalId"], ["asc"]),
-            sectionName: getSectionName(
-              sectionName,
-              store.calendarSectionNamesTranslations
-            ),
+            sectionName: getSectionName(sectionName, store.calendarSectionNamesTranslations),
           });
         });
         centersDataValues[data.center].sections = calendarSections;
@@ -302,10 +268,7 @@ function Calendar({ session }) {
       });
     }
     store.schedule.showCourseSelect = true;
-    if (
-      schedule.courses?.length === 1 ||
-      schedule.config?.allCoursesHaveSameConfig
-    ) {
+    if (schedule.courses?.length === 1 || schedule.config?.allCoursesHaveSameConfig) {
       store.schedule.showCourseSelect = false;
     }
     store.schedule.courseData = _.map(schedule.courses, (course) => ({
@@ -316,9 +279,7 @@ function Calendar({ session }) {
     const classes = _.filter(schedule.classes, (classe) => {
       if (store.schedule.selectedCourse) {
         if (_.isArray(classe)) {
-          return _.map(classe.courses, "id").includes(
-            store.schedule.selectedCourse.id
-          );
+          return _.map(classe.courses, "id").includes(store.schedule.selectedCourse.id);
         }
         return classe.courses.id === store.schedule.selectedCourse.id;
       }
@@ -343,19 +304,13 @@ function Calendar({ session }) {
           bgColor: classe.color,
           borderColor: classe.color,
           fullName: `${classe.subject.name}${
-            classe.groups?.abbreviation
-              ? ` (${classe.groups.abbreviation})`
-              : ""
+            classe.groups?.abbreviation ? ` (${classe.groups.abbreviation})` : ""
           }`,
           name: `${classe.subject.name}${
-            classe.groups?.abbreviation
-              ? ` (${classe.groups.abbreviation})`
-              : ""
+            classe.groups?.abbreviation ? ` (${classe.groups.abbreviation})` : ""
           }`,
           showEvents: true,
-          icon: classe.subject.icon
-            ? getAssetUrl(classe.subject.icon.id)
-            : null,
+          icon: classe.subject.icon ? getAssetUrl(classe.subject.icon.id) : null,
         })),
       },
     ];
@@ -368,9 +323,7 @@ function Calendar({ session }) {
   }
 
   async function reloadCalendar() {
-    store.centersDataById[store.center.id].data = await getCalendarsForCenter(
-      store.center
-    );
+    store.centersDataById[store.center.id].data = await getCalendarsForCenter(store.center);
     store.centersDataById[store.center.id].events = getFilteredEvents(
       store.centersDataById[store.center.id].data
     );
@@ -385,7 +338,9 @@ function Calendar({ session }) {
   });
 
   useEffect(() => {
-    if (session && !evLoading) init();
+    if (session && !evLoading) {
+      init();
+    }
   }, [session, evLoading]);
 
   function onEventClick(info) {
@@ -426,15 +381,12 @@ function Calendar({ session }) {
           : `${classe.program.name}`,
         subject: {
           name: classe.subject.name,
-          icon: classe.subject.icon?.cover
-            ? getAssetUrl(classe.subject.icon.id)
-            : null,
+          icon: classe.subject.icon?.cover ? getAssetUrl(classe.subject.icon.id) : null,
         },
         teacher: {
           image: mainTeacher.user.avatar,
           name: mainTeacher.user.name,
-          surnames:
-            mainTeacher.user.surnames + (mainTeacher.user.secondSurname || ""),
+          surnames: mainTeacher.user.surnames + (mainTeacher.user.secondSurname || ""),
         },
         classroom: classe.virtualUrl,
         location: classe.address,
@@ -450,23 +402,17 @@ function Calendar({ session }) {
       if (data && data.calendarConfig) {
         config.firstDay = data.calendarConfig.weekday;
         config.validRange = {
-          start: new Date(
-            data.calendarConfig.startYear,
-            data.calendarConfig.startMonth,
-            1
-          ),
-          end: new Date(
-            data.calendarConfig.endYear,
-            data.calendarConfig.endMonth + 1,
-            0
-          ),
+          start: new Date(data.calendarConfig.startYear, data.calendarConfig.startMonth, 1),
+          end: new Date(data.calendarConfig.endYear, data.calendarConfig.endMonth + 1, 0),
         };
       }
     }
     return config;
   }, [store.center, store.loading]);
 
-  if (store.loading) return <LoadingOverlay visible />;
+  if (store.loading) {
+    return <LoadingOverlay visible />;
+  }
 
   return (
     <Box style={{ display: "flex", width: "100%", height: "100%" }}>
@@ -516,8 +462,8 @@ function Calendar({ session }) {
             store.activePage === "program"
               ? []
               : store.activePage === "schedule"
-                ? store.schedule.sections
-                : store.centersDataById[store.center.id].sections
+              ? store.schedule.sections
+              : store.centersDataById[store.center.id].sections
           }
           onChange={(event) => {
             if (store.activePage === "schedule") {
@@ -563,9 +509,7 @@ function Calendar({ session }) {
             centerToken={store.center.token}
             event={selectedEvent}
             close={toggleEventModal}
-            classCalendars={
-              store.centersDataById[store.center.id].data.classCalendars
-            }
+            classCalendars={store.centersDataById[store.center.id].data.classCalendars}
           />
         ) : null}
         {!store.activePage || store.activePage === "calendar" ? (
@@ -633,9 +577,7 @@ function Calendar({ session }) {
                 render();
               }}
               onControl={() => {
-                history.push(
-                  `/private/dashboard/class/${store.activeSchedule.id}`
-                );
+                navigate(`/private/dashboard/class/${store.activeSchedule.id}`);
               }}
             />
 
@@ -656,9 +598,7 @@ function Calendar({ session }) {
                         value={store.schedule.selectedCourse?.id}
                         data={store.schedule.courseData}
                         onChange={(e) => {
-                          store.scheduleCenter[
-                            store.center.id
-                          ].selectedCourseId = e;
+                          store.scheduleCenter[store.center.id].selectedCourseId = e;
                           getScheduleConfig();
                           render();
                         }}
@@ -711,24 +651,20 @@ function Calendar({ session }) {
                   <Box>
                     <Text color="primary" size="xl">
                       {t("programCalendar")}
-                      {store.scheduleCenter[store.center.id].config.program
-                        .abbreviation ?? ""}
+                      {store.scheduleCenter[store.center.id].config.program.abbreviation ?? ""}
                     </Text>
                   </Box>
                   <Stack spacing={8}>
                     {store.schedule.courseData.length > 1 ? (
                       <Stack alignItems="center">
-                        <Box
-                          sx={(theme) => ({ paddingRight: theme.spacing[2] })}
-                        >
+                        <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
                           <Text color="primary">{t("course")}</Text>
                         </Box>
                         <Box sx={() => ({ width: 80 })}>
                           <Select
                             value={
                               store.academicCalendarCourse ||
-                              store.scheduleCenter[store.center.id]
-                                ?.allCourses[0]?.id
+                              store.scheduleCenter[store.center.id]?.allCourses[0]?.id
                             }
                             data={store.schedule.courseData}
                             onChange={(e) => {
@@ -766,9 +702,7 @@ function Calendar({ session }) {
                   store.scheduleCenter[store.center.id]?.allCourses[0]?.id
                 }
                 t={t}
-                programName={
-                  store.scheduleCenter[store.center.id].config.program.name
-                }
+                programName={store.scheduleCenter[store.center.id].config.program.name}
                 ref={calendarRef}
                 useAcademicCalendar
               />

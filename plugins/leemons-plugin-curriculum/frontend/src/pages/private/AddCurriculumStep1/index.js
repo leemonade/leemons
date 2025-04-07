@@ -1,9 +1,3 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { forEach, map } from "lodash";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "@curriculum/helpers/prefixPN";
-import { FolderIcon } from "@bubbles-ui/icons/outline";
 import {
   Box,
   Button,
@@ -14,8 +8,14 @@ import {
   Tree,
   useTree,
 } from "@bubbles-ui/components";
-import { useHistory } from "react-router-dom";
+import { FolderIcon } from "@bubbles-ui/icons/outline";
 import { useStore } from "@common";
+import prefixPN from "@curriculum/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { forEach, map } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { addNodeLevelsRequest } from "../../../request";
 
 function AddCurriculumStep1({ curriculum, onNext }) {
@@ -30,7 +30,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
   });
 
   const tree = useTree();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   function onCheckboxChange(event, nodeLevel, levelOrder) {
     if (event) {

@@ -1,15 +1,15 @@
-import React, { useMemo, useState } from "react";
-import PropTypes from "prop-types";
 import Form from "@assignables/components/Assignment/Form";
-import useAsset from "@leebrary/request/hooks/queries/useAsset";
-import { LoadingOverlay } from "@bubbles-ui/components";
 import useRole from "@assignables/requests/hooks/queries/useRole";
-import { omit } from "lodash";
-import { assignAssetRequest } from "@leebrary/request";
+import { LoadingOverlay } from "@bubbles-ui/components";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import prefixPN from "@leebrary/helpers/prefixPN";
-import { useHistory } from "react-router-dom";
+import { assignAssetRequest } from "@leebrary/request";
+import useAsset from "@leebrary/request/hooks/queries/useAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { omit } from "lodash";
+import PropTypes from "prop-types";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function useAssetAsAssignable({ id }) {
   const { data: asset, isLoading: isLoadingAsset } = useAsset({
@@ -39,7 +39,7 @@ function AssignAsset({ id }) {
   const [t] = useTranslateLoader(prefixPN("assignAsset"));
   const { data: assignable, isLoading } = useAssetAsAssignable({ id });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const isImage = assignable?.asset?.file?.type?.startsWith("image/");
 
@@ -53,10 +53,7 @@ function AssignAsset({ id }) {
           asset: {
             name: raw?.title ?? assignable.asset.name,
             color: assignable?.asset?.color,
-            cover:
-              raw?.thumbnail !== undefined
-                ? raw.thumbnail
-                : assignable.asset.cover?.id,
+            cover: raw?.thumbnail !== undefined ? raw.thumbnail : assignable.asset.cover?.id,
           },
           metadata: {
             leebrary: {
@@ -68,7 +65,7 @@ function AssignAsset({ id }) {
       });
 
       addSuccessAlert(t("successAlert"));
-      history.push("/private/assignables/ongoing");
+      navigate("/private/assignables/ongoing");
     } catch (e) {
       addErrorAlert(t("errorAlert"), e.message);
     } finally {

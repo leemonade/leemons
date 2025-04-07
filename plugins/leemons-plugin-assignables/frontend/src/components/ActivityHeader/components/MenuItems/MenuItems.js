@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import { Menu, Box, Text } from "@bubbles-ui/components";
+import { Box, Menu, Text } from "@bubbles-ui/components";
 import { DeleteBinIcon, RemoveCircleIcon } from "@bubbles-ui/icons/outline";
-import { SettingMenuVerticalIcon, ArchiveIcon } from "@bubbles-ui/icons/solid";
+import { ArchiveIcon, SettingMenuVerticalIcon } from "@bubbles-ui/icons/solid";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import { useLayout } from "@layout/context";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
@@ -58,9 +58,7 @@ function onCloseTask({
           });
           addSuccessAlert(t("closeActionAlerts.success"));
         } catch (e) {
-          addErrorAlert(
-            t("closeActionAlerts.error").replace("{{error}}", e.message)
-          );
+          addErrorAlert(t("closeActionAlerts.error").replace("{{error}}", e.message));
         }
       },
     })();
@@ -78,9 +76,7 @@ function archiveTask({ mutateAsyncAssignableInstance, instance, t }) {
       await mutateAsyncAssignableInstance({ id: instance.id, dates: newDates });
       addSuccessAlert(t("archiveActionAlerts.success"));
     } catch (e) {
-      addErrorAlert(
-        t("archiveActionAlerts.error").replace("{{error}}", e.message)
-      );
+      addErrorAlert(t("archiveActionAlerts.error").replace("{{error}}", e.message));
     }
   };
 }
@@ -98,8 +94,7 @@ function onArchiveTask({
       if (
         instance.students.some(
           (student) =>
-            student.grades.filter((grade) => grade.type === "main").length <
-            subjects?.length
+            student.grades.filter((grade) => grade.type === "main").length < subjects?.length
         )
       ) {
         setArchived(true);
@@ -134,13 +129,7 @@ function onArchiveTask({
   };
 }
 
-function onDeleteActivity({
-  instance,
-  t,
-  openConfirmationModal,
-  mutateAsync,
-  onSuccess,
-}) {
+function onDeleteActivity({ instance, t, openConfirmationModal, mutateAsync, onSuccess }) {
   return async () => {
     return openConfirmationModal({
       title: t("deleteModal.title"),
@@ -166,9 +155,7 @@ function onDeleteActivity({
           addSuccessAlert(t("deleteAction.success"));
           onSuccess();
         } catch (e) {
-          addErrorAlert(
-            t("deleteAction.error").replace("{{error}}", e.message)
-          );
+          addErrorAlert(t("deleteAction.error").replace("{{error}}", e.message));
         }
       },
     })();
@@ -182,17 +169,14 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
   const { classes } = MenuItemsStyles({ showMenu }, { name: "MenuItems" });
   const [t] = useTranslateLoader(prefixPN("activity_dashboard"));
   const { mutateAsync } = useDeleteInstanceMutation();
-  const { mutateAsync: mutateAsyncAssignableInstance } =
-    useMutateAssignableInstance();
+  const { mutateAsync: mutateAsyncAssignableInstance } = useMutateAssignableInstance();
   const { openConfirmationModal } = useLayout();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const alwaysAvailable = !!instance?.alwaysAvailable;
   const { deadline, closed, archived: archivedDate } = instance?.dates ?? {};
   const now = dayjs();
-  const deadlinePassed = alwaysAvailable
-    ? false
-    : deadline && now.isAfter(deadline);
+  const deadlinePassed = alwaysAvailable ? false : deadline && now.isAfter(deadline);
 
   useEffect(() => {
     setArchived(!!archivedDate);
@@ -265,7 +249,7 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
         t,
         openConfirmationModal,
         mutateAsync,
-        onSuccess: () => history.push("/private/assignables/ongoing"),
+        onSuccess: () => navigate("/private/assignables/ongoing"),
       }),
       className: classes.menuItem,
     },
@@ -282,16 +266,8 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
         withinPortal={true}
         offset={4}
         control={
-          <Box
-            as="button"
-            className={classes.ellipsisBox}
-            onClick={preventPropagation}
-          >
-            <SettingMenuVerticalIcon
-              width={16}
-              height={16}
-              className={classes.menuIcon}
-            />
+          <Box as="button" className={classes.ellipsisBox} onClick={preventPropagation}>
+            <SettingMenuVerticalIcon width={16} height={16} className={classes.menuIcon} />
           </Box>
         }
         items={menuItemsFiltered}

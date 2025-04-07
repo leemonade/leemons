@@ -1,6 +1,6 @@
-import { useEffect, useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   Alert,
@@ -27,13 +27,7 @@ import { useConfig } from "@emails/hooks/queries/useConfig";
 
 function HeaderIcon() {
   return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -46,7 +40,7 @@ function HeaderIcon() {
 
 export default function Preferences() {
   const [t] = useTranslateLoader(prefixPN("preferences"));
-  const history = useHistory();
+  const navigate = useNavigate();
   const scrollRef = useRef();
 
   // ----------------------------------------------------------------------
@@ -62,7 +56,9 @@ export default function Preferences() {
   const { mutate: saveConfig, isLoading: isSaving } = useSaveConfig();
 
   function setConfigValues(configs) {
-    if (!configs) return;
+    if (!configs) {
+      return;
+    }
 
     reset(configs);
   }
@@ -77,9 +73,7 @@ export default function Preferences() {
   }
 
   const widgets = useCallback(
-    ({ Component, key, properties }) => (
-      <Component {...properties} key={key} form={form} />
-    ),
+    ({ Component, key, properties }) => <Component {...properties} key={key} form={form} />,
     [form]
   );
 
@@ -90,7 +84,7 @@ export default function Preferences() {
         Header={
           <TotalLayoutHeader
             title={t("pageTitle")}
-            onCancel={() => history.goBack()}
+            onCancel={() => navigate(-1)}
             icon={<HeaderIcon />}
             mainActionLabel={t("cancel")}
           />
@@ -171,9 +165,7 @@ export default function Preferences() {
                           label={t("weekResumeEmail")}
                           help={t("weekResumeEmailDescription")}
                           helpPosition="bottom"
-                          checked={
-                            !isUndefined(field.value) && field.value !== false
-                          }
+                          checked={!isUndefined(field.value) && field.value !== false}
                           onChange={(e) => {
                             field.onChange(e ? 1 : false);
                           }}
@@ -209,11 +201,7 @@ export default function Preferences() {
                   />
                 </ContextContainer>
                 <ContextContainer title={t("advancedConfig")} level={1}>
-                  <Alert
-                    closeable={false}
-                    severity="warning"
-                    title={t("alertTitle")}
-                  >
+                  <Alert closeable={false} severity="warning" title={t("alertTitle")}>
                     {t("alertDescription")}
                   </Alert>
                   <Controller
@@ -227,9 +215,7 @@ export default function Preferences() {
                           label={t("newAssignationDaysEmail")}
                           help={t("newAssignationDaysEmailDescription")}
                           helpPosition="bottom"
-                          checked={
-                            !isUndefined(field.value) && field.value !== false
-                          }
+                          checked={!isUndefined(field.value) && field.value !== false}
                           onChange={(e) => {
                             field.onChange(e ? 10 : false);
                           }}
@@ -270,9 +256,7 @@ export default function Preferences() {
                           label={t("emailLastHour")}
                           help={t("emailLastHourDescription")}
                           helpPosition="bottom"
-                          checked={
-                            !isUndefined(field.value) && field.value !== false
-                          }
+                          checked={!isUndefined(field.value) && field.value !== false}
                           onChange={(e) => {
                             field.onChange(e ? 72 : false);
                           }}
@@ -304,9 +288,7 @@ export default function Preferences() {
                   />
                 </ContextContainer>
               </Box>
-              <ZoneWidgets zone={`${PLUGIN_NAME}.preferences`}>
-                {widgets}
-              </ZoneWidgets>
+              <ZoneWidgets zone={`${PLUGIN_NAME}.preferences`}>{widgets}</ZoneWidgets>
             </FormProvider>
           </TotalLayoutStepContainer>
         </Stack>

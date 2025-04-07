@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import hooks from "@leemons/hooks";
 import Cookies from "js-cookie";
@@ -21,11 +21,7 @@ const handleProfileAndCenter = async (profile, center, jwtToken) => {
   }
 
   if (center) {
-    const response = await getUserCenterProfileTokenRequest(
-      center.id,
-      profile.id,
-      jwtToken
-    );
+    const response = await getUserCenterProfileTokenRequest(center.id, profile.id, jwtToken);
     await hooks.fireEvent("user:change:profile", profile);
     return response.jwtToken;
   }
@@ -42,11 +38,7 @@ const handleNoProfileAndCenter = async (jwtToken) => {
     return { ...response.jwtToken, profile: profiles[0] };
   }
 
-  if (
-    centers.length === 1 &&
-    centers[0].profiles.length === 1 &&
-    profiles.length === 1
-  ) {
+  if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
     const response = await getUserCenterProfileTokenRequest(
       centers[0].id,
       centers[0].profiles[0].id,
@@ -77,7 +69,7 @@ async function getAdvancedToken(token) {
 }
 
 export default function useOnLoginSuccess() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return useCallback(
     async (token) => {
@@ -86,15 +78,15 @@ export default function useOnLoginSuccess() {
       window.sessionStorage.setItem("boardMessagesModalId", null);
 
       if (profile?.sysName === "super") {
-        return history.push("/private/admin/setup");
+        return navigate("/private/admin/setup");
       }
 
       const redirectUrl = isString(jwtToken)
         ? "/protected/users/select-profile"
         : "/private/dashboard";
 
-      history.push(redirectUrl);
+      navigate(redirectUrl);
     },
-    [history]
+    [navigate]
   );
 }

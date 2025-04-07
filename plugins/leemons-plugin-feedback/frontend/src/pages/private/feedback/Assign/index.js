@@ -1,16 +1,16 @@
-import React from "react";
-import { useHistory, useParams } from "react-router-dom";
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import Form from "@assignables/components/Assignment/Form";
-import { useStore } from "@common";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import Form from '@assignables/components/Assignment/Form';
+import { useStore } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
-import prefixPN from "@feedback/helpers/prefixPN";
-import { assignFeedbackRequest, getFeedbackRequest } from "@feedback/request";
+import prefixPN from '@feedback/helpers/prefixPN';
+import { assignFeedbackRequest, getFeedbackRequest } from '@feedback/request';
 
 export default function Assign() {
-  const [t] = useTranslateLoader(prefixPN("feedbackAssign"));
+  const [t] = useTranslateLoader(prefixPN('feedbackAssign'));
 
   const [store, render] = useStore({
     loading: false,
@@ -20,7 +20,7 @@ export default function Assign() {
     },
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   async function send({ value: taskInstanceData }) {
@@ -30,8 +30,8 @@ export default function Assign() {
     try {
       await assignFeedbackRequest(params.id, taskInstanceData);
 
-      addSuccessAlert(t("assignDone"));
-      history.push("/private/assignables/ongoing");
+      addSuccessAlert(t('assignDone'));
+      navigate('/private/assignables/ongoing');
     } catch (e) {
       addErrorAlert(e.message);
     }
@@ -55,12 +55,12 @@ export default function Assign() {
 
   return (
     <Form
-      action={t("assign")}
+      action={t('assign')}
       onSubmit={send}
       showMessageForStudents
       assignable={store.feedback}
       evaluationType="none"
-      evaluationTypes={["nonEvaluable"]}
+      evaluationTypes={['nonEvaluable']}
       showInstructions
       showReport
       loading={store.loading}

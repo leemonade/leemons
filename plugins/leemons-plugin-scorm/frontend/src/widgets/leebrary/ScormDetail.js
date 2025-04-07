@@ -1,20 +1,19 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
-// TODO: import from @library plugin maybe?
-import { LibraryDetail } from "@leebrary/components/LibraryDetail";
 import { ViewOnIcon } from "@bubbles-ui/icons/outline";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { useLayout } from "@layout/context";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+// TODO: import from @library plugin maybe?
+import { LibraryDetail } from "@leebrary/components/LibraryDetail";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { AssetMetadataScorm } from "@scorm/components/AssetMetadataScorm";
+import { CardVariantIcon } from "@scorm/components/icons";
 import { prefixPN } from "@scorm/helpers";
 import { deletePackageRequest, duplicatePackageRequest } from "@scorm/request";
-import { CardVariantIcon } from "@scorm/components/icons";
-import { AssetMetadataScorm } from "@scorm/components/AssetMetadataScorm";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 const ScormDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [t] = useTranslateLoader(prefixPN("scormCard"));
   const {
     openConfirmationModal,
@@ -58,11 +57,11 @@ const ScormDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
   }
 
   const handleView = () => {
-    history.push(`/private/scorm/preview/${asset.providerData.id}`);
+    navigate(`/private/scorm/preview/${asset.providerData.id}`);
   };
 
   const handleEdit = () => {
-    history.push(`/private/scorm/${asset.providerData.id}`);
+    navigate(`/private/scorm/${asset.providerData.id}`);
   };
 
   const handleOnPin = () => {
@@ -94,10 +93,7 @@ const ScormDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          await duplicatePackageRequest(
-            asset.providerData.id,
-            asset.providerData.published
-          );
+          await duplicatePackageRequest(asset.providerData.id, asset.providerData.published);
           addSuccessAlert(t("duplicated"));
           onRefresh();
         } catch (err) {
@@ -109,7 +105,7 @@ const ScormDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
   };
 
   const handleAssign = () => {
-    history.push(`/private/scorm/assign/${asset.providerData.id}`);
+    navigate(`/private/scorm/assign/${asset.providerData.id}`);
   };
 
   // ·········································································

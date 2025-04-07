@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useIsTeacher } from "@academic-portfolio/hooks";
 import { getProgramEvaluationSystemRequest } from "@academic-portfolio/request";
@@ -57,7 +57,7 @@ export default function Result() {
   });
 
   const nextActivityUrl = useNextActivityUrl(store.assignation);
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
   const searchParams = useSearchParams();
 
@@ -77,13 +77,16 @@ export default function Result() {
   }, [isTeacher, updateTimestamps, isModuleActivity]);
 
   function getUserId() {
-    if (params.user) return params.user;
+    if (params.user) {
+      return params.user;
+    }
+
     return null;
   }
 
   function onChangeUser(e) {
     if (e) {
-      history.push(`/private/tests/result/${params.id}/${e}`);
+      navigate(`/private/tests/result/${params.id}/${e}`);
     }
   }
 
@@ -96,24 +99,26 @@ export default function Result() {
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
 
-      const [
-        { evaluationSystem },
-        { questions },
-        { responses },
-        { timestamps },
-      ] = await Promise.all([
-        getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
-        getQuestionByIdsRequest(store.instance.metadata.questions, {
-          categories: true,
-        }),
-        getUserQuestionResponsesRequest(params.id, getUserId()),
-        setInstanceTimestampRequest(params.id, "open", getUserId()),
-      ]);
+      const [{ evaluationSystem }, { questions }, { responses }, { timestamps }] =
+        await Promise.all([
+          getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
+          getQuestionByIdsRequest(store.instance.metadata.questions, {
+            categories: true,
+          }),
+          getUserQuestionResponsesRequest(params.id, getUserId()),
+          setInstanceTimestampRequest(params.id, "open", getUserId()),
+        ]);
 
-      if (store.assignation.finished) store.viewMode = true;
+      if (store.assignation.finished) {
+        store.viewMode = true;
+      }
+
       store.questionResponses = responses;
       store.questionMax = Object.keys(responses).length - 1;
-      if (store.questionMax < 0) store.questionMax = 0;
+      if (store.questionMax < 0) {
+        store.questionMax = 0;
+      }
+
       forEach(questions, ({ id }) => {
         if (!store.questionResponses[id]) {
           store.questionResponses[id] = {
@@ -189,8 +194,7 @@ export default function Result() {
   }
 
   const userNote = parseFloat(
-    store.assignation?.grades[0]?.grade ||
-      store.evaluationSystem?.minScale.number
+    store.assignation?.grades[0]?.grade || store.evaluationSystem?.minScale.number
   );
 
   let scale = null;
@@ -276,7 +280,7 @@ export default function Result() {
                   <TimeoutAlert
                     onClose={() => {
                       searchParams.delete("fromTimeout");
-                      history.replace({ search: searchParams.toString() });
+                      navigate({ search: searchParams.toString() });
                     }}
                   />
                 )}
@@ -289,9 +293,7 @@ export default function Result() {
                     key={1}
                     itemValue={"evaluationAndFeedback"}
                     hideIcon={true}
-                    title={
-                      <Title order={3}>{t("evaluationAndFeedback")}</Title>
-                    }
+                    title={<Title order={3}>{t("evaluationAndFeedback")}</Title>}
                   >
                     <EvaluationAndFeedback
                       t={t}
@@ -310,9 +312,7 @@ export default function Result() {
                       itemValue={"responsesDetailTable"}
                       hideIcon={true}
                       title={
-                        <Title
-                          order={3}
-                        >{`${t("questions")} (${store.questions?.length})`}</Title>
+                        <Title order={3}>{`${t("questions")} (${store.questions?.length})`}</Title>
                       }
                       compact
                     >

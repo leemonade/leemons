@@ -1,40 +1,40 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { Controller, useForm } from "react-hook-form";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  Select,
-  TableInput,
-  TextInput,
-  Button,
-  ContextContainer,
-  TotalLayoutContainer,
-  TotalLayoutHeader,
-  TotalLayoutStepContainer,
-  LoadingOverlay,
-  Stack,
-  Box,
-  InputWrapper,
-} from "@bubbles-ui/components";
-import { AddCircleIcon } from "@bubbles-ui/icons/solid";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
-import { useUserCenters } from "@users/hooks";
+import SubjectTypesEmptyState from "@academic-portfolio/components/SubjectTypesEmptyState";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 import {
   useCreateKnowledgeArea,
   useDeleteKnowledgeArea,
   useUpdateKnowledgeArea,
 } from "@academic-portfolio/hooks/mutations/useMutateKnowledgeArea";
 import useKnowledgeAreas from "@academic-portfolio/hooks/useKnowledgeAreas";
+import {
+  Box,
+  Button,
+  ContextContainer,
+  InputWrapper,
+  LoadingOverlay,
+  Select,
+  Stack,
+  TableInput,
+  TextInput,
+  TotalLayoutContainer,
+  TotalLayoutHeader,
+  TotalLayoutStepContainer,
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "@academic-portfolio/helpers/prefixPN";
-import SubjectTypesEmptyState from "@academic-portfolio/components/SubjectTypesEmptyState";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUserCenters } from "@users/hooks";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const KnowledgeAreasPage = () => {
   const [t, , , tLoading] = useTranslateLoader(prefixPN("knowledgeAreas_page"));
   const [knowledgeAreas, setKnowledgeAreas] = useState([]);
   const [selectedCenter, setSelectedCenter] = useState("");
   const [showEmptyState, setShowEmptyState] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
   const { mutate: createKnowledgeArea, isLoading: isCreateLoading } =
@@ -136,7 +136,9 @@ const KnowledgeAreasPage = () => {
   // HANDLERS ---------------------------------------------------------------------------------------------- ||
 
   const onSubmit = async (data) => {
-    if (showEmptyState) setShowEmptyState(false);
+    if (showEmptyState) {
+      setShowEmptyState(false);
+    }
     const { name, abbreviation } = data;
     const center = selectedCenter;
 
@@ -204,7 +206,7 @@ const KnowledgeAreasPage = () => {
         Header={
           <TotalLayoutHeader
             title={t("header.title")}
-            onCancel={() => history.goBack()}
+            onCancel={() => navigate(-1)}
             mainActionLabel={t("header.cancel")}
           >
             <Select

@@ -1,40 +1,40 @@
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import loadable from "@loadable/component";
 import { goLoginPage } from "@users/navigate";
 import { useSession } from "@users/session";
 
-const EvaluationNotebookPage = loadable(
-  () => import("@scores/pages/EvaluationNotebookPage")
-);
+const EvaluationNotebookPage = loadable(() => import("@scores/pages/EvaluationNotebookPage"));
 const PeriodsPage = loadable(() => import("@scores/pages/PeriodsPage"));
 const WeightsPage = loadable(() => import("@scores/pages/WeightsPage"));
-const ReviewerPage = loadable(
-  () => import("@scores/pages/__DEPRECATED__/ReviewerPage")
-);
+const ReviewerPage = loadable(() => import("@scores/pages/__DEPRECATED__/ReviewerPage"));
 const MyScores = loadable(() => import("@scores/pages/MyScoresPage"));
 
 export default function Private() {
-  const { path } = useRouteMatch();
   useSession({ redirectTo: goLoginPage });
 
   return (
-    <Switch>
-      <Route exact path={`${path}/weights`}>
-        <WeightsPage />
-      </Route>
-      <Route exact path={`${path}/periods`}>
-        <PeriodsPage />
-      </Route>
-      <Route exact path={`${path}/scores`}>
-        <MyScores />
-      </Route>
-      <Route exact path={`${path}/notebook`}>
-        <EvaluationNotebookPage />
-      </Route>
-      <Route exact path={`${path}/notebook/review`}>
-        <ReviewerPage />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route
+        path="weights"
+        element={<WeightsPage />}
+      />
+      <Route
+        path="periods"
+        element={<PeriodsPage />}
+      />
+      <Route
+        path="scores"
+        element={<MyScores />}
+      />
+      <Route
+        path="notebook"
+        element={<EvaluationNotebookPage />}
+      />
+      <Route
+        path="notebook/review"
+        element={<ReviewerPage />}
+      />
+    </Routes>
   );
 }

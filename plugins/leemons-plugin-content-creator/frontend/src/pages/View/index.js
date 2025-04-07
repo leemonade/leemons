@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import ActivityHeader from "@assignables/components/ActivityHeader/index";
 import {
@@ -13,14 +13,14 @@ import useClassData from "@assignables/hooks/useClassDataQuery";
 import useNextActivityUrl from "@assignables/hooks/useNextActivityUrl";
 import useInstances from "@assignables/requests/hooks/queries/useInstances";
 import {
-  Stack,
-  LoadingOverlay,
   Button,
-  createStyles,
+  ContextContainer,
   HtmlText,
+  LoadingOverlay,
+  Stack,
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
-  ContextContainer,
+  createStyles,
 } from "@bubbles-ui/components";
 import { ChevRightIcon } from "@bubbles-ui/icons/outline";
 import { AlertInformationCircleIcon } from "@bubbles-ui/icons/solid";
@@ -35,8 +35,11 @@ import prefixPN from "@content-creator/helpers/prefixPN";
 import useDocument from "@content-creator/request/hooks/queries/useDocument";
 
 function useDocumentData({ id, user }) {
-  const { data: assignation, isLoading: assignationIsLoading } =
-    useAssignations({ instance: id, user }, true, { enabled: !!id && !!user });
+  const { data: assignation, isLoading: assignationIsLoading } = useAssignations(
+    { instance: id, user },
+    true,
+    { enabled: !!id && !!user }
+  );
 
   const { data: instanceData, isLoading: instancesIsLoading } = useInstances({
     id,
@@ -51,8 +54,7 @@ function useDocumentData({ id, user }) {
   });
   const asset = assignable?.asset;
 
-  const { data: classData, isLoading: classDataIsLoading } =
-    useClassData(instance);
+  const { data: classData, isLoading: classDataIsLoading } = useClassData(instance);
   const coverUrl = React.useMemo(
     () => getFileUrl(asset?.cover?.id ?? asset?.cover),
     [asset?.cover]
@@ -66,9 +68,7 @@ function useDocumentData({ id, user }) {
     classData,
     coverUrl,
     isLoading:
-      (assignationIsLoading && instancesIsLoading) ||
-      classDataIsLoading ||
-      assignableIsLoading,
+      (assignationIsLoading && instancesIsLoading) || classDataIsLoading || assignableIsLoading,
   };
 }
 
@@ -88,10 +88,8 @@ const useDocumentViewStyles = createStyles((theme) => ({
 
 export default function DocumentView() {
   const scrollRef = useRef();
-  const [t, , , tLoading] = useTranslateLoader(
-    prefixPN("contentCreatorDetail")
-  );
-  const history = useHistory();
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("contentCreatorDetail"));
+  const navigate = useNavigate();
   const { theme } = useDocumentViewStyles();
 
   // ----------------------------------------------------------------------
@@ -131,11 +129,7 @@ export default function DocumentView() {
         />
       }
     >
-      <Stack
-        justifyContent="center"
-        ref={scrollRef}
-        style={{ overflowY: "auto" }}
-      >
+      <Stack justifyContent="center" ref={scrollRef} style={{ overflowY: "auto" }}>
         <TotalLayoutStepContainerWithAccordion
           Footer={
             isUnavailable ? (
@@ -151,7 +145,7 @@ export default function DocumentView() {
                         rightIcon={<ChevRightIcon />}
                         onClick={() =>
                           updateTimestamps("end").then(() => {
-                            history.push(nextActivityUrl);
+                            navigate(nextActivityUrl);
                           })
                         }
                       >
@@ -161,7 +155,7 @@ export default function DocumentView() {
                       <Button
                         onClick={() =>
                           updateTimestamps("end").then(() => {
-                            history.push("/private/assignables/ongoing");
+                            navigate("/private/assignables/ongoing");
                           })
                         }
                       >
@@ -178,9 +172,7 @@ export default function DocumentView() {
             !!instance?.metadata?.statement && {
               title: t("instructions"),
               icon: (
-                <AlertInformationCircleIcon
-                  color={theme.other.global.content.color.icon.default}
-                />
+                <AlertInformationCircleIcon color={theme.other.global.content.color.icon.default} />
               ),
               children: <HtmlText>{instance?.metadata?.statement}</HtmlText>,
             }

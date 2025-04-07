@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Alert,
@@ -21,10 +21,7 @@ import {
 } from "@bubbles-ui/components";
 
 // TODO: fix this import from @common plugin
-import {
-  FamilyChildIcon,
-  SingleActionsGraduateMaleIcon,
-} from "@bubbles-ui/icons/outline";
+import { FamilyChildIcon, SingleActionsGraduateMaleIcon } from "@bubbles-ui/icons/outline";
 import { AdminPageHeader } from "@bubbles-ui/leemons";
 import { useFormWithTheme } from "@common/hooks/useFormWithTheme";
 import { useAsync } from "@common/useAsync";
@@ -52,11 +49,8 @@ import * as _ from "lodash";
 import moment from "moment";
 
 function dynamicImport(component) {
-  return loadable(
-    () =>
-      import(
-        /* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@app/plugins${component}.js`
-      )
+  return loadable(() =>
+    import(/* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@app/plugins${component}.js`)
   );
 }
 
@@ -119,8 +113,7 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
         setRelationError("need-other-relation");
         return;
       }
-      value.memberType =
-        selectedRelation === "other" ? otherRelationValue : selectedRelation;
+      value.memberType = selectedRelation === "other" ? otherRelationValue : selectedRelation;
     }
     if (selectedUser) {
       onAdd({ ...selectedUser, ...value });
@@ -157,7 +150,10 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
     setLoading(false);
   };
 
-  if (error) return <ErrorAlert />;
+  if (error) {
+    return <ErrorAlert />;
+  }
+
   if (!users || !users.length) {
     return (
       <Stack direction="column" spacing={2}>
@@ -196,9 +192,7 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
         <Stack spacing={4}>
           <RelationSelect
             label={t("guardian_relation")}
-            error={
-              relationError === "need-relation" ? tCommonForm("required") : ""
-            }
+            error={relationError === "need-relation" ? tCommonForm("required") : ""}
             value={selectedRelation}
             onChange={(e) => {
               setRelationError(null);
@@ -208,11 +202,7 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
           {selectedRelation === "other" && (
             <TextInput
               label={t("specify_relation")}
-              error={
-                relationError === "need-other-relation"
-                  ? tCommonForm("required")
-                  : ""
-              }
+              error={relationError === "need-other-relation" ? tCommonForm("required") : ""}
               value={otherRelationValue}
               onChange={(e) => {
                 setRelationError(null);
@@ -236,7 +226,7 @@ function Detail() {
   const { t: tCommonHeader } = useCommonTranslate("page_header");
   const { t: tCommonForm } = useCommonTranslate("forms");
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   const {
@@ -252,14 +242,12 @@ function Detail() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [datasetConfig, setDatasetConfig] = useState(false);
   const [datasetData, setDatasetData] = useState(false);
-  const [emergencyNumberIsInstalled, setEmergencyNumberIsInstalled] =
-    useState(false);
+  const [emergencyNumberIsInstalled, setEmergencyNumberIsInstalled] = useState(false);
   const [family, setFamily] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [_permissions, setPermissions] = useState([]);
-  const [error, setError, ErrorAlert, getErrorMessage] =
-    useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const [removeModalOpened, setRemoveModalOpened] = useState(false);
   const [modalOpened, setModalOpened] = useState(false);
 
@@ -274,8 +262,13 @@ function Detail() {
     _.forIn(response, (value, key) => {
       const info = permissionsByName[constants?.permissions[key]];
       if (info) {
-        if (info.actionNames.indexOf("view") >= 0) value.view = true;
-        if (info.actionNames.indexOf("update") >= 0) value.update = true;
+        if (info.actionNames.indexOf("view") >= 0) {
+          value.view = true;
+        }
+
+        if (info.actionNames.indexOf("update") >= 0) {
+          value.update = true;
+        }
       }
     });
     return response;
@@ -286,17 +279,17 @@ function Detail() {
     if (!isEditMode) {
       if (response && response.jsonSchema) {
         _.forIn(response.jsonSchema.properties, (value, key) => {
-          if (!response.jsonUI[key]) response.jsonUI[key] = {};
+          if (!response.jsonUI[key]) {
+            response.jsonUI[key] = {};
+          }
+
           response.jsonUI[key]["ui:readonly"] = true;
         });
       }
     }
     return response;
   }, [datasetConfig, isEditMode]);
-  const datasetProps = useMemo(
-    () => ({ formData: datasetData }),
-    [datasetData]
-  );
+  const datasetProps = useMemo(() => ({ formData: datasetData }), [datasetData]);
 
   const [form, formActions] = useFormWithTheme(
     goodDatasetConfig?.jsonSchema,
@@ -322,7 +315,9 @@ function Detail() {
         const { jsonSchema, jsonUI } = await getDatasetFormRequest();
         jsonUI["ui:className"] = "grid grid-cols-3 gap-6";
         familyDatasetForm = { jsonSchema, jsonUI };
-      } catch (e) {}
+      } catch (e) {
+        // Do nothing
+      }
       const [{ permissions }, phoneNumbersInstalled] = await Promise.all([
         getPermissionsWithActionsIfIHaveRequest([
           constants?.permissions.basicInfo,
@@ -330,9 +325,7 @@ function Detail() {
           constants?.permissions.guardiansInfo,
           constants?.permissions.studentsInfo,
         ]),
-        PackageManagerService.isPluginInstalled(
-          "leemons-plugin-families-emergency-numbers"
-        ),
+        PackageManagerService.isPluginInstalled("leemons-plugin-families-emergency-numbers"),
       ]);
 
       return { family, familyDatasetForm, permissions, phoneNumbersInstalled };
@@ -343,12 +336,7 @@ function Detail() {
   const onSuccess = useMemo(
     () => (data) => {
       if (data) {
-        const {
-          family,
-          familyDatasetForm,
-          permissions,
-          phoneNumbersInstalled,
-        } = data;
+        const { family, familyDatasetForm, permissions, phoneNumbersInstalled } = data;
         if (family) {
           setValue("name", family.name);
           setValue("maritalStatus", family.maritalStatus);
@@ -362,7 +350,9 @@ function Detail() {
           setValue("maritalStatus", "...");
           setIsEditMode(true);
         }
-        if (familyDatasetForm) setDatasetConfig(familyDatasetForm);
+        if (familyDatasetForm) {
+          setDatasetConfig(familyDatasetForm);
+        }
         setPermissions(permissions);
         setEmergencyNumberIsInstalled(phoneNumbersInstalled);
         setLoading(false);
@@ -387,9 +377,7 @@ function Detail() {
   const EmergencyNumbers = useMemo(
     () =>
       emergencyNumberIsInstalled
-        ? dynamicImport(
-            "/families-emergency-numbers/src/components/phoneNumbers"
-          )
+        ? dynamicImport("/families-emergency-numbers/src/components/phoneNumbers")
         : null,
     [emergencyNumberIsInstalled]
   );
@@ -428,7 +416,7 @@ function Detail() {
 
       setSaveLoading(false);
       await hooks.fireEvent("menu-builder:reset-menu");
-      await history.push(`/private/families/detail/${response.family.id}`);
+      navigate(`/private/families/detail/${response.family.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
       setSaveLoading(false);
@@ -440,7 +428,7 @@ function Detail() {
       await removeFamilyRequest(family.id);
       addSuccessAlert(t("deleted_done"));
       await hooks.fireEvent("menu-builder:reset-menu");
-      await history.push(`/private/families/list`);
+      navigate(`/private/families/list`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -467,7 +455,7 @@ function Detail() {
     if (family.id) {
       setIsEditMode(false);
     } else {
-      history.push("/private/families/list");
+      navigate("/private/families/list");
     }
   };
 
@@ -515,9 +503,7 @@ function Detail() {
             <Stack direction="column" spacing={4}>
               <Text>{t("remove_modal.message")}</Text>
               <Stack justifyContent="space-between" spacing={4}>
-                <Button onClick={() => setRemoveModalOpened(false)}>
-                  Cancel
-                </Button>
+                <Button onClick={() => setRemoveModalOpened(false)}>Cancel</Button>
                 <Button onClick={deleteFamily}>Remove</Button>
               </Stack>
             </Stack>
@@ -563,13 +549,11 @@ function Detail() {
               edit: isEditMode
                 ? tCommonHeader("cancel")
                 : family?.id
-                  ? tCommonHeader("delete")
-                  : "",
+                ? tCommonHeader("delete")
+                : "",
               cancel: isEditMode ? "" : tCommonHeader("edit"),
             }}
-            onSave={() =>
-              formActions.isLoaded() ? formActions.submit() : null
-            }
+            onSave={() => (formActions.isLoaded() ? formActions.submit() : null)}
             onCancel={isEditMode ? onCancelButton : onDeleteButton}
             onEdit={onEditButton}
             fullWidth
@@ -664,9 +648,7 @@ function Detail() {
                   {permissions.studentsInfo.view && (
                     <UserListBox
                       title={t("students")}
-                      icon={
-                        <SingleActionsGraduateMaleIcon height={32} width={32} />
-                      }
+                      icon={<SingleActionsGraduateMaleIcon height={32} width={32} />}
                       label="No students yet"
                       // relationship={'Married'}
                       type={"student"}

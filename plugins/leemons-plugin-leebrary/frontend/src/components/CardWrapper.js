@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useIsTeacher } from "@academic-portfolio/hooks";
 import { Box, createStyles } from "@bubbles-ui/components";
@@ -9,11 +9,7 @@ import { isEmpty, isNil } from "lodash";
 import PropTypes from "prop-types";
 
 import prefixPN from "../helpers/prefixPN";
-import {
-  getCoverUrl,
-  prepareAsset,
-  resolveAssetType,
-} from "../helpers/prepareAsset";
+import { getCoverUrl, prepareAsset, resolveAssetType } from "../helpers/prepareAsset";
 
 import { AssignIcon } from "./LibraryDetailToolbar/icons/AssignIcon";
 import { DeleteIcon } from "./LibraryDetailToolbar/icons/DeleteIcon";
@@ -27,27 +23,21 @@ import { LibraryCard } from "@leebrary/components/LibraryCard";
 function dynamicImport(pluginName, component) {
   return loadable(async () => {
     try {
-      return await import(
-        `@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`
-      );
+      return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`);
     } catch (error) {
-      return await import(
-        `@app/plugins/${pluginName}/src/widgets/leebrary/${component}.tsx`
-      );
+      return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.tsx`);
     }
   });
 }
 
-const CardWrapperStyles = createStyles(
-  (theme, { selected, isCreationPreview }) => ({
-    root: {
-      cursor: isCreationPreview ? "default" : "pointer",
-      borderColor: selected && theme.other.core.color.primary["400"],
-      borderWidth: selected && "1px",
-      boxShadow: selected && theme.shadows.shadow03,
-    },
-  })
-);
+const CardWrapperStyles = createStyles((theme, { selected, isCreationPreview }) => ({
+  root: {
+    cursor: isCreationPreview ? "default" : "pointer",
+    borderColor: selected && theme.other.core.color.primary["400"],
+    borderWidth: selected && "1px",
+    boxShadow: selected && theme.shadows.shadow03,
+  },
+}));
 
 const CardWrapper = ({
   key,
@@ -78,7 +68,7 @@ const CardWrapper = ({
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
 
   const [t] = useTranslateLoader(prefixPN("list"));
-  const history = useHistory();
+  const navigate = useNavigate();
   const { classes } = CardWrapperStyles({ selected, isCreationPreview });
   const isTeacher = useIsTeacher();
 
@@ -92,14 +82,11 @@ const CardWrapper = ({
           children: t("cardToolbar.covertToTask"),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/leebrary/assign/${asset.id}`);
+            navigate(`/private/leebrary/assign/${asset.id}`);
           },
         });
       }
-      if (
-        asset.shareable &&
-        (asset.providerData?.published || asset.providerData === undefined)
-      ) {
+      if (asset.shareable && (asset.providerData?.published || asset.providerData === undefined)) {
         items.push({
           icon: <ShareIcon />,
           children: t("cardToolbar.share"),
@@ -153,28 +140,21 @@ const CardWrapper = ({
     }
 
     return items;
-  }, [asset, t, isTeacher, history]);
+  }, [asset, t, isTeacher, navigate]);
 
   const Component = useMemo(() => {
     let componentToRender = LibraryCard;
     const componentOwner = category?.componentOwner || category?.pluginOwner;
     if (category?.listCardComponent && componentOwner) {
       try {
-        componentToRender = dynamicImport(
-          componentOwner,
-          category.listCardComponent
-        );
+        componentToRender = dynamicImport(componentOwner, category.listCardComponent);
       } catch (e) {
         console.log("error", e);
       }
     }
 
     return componentToRender;
-  }, [
-    category?.componentOwner,
-    category?.pluginOwner,
-    category?.listCardComponent,
-  ]);
+  }, [category?.componentOwner, category?.pluginOwner, category?.listCardComponent]);
 
   return !isNil(category) && !isEmpty(asset) ? (
     <Box key={key} {...props} style={{ display: "flex", gap: 32, ...style }}>

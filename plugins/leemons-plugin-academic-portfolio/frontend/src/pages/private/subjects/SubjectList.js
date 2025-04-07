@@ -12,14 +12,13 @@ import {
 import { AdminPageHeader } from "@bubbles-ui/leemons";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
 import { useStore } from "@common/useStore";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { SelectCenter } from "@users/components/SelectCenter";
 import SelectUserAgent from "@users/components/SelectUserAgent";
 import _, { find, isArray, map } from "lodash";
-import React, { useMemo } from "react";
-import { useHistory } from "react-router-dom";
-import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import { useMemo } from "react";
 import { KnowledgeTable } from "../../../components/KnowledgeTable";
 import { SubjectTypesTable } from "../../../components/SubjectTypesTable";
 import { SubjectsTable } from "../../../components/SubjectsTable";
@@ -48,7 +47,7 @@ import {
 export default function SubjectList() {
   const [t] = useTranslateLoader(prefixPN("subject_page"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const history = useHistory();
+
   const deploymentConfig = useDeploymentConfig({
     pluginName: "academic-portfolio",
     ignoreVersion: true,
@@ -119,10 +118,7 @@ export default function SubjectList() {
 
   async function onProgramChange(programId) {
     store.selectProgram = programId;
-    const [program, { profiles }] = await Promise.all([
-      getProgramDetail(),
-      getProfilesRequest(),
-    ]);
+    const [program, { profiles }] = await Promise.all([getProgramDetail(), getProfilesRequest()]);
     store.program = program;
     store.profiles = profiles;
     render();
@@ -301,7 +297,10 @@ export default function SubjectList() {
 
   async function addUpdateClass(data, event, isUpdate) {
     try {
-      if (!data.credits) data.credits = 1;
+      if (!data.credits) {
+        data.credits = 1;
+      }
+
       if (event.isNewSubject) {
         const subject = await addNewSubject({
           name: data.subject,
@@ -309,7 +308,11 @@ export default function SubjectList() {
           internalId: data.internalId,
           credits: data.credits,
         });
-        if (!subject) return null;
+
+        if (!subject) {
+          return null;
+        }
+
         data.subject = subject?.id;
       } else {
         const subject = await updateSubject({
@@ -319,7 +322,9 @@ export default function SubjectList() {
           credits: data.credits,
           color: data.color,
         });
-        if (!subject) return null;
+        if (!subject) {
+          return null;
+        }
       }
 
       if (event.isNewGroup) {
@@ -327,7 +332,10 @@ export default function SubjectList() {
           name: data.groups,
           abbreviation: data.groups,
         });
-        if (!group) return null;
+        if (!group) {
+          return null;
+        }
+
         data.groups = group?.id;
       }
 
@@ -340,8 +348,10 @@ export default function SubjectList() {
         await activeMenuItemTree();
       }
 
-      if (classe)
+      if (classe) {
         addSuccessAlert(isUpdate ? t("classUpdated") : t("classCreated"));
+      }
+
       store.program = await getProgramDetail();
       render();
       return true;
@@ -412,11 +422,7 @@ export default function SubjectList() {
                       ) : null}
                       {store.program
                         ? [
-                            !(
-                              deploymentConfig?.deny?.others?.indexOf(
-                                "subjectType"
-                              ) >= 0
-                            ) ? (
+                            !(deploymentConfig?.deny?.others?.indexOf("subjectType") >= 0) ? (
                               <SubjectTypesTable
                                 key="1"
                                 messages={messages.subjectTypes}
@@ -439,9 +445,7 @@ export default function SubjectList() {
                                   centers={store.center}
                                 />
                               }
-                              onlyNewSubject={
-                                !!store.program?.useOneStudentGroup
-                              }
+                              onlyNewSubject={!!store.program?.useOneStudentGroup}
                             />,
                           ]
                         : null}

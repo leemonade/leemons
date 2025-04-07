@@ -1,14 +1,8 @@
 import { useMemo, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { PivotTable } from "@analytics/components/PivotTable";
-import {
-  Box,
-  TLayout,
-  Stack,
-  ImageLoader,
-  Button,
-} from "@bubbles-ui/components";
+import { Box, Button, ImageLoader, Stack, TLayout } from "@bubbles-ui/components";
 import { ChevronLeftIcon } from "@bubbles-ui/icons/outline";
 import { LocaleDate } from "@common/LocaleDate";
 import { ChipsContainer } from "@common/components";
@@ -27,7 +21,7 @@ export default function Reports() {
   const [canGenerate, setCanGenerate] = useState(false);
   const tableRef = useRef(null);
   const [t] = useTranslateLoader(prefixPN("reportsPage"));
-  const history = useHistory();
+  const navigate = useNavigate();
   const { openConfirmationModal } = useLayout();
   const { data: columnsData } = useReportColumns({});
   const { data: reportData, isLoading: isReportDataLoading } = useReportData({
@@ -48,11 +42,7 @@ export default function Reports() {
           if (column.toLowerCase().endsWith("date")) {
             return isEmpty(value) ? "-" : <LocaleDate date={value} />;
           } else if (column.toLowerCase().endsWith("dataset")) {
-            return (
-              <ChipsContainer
-                items={value.map((item) => `${item.label}: ${item.value}`)}
-              />
-            );
+            return <ChipsContainer items={value.map((item) => `${item.label}: ${item.value}`)} />;
           } else if (column.toLowerCase().endsWith("tags")) {
             return <ChipsContainer items={value} />;
           }
@@ -64,7 +54,10 @@ export default function Reports() {
   }, [columnsData, t]);
 
   const data = useMemo(() => {
-    if (!canGenerate) return [];
+    if (!canGenerate) {
+      return [];
+    }
+
     return (
       reportData?.map((session) => ({
         ...session,
@@ -92,11 +85,11 @@ export default function Reports() {
         title: t("backConfirmationModal.title"),
         description: t("backConfirmationModal.description"),
         onConfirm: () => {
-          history.push(`/private/${PLUGIN_NAME}/programs`);
+          navigate(`/private/${PLUGIN_NAME}/programs`);
         },
       })();
     } else {
-      history.push(`/private/${PLUGIN_NAME}/programs`);
+      navigate(`/private/${PLUGIN_NAME}/programs`);
     }
   }
 
@@ -149,10 +142,7 @@ export default function Reports() {
 
         <TLayout.Footer fullWidth>
           <TLayout.Footer.RightActions>
-            <Button
-              onClick={handleOnDownload}
-              disabled={!tableRef.current || data.length === 0}
-            >
+            <Button onClick={handleOnDownload} disabled={!tableRef.current || data.length === 0}>
               {t("downloadReport")}
             </Button>
           </TLayout.Footer.RightActions>

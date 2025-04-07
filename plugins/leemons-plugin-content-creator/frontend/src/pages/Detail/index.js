@@ -1,17 +1,17 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { FormProvider, useForm, Controller, useWatch } from "react-hook-form";
-import { useHistory, useParams, useLocation, Link } from "react-router-dom";
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useIsStudent } from "@academic-portfolio/hooks";
 import {
-  LoadingOverlay,
+  AssetDocumentIcon,
   Button,
+  DropdownButton,
+  LoadingOverlay,
   Stack,
   TotalLayoutContainer,
-  TotalLayoutHeader,
   TotalLayoutFooterContainer,
-  DropdownButton,
-  AssetDocumentIcon,
+  TotalLayoutHeader,
 } from "@bubbles-ui/components";
 import { useProcessTextEditor } from "@common";
 import ContentEditorInput from "@common/components/ContentEditorInput/ContentEditorInput";
@@ -34,9 +34,7 @@ const validators = [
     content: z.string().min(1),
   }),
   z.object({
-    name: z
-      .string({ required_error: "Title is required" })
-      .min(1, "Title is required"),
+    name: z.string({ required_error: "Title is required" }).min(1, "Title is required"),
   }),
 ];
 
@@ -51,12 +49,10 @@ export default function Index({ isNew, readOnly }) {
   const urlQuery = useUrlQuery();
   const [isLoading, setIsLoading] = useState(false);
   const [disableNext, setDisableNext] = useState(true);
-  const [activeStep, setActiveStep] = useState(
-    Number(urlQuery.get("step")) || 0
-  );
+  const [activeStep, setActiveStep] = useState(Number(urlQuery.get("step")) || 0);
   const { openConfirmationModal } = useLayout();
   const scrollRef = React.useRef(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
   const processTextEditor = useProcessTextEditor();
   const { data: documentData, isLoading: documentIsLoading } = useDocument({
@@ -77,7 +73,10 @@ export default function Index({ isNew, readOnly }) {
 
   const handleNext = async () => {
     const isValidStep = await form.trigger();
-    if (!isValidStep) return;
+    if (!isValidStep) {
+      return;
+    }
+
     setActiveStep((current) => current + 1);
     window.scrollTo(0, 0, { behavior: "smooth" });
   };
@@ -88,8 +87,7 @@ export default function Index({ isNew, readOnly }) {
   };
 
   const handleOnCancel = () => {
-    const formHasBeenTouched =
-      Object.keys(form.formState.touchedFields).length > 0;
+    const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
     const formIsNotEmpty = !isEmpty(formValues);
     if ((formHasBeenTouched || formIsNotEmpty) && !readOnly) {
       openConfirmationModal({
@@ -99,26 +97,24 @@ export default function Index({ isNew, readOnly }) {
           confim: t("cancelModalConfirm"),
           cancel: t("cancelModalCancel"),
         },
-        onConfirm: () => history.goBack(),
+        onConfirm: () => navigate(-1),
       })();
     } else {
-      history.goBack();
+      navigate(-1);
     }
   };
 
   const handleMutations = async ({ publishing, assigning }) => {
     const isValidStep = await form.trigger();
-    if (!isValidStep) return;
+    if (!isValidStep) {
+      return;
+    }
 
     setIsLoading(true);
 
-    const processedContent = await processTextEditor(
-      formValues.content,
-      documentData?.content,
-      {
-        force: documentData?.published,
-      }
-    );
+    const processedContent = await processTextEditor(formValues.content, documentData?.content, {
+      force: documentData?.published,
+    });
 
     const documentToSave = {
       ...formValues,
@@ -127,7 +123,10 @@ export default function Index({ isNew, readOnly }) {
     };
     delete documentToSave.subjectsRaw;
 
-    if (!isNew) documentToSave.id = params.id;
+    if (!isNew) {
+      documentToSave.id = params.id;
+    }
+
     mutation.mutate(
       { ...documentToSave },
       {
@@ -135,17 +134,15 @@ export default function Index({ isNew, readOnly }) {
           addSuccessAlert(t(`${publishing ? "published" : "savedAsDraft"}`));
           setIsLoading(false);
           if (!publishing) {
-            history.replace(
+            navigate(
               `/private/content-creator/${data.document.assignable}/edit?step=${activeStep}`
             );
           }
 
           if (assigning) {
-            history.push(
-              `/private/content-creator/${data.document.assignable}/assign`
-            );
+            navigate(`/private/content-creator/${data.document.assignable}/assign`);
           } else if (publishing && !assigning) {
-            history.push("/private/leebrary/assignables.content-creator/list");
+            navigate("/private/leebrary/assignables.content-creator/list");
           }
         },
         onError: (e) => {
@@ -161,13 +158,9 @@ export default function Index({ isNew, readOnly }) {
     if (!documentData?.name) {
       const parser = new DOMParser();
       const htmlContent = Array.from(
-        parser
-          .parseFromString(value, "text/html")
-          .body.getElementsByTagName("*")
+        parser.parseFromString(value, "text/html").body.getElementsByTagName("*")
       );
-      const firstElementWithText = htmlContent.find(
-        (element) => element.textContent
-      )?.textContent;
+      const firstElementWithText = htmlContent.find((element) => element.textContent)?.textContent;
       form.setValue("name", firstElementWithText);
     }
   };
@@ -181,18 +174,16 @@ export default function Index({ isNew, readOnly }) {
     if (documentData?.subjects?.length) {
       solvedProgram = documentData?.subjects[0].program;
     }
-    if (isNew) form.reset();
-    else {
+    if (isNew) {
+      form.reset();
+    } else {
       form.setValue("name", documentData?.name);
       form.setValue("content", documentData?.content);
       form.setValue("description", documentData?.description);
       form.setValue("color", documentData?.color || null);
       form.setValue("cover", documentData?.cover || null);
       form.setValue("program", documentData?.program || solvedProgram || null);
-      form.setValue(
-        "subjects",
-        documentData?.subjects?.map((subject) => subject.subject) || null
-      );
+      form.setValue("subjects", documentData?.subjects?.map((subject) => subject.subject) || null);
       form.setValue("tags", documentData?.tags);
     }
   }, [documentData]);
@@ -227,8 +218,12 @@ export default function Index({ isNew, readOnly }) {
   // #endregion
 
   function getTitle() {
-    if (readOnly) return null;
-    if (isNew) return t("titleNew");
+    if (readOnly) {
+      return null;
+    }
+    if (isNew) {
+      return t("titleNew");
+    }
     return t("titleEdit");
   }
 
@@ -245,9 +240,7 @@ export default function Index({ isNew, readOnly }) {
                 <AssetDocumentIcon width={24} height={24} />
               </Stack>
             }
-            formTitlePlaceholder={
-              formValues.name ? formValues.name : t("documentTitlePlaceHolder")
-            }
+            formTitlePlaceholder={formValues.name ? formValues.name : t("documentTitlePlaceHolder")}
             onCancel={handleOnCancel}
             compact
             mainActionLabel={t("cancel")}
@@ -255,20 +248,12 @@ export default function Index({ isNew, readOnly }) {
             rightZone={
               isModulePreview && (
                 <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
-                  <Button variant="outline">
-                    {t("goBackToDashboardPreview")}
-                  </Button>
+                  <Button variant="outline">{t("goBackToDashboardPreview")}</Button>
                 </Link>
               )
             }
           >
-            {!readOnly && (
-              <div
-                id="toolbar-div"
-                style={{ width: "100%" }}
-                ref={toolbarRef}
-              ></div>
-            )}
+            {!readOnly && <div id="toolbar-div" style={{ width: "100%" }} ref={toolbarRef}></div>}
           </TotalLayoutHeader>
         }
       >

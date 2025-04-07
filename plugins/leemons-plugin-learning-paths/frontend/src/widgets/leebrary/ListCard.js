@@ -1,28 +1,25 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
+import useIsMainTeacherInSubject from "@academic-portfolio/hooks/queries/useIsMainTeacherInSubject";
 import { createStyles } from "@bubbles-ui/components";
-import { LibraryCard } from "@leebrary/components";
-import { get } from "lodash";
 import { unflatten } from "@common";
-import propTypes from "prop-types";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import { useLayout } from "@layout/context";
+import { ModuleCardIcon } from "@learning-paths/components/ModuleCardIcon";
 import duplicateModuleRequest from "@learning-paths/requests/duplicateModule";
 import removeModuleRequest from "@learning-paths/requests/removeModule";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { ModuleCardIcon } from "@learning-paths/components/ModuleCardIcon";
+import { LibraryCard } from "@leebrary/components";
 import { AssignIcon } from "@leebrary/components/LibraryDetailToolbar/icons/AssignIcon";
 import { DeleteIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon";
-import { EditIcon } from "@leebrary/components/LibraryDetailToolbar/icons/EditIcon";
 import { DuplicateIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon";
+import { EditIcon } from "@leebrary/components/LibraryDetailToolbar/icons/EditIcon";
 import { ShareIcon } from "@leebrary/components/LibraryDetailToolbar/icons/ShareIcon";
-import useIsMainTeacherInSubject from "@academic-portfolio/hooks/queries/useIsMainTeacherInSubject";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { get } from "lodash";
+import propTypes from "prop-types";
+import { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function useListCardLocalizations() {
-  const keys = [
-    "assignables.roles.learningpaths.module.singular",
-    "learning-paths.libraryCard",
-  ];
+  const keys = ["assignables.roles.learningpaths.module.singular", "learning-paths.libraryCard"];
   const [, translations] = useTranslateLoader(keys);
 
   return useMemo(() => {
@@ -56,21 +53,19 @@ function useListCardMenuItems({
   const canDuplicate = !!duplicable && isOwner;
 
   const { id, published } = asset.providerData || {};
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const assignAction = useCallback(
     (e) => {
       e.stopPropagation();
       if (subjects?.length > 0 && !isMainTeacherInAssetSubjects) {
-        const updateAsset = () =>
-          history.push(`/private/learning-paths/modules/${id}/edit`);
+        const updateAsset = () => navigate(`/private/learning-paths/modules/${id}/edit`);
 
         openConfirmationModal({
           title: localizations?.menuItems?.cannotAssignModal?.title,
           description: isOwner
             ? localizations?.menuItems?.cannotAssignModal?.descriptionWhenOwner
-            : localizations?.menuItems?.cannotAssignModal
-                ?.descriptionWhenNotOwner,
+            : localizations?.menuItems?.cannotAssignModal?.descriptionWhenNotOwner,
           onConfirm: isOwner ? updateAsset : undefined,
           labels: {
             confirm: isOwner
@@ -79,10 +74,10 @@ function useListCardMenuItems({
           },
         })();
       } else {
-        history.push(`/private/learning-paths/modules/${id}/assign`);
+        navigate(`/private/learning-paths/modules/${id}/assign`);
       }
     },
-    [isMainTeacherInAssetSubjects, subjects, id, isOwner, history]
+    [isMainTeacherInAssetSubjects, subjects, id, isOwner, navigate]
   );
 
   return useMemo(
@@ -108,7 +103,7 @@ function useListCardMenuItems({
           children: localizations?.menuItems?.edit,
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/learning-paths/modules/${id}/edit`);
+            navigate(`/private/learning-paths/modules/${id}/edit`);
           },
         },
         // {
@@ -116,7 +111,7 @@ function useListCardMenuItems({
         //   children: localizations?.menuItems?.view,
         //   onClick: (e) => {
         //     e.stopPropagation();
-        //     history.push(`/private/learning-paths/modules/${id}/view`);
+        //     navigate(`/private/learning-paths/modules/${id}/view`);
         //   },
         // },
 
@@ -131,18 +126,12 @@ function useListCardMenuItems({
                   await duplicateModuleRequest(id, { published: !!published });
 
                   addSuccessAlert(
-                    localizations?.alerts?.duplicate?.success?.replace(
-                      "{{name}}",
-                      name
-                    )
+                    localizations?.alerts?.duplicate?.success?.replace("{{name}}", name)
                   );
                   onRefresh();
                 } catch (e) {
                   addErrorAlert(
-                    localizations?.alerts?.duplicate?.error?.replace(
-                      "{{name}}",
-                      name
-                    ),
+                    localizations?.alerts?.duplicate?.error?.replace("{{name}}", name),
                     e.message ?? e.error
                   );
                 } finally {
@@ -163,18 +152,12 @@ function useListCardMenuItems({
                   await removeModuleRequest(id, { published: !!published });
 
                   addSuccessAlert(
-                    localizations?.alerts?.delete?.success?.replace(
-                      "{{name}}",
-                      name
-                    )
+                    localizations?.alerts?.delete?.success?.replace("{{name}}", name)
                   );
                   onRefresh();
                 } catch (e) {
                   addErrorAlert(
-                    localizations?.alerts?.delete?.error?.replace(
-                      "{{name}}",
-                      name
-                    ),
+                    localizations?.alerts?.delete?.error?.replace("{{name}}", name),
                     e.message ?? e.error
                   );
                 } finally {
@@ -190,7 +173,7 @@ function useListCardMenuItems({
       canDuplicate,
       deleteable,
       editable,
-      history,
+      navigate,
       id,
       isOwner,
       localizations,
@@ -219,14 +202,10 @@ const useListCardStyles = createStyles((theme, { single, selected }) => ({
 function ListCard({ asset, single, onRefresh = () => {}, onShare, ...props }) {
   const localizations = useListCardLocalizations();
   const { classes } = useListCardStyles({ single });
-  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] =
-    useState(false);
+  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] = useState(false);
   const { data: isMainTeacherInAssetSubjects, isLoading: teacherCheckLoading } =
     useIsMainTeacherInSubject({
-      subjectIds:
-        asset.subjects?.length > 0
-          ? asset.subjects.map((item) => item.subject)
-          : [],
+      subjectIds: asset.subjects?.length > 0 ? asset.subjects.map((item) => item.subject) : [],
       options: {
         enabled: enableIsTeacherInSubjectQuery && asset.subjects?.length > 0,
         refetchOnWindowFocus: false,

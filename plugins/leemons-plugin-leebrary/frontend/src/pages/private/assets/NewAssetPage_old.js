@@ -1,19 +1,19 @@
-/* eslint-disable no-unreachable */
-import React, { useContext, useEffect, useMemo } from "react";
-import { isArray, isEmpty } from "lodash";
-import { useHistory, useParams } from "react-router-dom";
-import { ActionButton, Box, createStyles, Stack } from "@bubbles-ui/components";
+import { ActionButton, Box, Stack, createStyles } from "@bubbles-ui/components";
 import { ChevronLeftIcon } from "@bubbles-ui/icons/outline";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "../../../helpers/prefixPN";
-import LibraryContext from "../../../context/LibraryContext";
-import { VIEWS } from "../library/Library.constants";
+import { isArray, isEmpty } from "lodash";
+/* eslint-disable no-unreachable */
+import { useContext, useEffect, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import {
-  BasicData as MediaBasicData,
   BookmarkBasicData,
+  BasicData as MediaBasicData,
   PermissionsData,
   Setup,
 } from "../../../components/AssetSetup";
+import LibraryContext from "../../../context/LibraryContext";
+import prefixPN from "../../../helpers/prefixPN";
+import { VIEWS } from "../library/Library.constants";
 
 const NewAssetPageStyles = createStyles((theme) => ({
   root: {
@@ -23,10 +23,9 @@ const NewAssetPageStyles = createStyles((theme) => ({
 }));
 
 const NewAssetPage = () => {
-  const { file, setView, category, selectCategory, setAsset, asset } =
-    useContext(LibraryContext);
+  const { file, setView, category, selectCategory, setAsset, asset } = useContext(LibraryContext);
   const [t] = useTranslateLoader(prefixPN("assetSetup"));
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   useEffect(() => {
@@ -35,7 +34,7 @@ const NewAssetPage = () => {
   }, [params]);
 
   const handleOnBack = () => {
-    history.goBack();
+    navigate(-1);
   };
 
   const handleOnFinish = () => {

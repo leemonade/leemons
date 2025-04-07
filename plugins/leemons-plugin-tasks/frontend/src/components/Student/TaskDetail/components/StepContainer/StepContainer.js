@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo } from "react";
-import { useHistory } from "react-router-dom";
 
 import { ActivityUnavailable } from "@assignables/components/ActivityUnavailable";
 import { useActivityStates } from "@assignables/components/ActivityUnavailable/hooks/useActivityStates";
@@ -14,6 +13,7 @@ import SubmissionStep from "../SubmissionStep/SubmissionStep";
 
 import { prefixPN } from "@tasks/helpers";
 import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
+import { useNavigate } from "react-router-dom";
 
 function useSteps({ instance, isUnavailable }) {
   const [t] = useTranslateLoader(prefixPN("task_realization.steps"));
@@ -42,12 +42,7 @@ function useSteps({ instance, isUnavailable }) {
   );
 }
 
-export default function StepContainer({
-  preview,
-  assignation,
-  instance,
-  scrollRef,
-}) {
+export default function StepContainer({ preview, assignation, instance, scrollRef }) {
   const { isUnavailable } = useActivityStates({
     instance,
     user: assignation?.user,
@@ -55,7 +50,7 @@ export default function StepContainer({
 
   const steps = useSteps({ instance, isUnavailable });
   const [currentStep, setCurrentStep] = React.useState(0);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   /*
     === Handle student timestamps ===
@@ -75,9 +70,7 @@ export default function StepContainer({
       try {
         await updateTimestamp("end");
 
-        history.push(
-          `/private/tasks/correction/${instance.id}/${assignation?.user}?fromExecution`
-        );
+        navigate(`/private/tasks/correction/${instance.id}/${assignation?.user}?fromExecution`);
       } catch (e) {
         console.error(e);
       }
@@ -90,9 +83,7 @@ export default function StepContainer({
     }
   };
 
-  const StepComponent = isUnavailable
-    ? ActivityUnavailable
-    : steps[currentStep].component;
+  const StepComponent = isUnavailable ? ActivityUnavailable : steps[currentStep].component;
 
   return (
     <VerticalStepperContainer

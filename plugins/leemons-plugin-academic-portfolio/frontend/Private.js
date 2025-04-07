@@ -1,11 +1,9 @@
-import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
-
 import { LoadingOverlay } from "@bubbles-ui/components";
 import loadable from "@loadable/component";
 import { goLoginPage } from "@users/navigate";
 import { useSession } from "@users/session";
 import pMinDelay from "p-min-delay";
+import { Route, Routes } from "react-router-dom";
 
 const Welcome = loadable(() =>
   pMinDelay(import("./src/pages/private/WelcomePage"), 500)
@@ -36,42 +34,46 @@ const ReportsPage = loadable(() =>
 );
 
 export default function Private() {
-  const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <Switch>
-      <Route path={`${path}/welcome`}>
-        <Welcome session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/profiles`}>
-        <Profiles session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/programs`}>
-        <ProgramsPage session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/subjects`}>
-        <SubjectsPage session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/tree`}>
-        {/* <Tree session={session} fallback={<LoadingOverlay visible />} /> */}
-        <AcademicTree session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/subject-types`}>
-        <SubjectTypes session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/knowledge-areas`}>
-        <KnowledgeAreas
-          session={session}
-          fallback={<LoadingOverlay visible />}
-        />
-      </Route>
-      <Route path={`${path}/blocks`}>
-        <BlocksPage session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/reports`}>
-        <ReportsPage session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route
+        path="welcome"
+        element={<Welcome session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="profiles"
+        element={<Profiles session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="programs"
+        element={<ProgramsPage session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="subjects"
+        element={<SubjectsPage session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="tree"
+        element={<AcademicTree session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="subject-types"
+        element={<SubjectTypes session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="knowledge-areas"
+        element={<KnowledgeAreas session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="blocks"
+        element={<BlocksPage session={session} fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="reports"
+        element={<ReportsPage session={session} fallback={<LoadingOverlay visible />} />}
+      />
+    </Routes>
   );
 }

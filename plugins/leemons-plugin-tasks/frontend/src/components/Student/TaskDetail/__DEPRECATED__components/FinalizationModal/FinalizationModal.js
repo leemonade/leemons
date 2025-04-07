@@ -1,15 +1,9 @@
-import React from "react";
-import {
-  Box,
-  createStyles,
-  Button,
-  Modal,
-  Title,
-  Text,
-} from "@bubbles-ui/components";
-import { ChevRightIcon } from "@bubbles-ui/icons/outline";
-import { Link, useHistory } from "react-router-dom";
 import useNextActivityUrl from "@assignables/hooks/useNextActivityUrl";
+import { Box, Button, Modal, Text, Title, createStyles } from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { noop } from "lodash";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const useFinalizationModalStyles = createStyles((theme) => ({
   root: {
@@ -44,11 +38,11 @@ export default function FinalizationModal({
   toggleModal,
   assignation,
   localizations,
-  updateTimestamps = () => {},
+  updateTimestamps = noop,
   actionUrl,
 }) {
   const [opened, setOpened] = React.useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const nextActivityUrl = useNextActivityUrl(assignation);
 
@@ -67,27 +61,17 @@ export default function FinalizationModal({
   }, [updateTimestamps, opened]);
 
   React.useEffect(() => {
-    if (
-      opened &&
-      !assignation?.instance?.assignable?.submission?.type &&
-      nextActivityUrl
-    ) {
-      history.push(nextActivityUrl);
+    if (opened && !assignation?.instance?.assignable?.submission?.type && nextActivityUrl) {
+      navigate(nextActivityUrl);
     }
   }, [opened, nextActivityUrl]);
 
   const { cx, classes } = useFinalizationModalStyles();
 
-  const hasNextActivity =
-    assignation?.instance?.relatedAssignableInstances?.after?.length > 0;
+  const hasNextActivity = assignation?.instance?.relatedAssignableInstances?.after?.length > 0;
 
   return (
-    <Modal
-      opened={opened}
-      onClose={() => {}}
-      withCloseButton={false}
-      size={hasNextActivity ? "lg" : undefined}
-    >
+    <Modal opened={opened} withCloseButton={false} size={hasNextActivity ? "lg" : undefined}>
       <Box className={classes.root}>
         <Box className={classes.text}>
           <Title className={classes.title}>{localizations?.title}</Title>

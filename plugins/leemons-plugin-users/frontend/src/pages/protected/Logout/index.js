@@ -1,30 +1,32 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { LoadingOverlay } from "@bubbles-ui/components";
-import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
-import hooks from "@leemons/hooks";
-import Cookies from "js-cookie";
+import { LoadingOverlay } from '@bubbles-ui/components';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+import hooks from '@leemons/hooks';
+import Cookies from 'js-cookie';
 
-import constants from "@users/constants";
-import useProvider from "@users/request/hooks/queries/useProvider";
+import constants from '@users/constants';
+import useProvider from '@users/request/hooks/queries/useProvider';
 
 export default function Logout({ session }) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const deploymentConfig = useDeploymentConfig({
-    pluginName: "users",
+    pluginName: 'users',
     ignoreVersion: true,
   });
   const { data: provider, isLoading } = useProvider();
 
   React.useEffect(() => {
-    if (isLoading) return;
+    if (isLoading) {
+      return;
+    }
 
     if (deploymentConfig !== undefined && session) {
-      Cookies.remove("token");
-      Cookies.remove("impersonated");
+      Cookies.remove('token');
+      Cookies.remove('impersonated');
       const domain = /:\/\/([^/]+)/.exec(window.location.href)[1];
-      const subdomain = domain.split(".")[0];
+      const subdomain = domain.split('.')[0];
       if (Cookies.get(`token_${subdomain}`)) {
         Cookies.remove(`token_${subdomain}`);
       }
@@ -33,13 +35,13 @@ export default function Logout({ session }) {
         window.location.replace(deploymentConfig?.externalLogoutUrl);
       } else if (provider?.supportedMethods?.users?.logout) {
         window.location.replace(provider.supportedMethods.users.logout);
-        hooks.fireEvent("user:cookie:session:change");
+        hooks.fireEvent('user:cookie:session:change');
       } else {
-        history.push(`/${constants.base}`);
-        hooks.fireEvent("user:cookie:session:change");
+        navigate(`/${constants.base}`);
+        hooks.fireEvent('user:cookie:session:change');
       }
     }
-  }, [deploymentConfig, session, isLoading, provider, history]);
+  }, [deploymentConfig, session, isLoading, provider, navigate]);
 
   return <LoadingOverlay visible />;
 }

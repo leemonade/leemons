@@ -1,35 +1,31 @@
-import React from "react";
 import {
   Box,
   Button,
   ContextContainer,
+  LoadingOverlay,
+  PasswordInput,
   Select,
   TextInput,
-  PasswordInput,
-  LoadingOverlay,
-} from "@bubbles-ui/components";
-import { isEmpty } from "lodash";
-import Cookies from "js-cookie";
-import { useHistory } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { unflatten } from "@common";
-import {
-  loginRequest,
-  getUserProfilesRequest,
-  getUserProfileTokenRequest,
-} from "@users/request";
-import prefixPN from "../../../helpers/prefixPN";
-import { HeroWrapper } from "../../../components/HeroWrapper";
-import { LOCALES, EMAIL_REGEX } from "../../../constants";
-import LocaleContext from "../../../contexts/translations";
-import { signupRequest } from "../../../request/settings";
+} from '@bubbles-ui/components';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getUserProfileTokenRequest, getUserProfilesRequest, loginRequest } from '@users/request';
+import Cookies from 'js-cookie';
+import { isEmpty } from 'lodash';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { HeroWrapper } from '../../../components/HeroWrapper';
+import { EMAIL_REGEX, LOCALES } from '../../../constants';
+import LocaleContext from '../../../contexts/translations';
+import prefixPN from '../../../helpers/prefixPN';
+import { signupRequest } from '../../../request/settings';
 
 const Signup = () => {
   const [loading, setLoading] = React.useState(false);
   const { locale } = React.useContext(LocaleContext);
-  const [, translations] = useTranslateLoader(prefixPN(""));
-  const history = useHistory();
+  const [, translations] = useTranslateLoader(prefixPN(''));
+  const navigate = useNavigate();
 
   const t = React.useMemo(() => {
     const empty = { welcome: {}, signup: {} };
@@ -46,9 +42,9 @@ const Signup = () => {
   // FORM
 
   const defaultValues = {
-    email: "",
-    password: "",
-    repeatPassword: "",
+    email: '',
+    password: '',
+    repeatPassword: '',
     locale,
   };
 
@@ -59,8 +55,8 @@ const Signup = () => {
     formState: { errors, isSubmitted },
   } = useForm({ defaultValues });
 
-  const password = watch("password");
-  const repeatPassword = watch("repeatPassword");
+  const password = watch('password');
+  const repeatPassword = watch('repeatPassword');
 
   // ·····················································
   // LOGIN
@@ -73,10 +69,7 @@ const Signup = () => {
         // Si no tiene recordado un perfil, lo redirigimos a la selección de perfil
         const { profiles } = await getUserProfilesRequest(response.jwtToken);
         if (profiles && !isEmpty(profiles)) {
-          const { jwtToken } = await getUserProfileTokenRequest(
-            profiles[0].id,
-            response.jwtToken
-          );
+          const { jwtToken } = await getUserProfileTokenRequest(profiles[0].id, response.jwtToken);
 
           response.jwtToken = { ...jwtToken, profile: profiles[0] };
         }
@@ -85,8 +78,8 @@ const Signup = () => {
       }
 
       // Finalmente metemos el token
-      Cookies.set("token", response.jwtToken);
-      history.push("/private/admin/setup");
+      Cookies.set('token', response.jwtToken);
+      navigate('/private/admin/setup');
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -111,9 +104,7 @@ const Signup = () => {
   // RENDER
 
   return (
-    <HeroWrapper
-      quote={{ q: t.welcome.quote?.title, a: t.welcome.quote?.description }}
-    >
+    <HeroWrapper quote={{ q: t.welcome.quote?.title, a: t.welcome.quote?.description }}>
       <form
         onSubmit={handleSubmit((e) => {
           if (e.password === e.repeatPassword) {
@@ -123,22 +114,16 @@ const Signup = () => {
         autoComplete="off"
       >
         {translations && !isEmpty(translations.items) ? (
-          <ContextContainer
-            title={t.signup.title}
-            description={t.signup.description}
-          >
+          <ContextContainer title={t.signup.title} description={t.signup.description}>
             <Box>
               <Controller
                 control={control}
                 name="email"
                 rules={{
-                  required:
-                    t.signup.errorMessages?.email?.required || "Field required",
+                  required: t.signup.errorMessages?.email?.required || 'Field required',
                   pattern: {
                     value: EMAIL_REGEX,
-                    message:
-                      t.signup.errorMessages?.email?.invalidFormat ||
-                      "Invalid email format",
+                    message: t.signup.errorMessages?.email?.invalidFormat || 'Invalid email format',
                   },
                 }}
                 render={({ field }) => (
@@ -156,9 +141,7 @@ const Signup = () => {
               name="password"
               control={control}
               rules={{
-                required:
-                  t.signup.errorMessages?.password?.required ||
-                  "Field required",
+                required: t.signup.errorMessages?.password?.required || 'Field required',
               }}
               render={({ field }) => (
                 <PasswordInput
@@ -180,9 +163,7 @@ const Signup = () => {
                 name="repeatPassword"
                 control={control}
                 rules={{
-                  required:
-                    t.signup.errorMessages?.repeatPassword?.required ||
-                    "Field required",
+                  required: t.signup.errorMessages?.repeatPassword?.required || 'Field required',
                 }}
                 render={({ field }) => (
                   <PasswordInput
@@ -204,8 +185,7 @@ const Signup = () => {
                 control={control}
                 name="locale"
                 rules={{
-                  required:
-                    t.signup.errorMessages?.lang?.required || "Field required",
+                  required: t.signup.errorMessages?.lang?.required || 'Field required',
                 }}
                 render={({ field }) => (
                   <Select

@@ -1,9 +1,8 @@
-import React from "react";
-import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-import loadable from "@loadable/component";
-import pMinDelay from "p-min-delay";
 import { LoadingOverlay } from "@bubbles-ui/components";
+import loadable from "@loadable/component";
 import useProvider from "@users/request/hooks/queries/useProvider";
+import pMinDelay from "p-min-delay";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./src/pages/public/Login";
 
 const RegisterPassword = loadable(() =>
@@ -20,34 +19,35 @@ const Logout = loadable(() =>
 );
 
 export default function Public() {
-  const { path } = useRouteMatch();
-
   const { data: provider } = useProvider();
 
   if (provider?.supportedMethods?.users?.login) {
-    return <Redirect to={provider.supportedMethods.users.login} />;
+    return <Navigate to={provider.supportedMethods.users.login} replace />;
   }
 
   return (
-    <Switch>
-      <Route path={`${path}/register-password`}>
-        <RegisterPassword fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/logout`}>
-        <Logout fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/login`}>
-        <Login fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/recover`}>
-        <Recover fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/reset`}>
-        <Reset fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}`}>
-        <Redirect to={`/private/dashboard`} />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route
+        path="register-password"
+        element={<RegisterPassword fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="logout"
+        element={<Logout fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="login"
+        element={<Login fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="recover"
+        element={<Recover fallback={<LoadingOverlay visible />} />}
+      />
+      <Route
+        path="reset"
+        element={<Reset fallback={<LoadingOverlay visible />} />}
+      />
+      <Route path="" element={<Navigate to="/private/dashboard" replace />} />
+    </Routes>
   );
 }

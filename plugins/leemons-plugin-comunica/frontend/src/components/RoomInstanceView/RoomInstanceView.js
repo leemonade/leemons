@@ -7,7 +7,7 @@ import getChatUserAgent from "@comunica/helpers/getChatUserAgent";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RoomInstanceViewStyles } from "./RoomInstanceView.styles";
 
 function RoomInstanceView({ room, t }) {
@@ -15,7 +15,7 @@ function RoomInstanceView({ room, t }) {
   const [store, render] = useStore({
     url: null,
   });
-  const history = useHistory();
+  const navigate = useNavigate();
   const isTeacher = useIsTeacher();
 
   const instanceIds = React.useMemo(() => {
@@ -31,7 +31,7 @@ function RoomInstanceView({ room, t }) {
   const { data } = useAssignationsByProfile(instanceIds);
 
   function goUrl() {
-    history.push(store.url);
+    navigate(store.url);
   }
 
   React.useEffect(() => {
@@ -57,8 +57,7 @@ function RoomInstanceView({ room, t }) {
         }
       } else if (isTeacher) {
         store.url = (
-          response.assignable.roleDetails.dashboardUrl ||
-          "/private/assignables/details/:id"
+          response.assignable.roleDetails.dashboardUrl || "/private/assignables/details/:id"
         ).replace(":id", response.id);
       } else if (!response.finished) {
         store.url = response.instance.assignable.roleDetails.studentDetailUrl
@@ -73,7 +72,9 @@ function RoomInstanceView({ room, t }) {
     render();
   }, [data, isTeacher]);
 
-  if (!store.url) return null;
+  if (!store.url) {
+    return null;
+  }
 
   return (
     <Box className={classes.view} onClick={goUrl}>

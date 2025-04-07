@@ -1,8 +1,7 @@
-import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { LoadingOverlay } from "@bubbles-ui/components";
 import loadable from "@loadable/component";
 import pMinDelay from "p-min-delay";
+import { Route, Routes } from "react-router-dom";
 import { LocaleContainer } from "./src/components/LocaleContainer";
 import { UserRedirect } from "./src/components/UserRedirect";
 
@@ -11,15 +10,18 @@ const Setup = loadable(() =>
 );
 
 export default function Private() {
-  const { path } = useRouteMatch();
-
   return (
     <LocaleContainer>
-      <Switch>
-        <Route path={`${path}/setup`}>
-          <UserRedirect to={<Setup fallback={<LoadingOverlay visible />} />} />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route
+          path="setup"
+          element={
+            <UserRedirect
+              to={<Setup fallback={<LoadingOverlay visible />} />}
+            />
+          }
+        />
+      </Routes>
     </LocaleContainer>
   );
 }

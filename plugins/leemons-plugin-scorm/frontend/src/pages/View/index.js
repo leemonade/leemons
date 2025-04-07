@@ -1,3 +1,38 @@
+import ActivityHeader from "@assignables/components/ActivityHeader/index";
+import useAssignableInstances from "@assignables/hooks/assignableInstance/useAssignableInstancesQuery";
+import useClassData from "@assignables/hooks/useClassDataQuery";
+import useNextActivityUrl from "@assignables/hooks/useNextActivityUrl";
+import {
+  ActivityAccordion,
+  ActivityAccordionPanel,
+  Box,
+  Button,
+  HtmlText,
+  LoadingOverlay,
+  ProgressBottomBar,
+  Stack,
+  TotalLayoutContainer,
+  TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
+  createStyles,
+  useTheme,
+} from "@bubbles-ui/components";
+import { AlertInformationCircleIcon } from "@bubbles-ui/icons/solid";
+import { useLocale } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
+// TODO: import from @feedback plugin maybe?
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { ScormRender } from "@scorm/components/ScormRender";
+import { prefixPN } from "@scorm/helpers";
+import getScormProgress from "@scorm/helpers/getScormProgress";
+import { updateStatus } from "@scorm/request/assignation";
+import useAssignation from "@scorm/request/hooks/queries/useAssignation";
+import usePackage from "@scorm/request/hooks/queries/usePackage";
+import { useUpdateTimestamps } from "@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
+import dayjs from "dayjs";
+import { isEmpty, isEqual } from "lodash";
 // {/* <Box
 // sx={{
 //   'div div:nth-child(2)': {
@@ -6,42 +41,7 @@
 // }}
 // > */}
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
-import {
-  Box,
-  LoadingOverlay,
-  Button,
-  createStyles,
-  HtmlText,
-  TotalLayoutContainer,
-  TotalLayoutStepContainer,
-  TotalLayoutFooterContainer,
-  Stack,
-  ActivityAccordion,
-  ActivityAccordionPanel,
-  ProgressBottomBar,
-} from "@bubbles-ui/components";
-import { AlertInformationCircleIcon } from "@bubbles-ui/icons/solid";
-// TODO: import from @feedback plugin maybe?
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { addErrorAlert } from "@layout/alert";
-import { prefixPN } from "@scorm/helpers";
-import { getFileUrl } from "@leebrary/helpers/prepareAsset";
-import useAssignableInstances from "@assignables/hooks/assignableInstance/useAssignableInstancesQuery";
-import usePackage from "@scorm/request/hooks/queries/usePackage";
-import useAssignation from "@scorm/request/hooks/queries/useAssignation";
-import { updateStatus } from "@scorm/request/assignation";
-import useClassData from "@assignables/hooks/useClassDataQuery";
-import { useLocale } from "@common";
-import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
-import { useUpdateTimestamps } from "@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps";
-import useNextActivityUrl from "@assignables/hooks/useNextActivityUrl";
-import { useLayout } from "@layout/context";
-import { isEmpty, isEqual } from "lodash";
-import dayjs from "dayjs";
-import { ScormRender } from "@scorm/components/ScormRender";
-import getScormProgress from "@scorm/helpers/getScormProgress";
-import ActivityHeader from "@assignables/components/ActivityHeader/index";
+import { useNavigate, useParams } from "react-router-dom";
 import { useScorm as useScormEvents } from "../../hooks/useScorm";
 
 function onSetValue({ instance, user, commit, LatestCommit, setProgress }) {
@@ -55,28 +55,22 @@ function onSetValue({ instance, user, commit, LatestCommit, setProgress }) {
     LatestCommit.current = { ...commit, leemonsCommitDate: new Date() };
   }
 
-  setProgress(
-    getScormProgress({ state: LatestCommit.current, ensurePercentage: false })
-  );
+  setProgress(getScormProgress({ state: LatestCommit.current, ensurePercentage: false }));
 
-  updateStatus({ instance, user, state: commit }).catch((e) =>
-    addErrorAlert(e.message)
-  );
+  updateStatus({ instance, user, state: commit }).catch((e) => addErrorAlert(e.message));
 }
 
 function useData({ id, user }) {
-  const { data: instance, isLoading: instanceIsLoading } =
-    useAssignableInstances({
-      id,
-      enabled: !!id,
-    });
+  const { data: instance, isLoading: instanceIsLoading } = useAssignableInstances({
+    id,
+    enabled: !!id,
+  });
 
-  const { data: scormAssignation, isLoading: assignationIsLoading } =
-    useAssignation({
-      instance: id,
-      user,
-      enabled: !!id && !!user,
-    });
+  const { data: scormAssignation, isLoading: assignationIsLoading } = useAssignation({
+    instance: id,
+    user,
+    enabled: !!id && !!user,
+  });
 
   const { assignation, scormStatus: state } = scormAssignation ?? {};
 
@@ -90,11 +84,9 @@ function useData({ id, user }) {
     enabled: !!instance?.assignable?.id,
   });
 
-  const { data: classData, isLoading: classDataIsLoading } =
-    useClassData(instance);
+  const { data: classData, isLoading: classDataIsLoading } = useClassData(instance);
   const coverUrl = React.useMemo(
-    () =>
-      getFileUrl(scormPackage?.asset?.cover?.id ?? scormPackage?.asset?.cover),
+    () => getFileUrl(scormPackage?.asset?.cover?.id ?? scormPackage?.asset?.cover),
     [scormPackage?.asset?.cover]
   );
 
@@ -107,14 +99,9 @@ function useData({ id, user }) {
     classData,
     coverUrl,
     isFinished:
-      !!assignation?.timestamps?.end &&
-      !dayjs(assignation?.timestamps?.end).isAfter(dayjs()),
+      !!assignation?.timestamps?.end && !dayjs(assignation?.timestamps?.end).isAfter(dayjs()),
 
-    isLoading:
-      instanceIsLoading ||
-      assignationIsLoading ||
-      scormIsLoading ||
-      classDataIsLoading,
+    isLoading: instanceIsLoading || assignationIsLoading || scormIsLoading || classDataIsLoading,
   };
 }
 
@@ -141,15 +128,10 @@ export const useViewStyles = createStyles((theme) => ({
   },
 }));
 
-function useOnScormComplete({
-  updateTimestamps,
-  nextActivityUrl,
-  moduleId,
-  LatestCommit,
-}) {
+function useOnScormComplete({ updateTimestamps, nextActivityUrl, moduleId, LatestCommit }) {
   const [t] = useTranslateLoader(prefixPN("scormView"));
   // const { openConfirmationModal } = useLayout();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // const showSubmissionModal = async (progress) => {
   //   const labels = {
@@ -190,11 +172,11 @@ function useOnScormComplete({
   //       updateTimestamps('end');
 
   //       if (nextActivityUrl) {
-  //         history.push(nextActivityUrl);
+  //         navigate(nextActivityUrl);
   //       } else if (moduleId) {
-  //         history.push(`/private/learning-paths/modules/dashboard/${moduleId}`);
+  //         navigate(`/private/learning-paths/modules/dashboard/${moduleId}`);
   //       } else {
-  //         history.push('/private/assignables/ongoing');
+  //         navigate('/private/assignables/ongoing');
   //       }
   //     },
   //   })();
@@ -204,11 +186,11 @@ function useOnScormComplete({
     updateTimestamps("end");
 
     if (nextActivityUrl) {
-      history.push(nextActivityUrl);
+      navigate(nextActivityUrl);
     } else if (moduleId) {
-      history.push(`/private/learning-paths/modules/dashboard/${moduleId}`);
+      navigate(`/private/learning-paths/modules/dashboard/${moduleId}`);
     } else {
-      history.push("/private/assignables/ongoing");
+      navigate("/private/assignables/ongoing");
     }
 
     // const progress = getScormProgress({ state: LatestCommit, ensurePercentage: false });
@@ -236,6 +218,8 @@ export default function View() {
   const LatestCommit = useRef({});
   const [progress, setProgress] = useState(null);
   const scrollRef = useRef();
+  const theme = useTheme();
+
   // ----------------------------------------------------------------------
   // Data
   const { id, user } = useParams();
@@ -258,16 +242,11 @@ export default function View() {
       updateTimestamps("open");
       updateTimestamps("start");
     },
-    onSetValue: (commit) =>
-      onSetValue({ instance: id, user, commit, LatestCommit, setProgress }),
+    onSetValue: (commit) => onSetValue({ instance: id, user, commit, LatestCommit, setProgress }),
   });
 
   useEffect(() => {
-    if (
-      dayjs(state?.leemonsCommitDate).isAfter(
-        dayjs(LatestCommit.current?.leemonsCommitDate)
-      )
-    ) {
+    if (dayjs(state?.leemonsCommitDate).isAfter(dayjs(LatestCommit.current?.leemonsCommitDate))) {
       LatestCommit.current = state;
     }
   }, [state]);
@@ -286,8 +265,12 @@ export default function View() {
   // ----------------------------------------------------------------------
   // COMPONENT
 
-  if (dataIsLoading || tLoading) return <LoadingOverlay visible />;
+  if (dataIsLoading || tLoading) {
+    return <LoadingOverlay visible />;
+  }
+
   const labelTopElement = `${progress !== null ? `(${progress}%)` : ""}`;
+
   return (
     <TotalLayoutContainer
       scrollRef={scrollRef}
@@ -302,11 +285,7 @@ export default function View() {
         />
       }
     >
-      <Stack
-        justifyContent="center"
-        ref={scrollRef}
-        style={{ overflowY: "auto" }}
-      >
+      <Stack justifyContent="center" ref={scrollRef} style={{ overflowY: "auto" }}>
         <TotalLayoutStepContainer
           clean
           Footer={
@@ -337,10 +316,7 @@ export default function View() {
               <Box className={classes.progressBottomBarContainer}>
                 <Box className={classes.progressBottomBar}>
                   {progress !== null && (
-                    <ProgressBottomBar
-                      value={progress}
-                      labelTop={labelTopElement}
-                    />
+                    <ProgressBottomBar value={progress} labelTop={labelTopElement} />
                   )}
                 </Box>
               </Box>
@@ -377,11 +353,7 @@ export default function View() {
               </ActivityAccordionPanel>
             </ActivityAccordion>
           )}
-          <ScormRender
-            scormPackage={scormPackage}
-            state={state}
-            onSetValue={onSetValue}
-          />
+          <ScormRender scormPackage={scormPackage} state={state} onSetValue={onSetValue} />
         </TotalLayoutStepContainer>
       </Stack>
     </TotalLayoutContainer>

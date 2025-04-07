@@ -1,10 +1,9 @@
-import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { LoadingOverlay } from "@bubbles-ui/components";
 import loadable from "@loadable/component";
 import pMinDelay from "p-min-delay";
-import { LoadingOverlay } from "@bubbles-ui/components";
-import { UserRedirect } from "./src/components/UserRedirect";
+import { Route, Routes } from "react-router-dom";
 import { LocaleContainer } from "./src/components/LocaleContainer";
+import { UserRedirect } from "./src/components/UserRedirect";
 
 const Welcome = loadable(() =>
   pMinDelay(import("./src/pages/public/Welcome"), 500)
@@ -20,26 +19,35 @@ const Login = loadable(() =>
 // PUBLIC ROUTES
 
 export default function Public() {
-  const { path } = useRouteMatch();
-
   return (
     <LocaleContainer>
-      <Switch>
-        <Route path={`${path}/welcome`}>
-          <UserRedirect
-            to={<Welcome fallback={<LoadingOverlay visible />} />}
-          />
-        </Route>
-        <Route path={`${path}/signup`}>
-          <UserRedirect to={<Signup fallback={<LoadingOverlay visible />} />} />
-        </Route>
-        <Route path={`${path}/login`}>
-          <UserRedirect to={<Login fallback={<LoadingOverlay visible />} />} />
-        </Route>
-        <Route path={`${path}`}>
-          <UserRedirect />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route
+          path="welcome"
+          element={
+            <UserRedirect
+              to={<Welcome fallback={<LoadingOverlay visible />} />}
+            />
+          }
+        />
+        <Route
+          path="signup"
+          element={
+            <UserRedirect
+              to={<Signup fallback={<LoadingOverlay visible />} />}
+            />
+          }
+        />
+        <Route
+          path="login"
+          element={
+            <UserRedirect
+              to={<Login fallback={<LoadingOverlay visible />} />}
+            />
+          }
+        />
+        <Route path="" element={<UserRedirect />} />
+      </Routes>
     </LocaleContainer>
   );
 }

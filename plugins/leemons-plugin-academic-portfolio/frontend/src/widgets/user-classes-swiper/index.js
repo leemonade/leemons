@@ -1,15 +1,15 @@
 /* eslint-disable no-nested-ternary */
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
+  AvatarSubject,
   Box,
-  createStyles,
   Loader,
   Stack,
   Text,
   TextClamp,
-  AvatarSubject,
+  createStyles,
 } from "@bubbles-ui/components";
 import { Swiper } from "@bubbles-ui/extras";
 import { useStore } from "@common";
@@ -59,7 +59,7 @@ function UserClassesSwiperWidget({ program }) {
   });
   const [t] = useTranslateLoader(prefixPN("userClassesSwiperWidget"));
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   async function load() {
     try {
@@ -77,15 +77,22 @@ function UserClassesSwiperWidget({ program }) {
   }
 
   function goClassDashboard(classe) {
-    history.push(`/private/dashboard/class/${classe.id}`);
+    navigate(`/private/dashboard/class/${classe.id}`);
   }
 
   React.useEffect(() => {
-    if (program) load();
+    if (program) {
+      load();
+    }
   }, [program]);
 
-  if (store.loading) return <Loader />;
-  if (!store.classes) return null;
+  if (store.loading) {
+    return <Loader />;
+  }
+
+  if (!store.classes) {
+    return null;
+  }
 
   return (
     <Box className={styles.root}>

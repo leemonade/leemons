@@ -19,19 +19,18 @@ import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import prefixPN from "@users/helpers/prefixPN";
 import { listRolesRequest } from "@users/request";
 import _ from "lodash";
-import React, { useEffect, useMemo } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useEffect, useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function ListRoles() {
   const [t] = useTranslateLoader(prefixPN("list_roles"));
   const { t: tCommon } = useCommonTranslate("page_header");
-  const [loadingError, setLoadingError, LoadingErrorAlert] =
-    useRequestErrorMessage();
+  const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
   const [store, render] = useStore({
     page: 0,
     size: 10,
   });
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const tableHeaders = useMemo(
     () => [
@@ -123,7 +122,7 @@ function ListRoles() {
         values={headerValues}
         buttons={{ new: tCommon("new") }}
         onNew={() => {
-          history.push("/private/users/roles/detail");
+          navigate("/private/users/roles/detail");
         }}
       />
 

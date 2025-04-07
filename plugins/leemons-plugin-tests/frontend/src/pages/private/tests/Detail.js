@@ -1,47 +1,47 @@
-import React, { useRef } from "react";
+import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
 import {
-  Box,
-  // Badge,
-  Stack,
-  Button,
-  Loader,
   // ImageLoader,
   AssetTestIcon,
+  Box,
+  Button,
   ContextContainer,
-  TotalLayoutHeader,
+  Loader,
+  // Badge,
+  Stack,
   // ActivityAnswersBar,
   TotalLayoutContainer,
+  TotalLayoutHeader,
   // ActivityAccordionPanel,
   TotalLayoutStepContainer,
-} from "@bubbles-ui/components";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "@tests/helpers/prefixPN";
-import { useStore } from "@common";
-import { useHistory, useParams, Link } from "react-router-dom";
-import { addErrorAlert } from "@layout/alert";
+} from '@bubbles-ui/components';
+import { useStore } from '@common';
+import { addErrorAlert } from '@layout/alert';
+import { useIsOwner } from '@leebrary/hooks/useIsOwner';
+import useAssets from '@leebrary/request/hooks/queries/useAssets';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@tests/helpers/prefixPN';
 // import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
-import { forEach, keyBy } from "lodash";
-import { getProgramEvaluationSystemRequest } from "@academic-portfolio/request";
-import useLevelsOfDifficulty from "@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty";
-import useAssets from "@leebrary/request/hooks/queries/useAssets";
-import useAssignables from "@assignables/requests/hooks/queries/useAssignables";
-import { useIsOwner } from "@leebrary/hooks/useIsOwner";
-import { getTestRequest } from "../../../request";
+import { forEach, keyBy } from 'lodash';
+import React, { useRef } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import ViewModeQuestions from '../../../components/ViewModeQuestions';
+import { getTestRequest } from '../../../request';
 // import QuestionsTable from './components/QuestionsTable';
-import { questionTypeT } from "../questions-banks/components/QuestionForm";
-import ViewModeQuestions from "../../../components/ViewModeQuestions";
+import { questionTypeT } from '../questions-banks/components/QuestionForm';
 // import { ResultStyles } from './Result.style';
-import { calculeInfoValues } from "./StudentInstance/helpers/calculeInfoValues";
-import { getConfigByInstance } from "./StudentInstance/helpers/getConfigByInstance";
+import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
+import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 
 export default function Detail() {
-  const [t, t1V] = useTranslateLoader(prefixPN("testsDetail"));
-  const [t2, t2V] = useTranslateLoader(prefixPN("questionsBanksDetail"));
+  const [t, t1V] = useTranslateLoader(prefixPN('testsDetail'));
+  const [t2, t2V] = useTranslateLoader(prefixPN('questionsBanksDetail'));
   // const { classes: styles } = ResultStyles({}, { name: 'Detail' });
   const levels = useLevelsOfDifficulty(true);
   const scrollRef = useRef();
-  const isModulePreview = window?.location?.href?.includes("moduleId");
-  const moduleId = window?.location?.href?.split("moduleId=")[1];
+  const isModulePreview = window?.location?.href?.includes('moduleId');
+  const moduleId = window?.location?.href?.split('moduleId=')[1];
 
   const [store, render] = useStore({
     loading: true,
@@ -51,14 +51,13 @@ export default function Detail() {
 
   // const [accordionState, setAccordionState] = React.useState([]);
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
-  const { data: assignableDetail, isLoading: assignableLoading } =
-    useAssignables({
-      id: store.test?.id,
-      enabled: !!store.test?.id,
-    });
+  const { data: assignableDetail, isLoading: assignableLoading } = useAssignables({
+    id: store.test?.id,
+    enabled: !!store.test?.id,
+  });
   const { data: assetsDetails, isLoading: assetsLoading } = useAssets({
     ids: [assignableDetail?.asset?.id],
     enabled: !!assignableDetail?.asset?.id,
@@ -75,8 +74,8 @@ export default function Detail() {
       let category = false;
       let level = false;
       let type = false;
-      const levelsByValue = keyBy(levels, "value");
-      const categoriesById = keyBy(store.test.questionBank.categories, "id");
+      const levelsByValue = keyBy(levels, 'value');
+      const categoriesById = keyBy(store.test.questionBank.categories, 'id');
       forEach(store.test.questions, (question) => {
         const d = {
           id: question.id,
@@ -86,45 +85,45 @@ export default function Detail() {
           level = true;
           d.level = levelsByValue[question.level].label;
         } else {
-          d.level = t("undefined");
+          d.level = t('undefined');
         }
         if (question.category) {
           category = true;
           d.category = categoriesById[question.category].value;
         } else {
-          d.category = t("undefined");
+          d.category = t('undefined');
         }
         if (question.type) {
           type = true;
           d.type = t2(questionTypeT[question.type]);
         } else {
-          d.type = t("undefined");
+          d.type = t('undefined');
         }
         data.push(d);
       });
       if (category) {
         selectables.push({
-          value: "category",
-          label: t("categories"),
+          value: 'category',
+          label: t('categories'),
         });
       }
       if (type) {
         selectables.push({
-          value: "type",
-          label: t("questionTypes"),
+          value: 'type',
+          label: t('questionTypes'),
         });
       }
       if (level) {
         selectables.push({
-          value: "level",
-          label: t("levels"),
+          value: 'level',
+          label: t('levels'),
         });
       }
     }
     return {
       selectables,
       data,
-      labels: { OK: t("ok"), KO: t("ko"), null: t("nsnc") },
+      labels: { OK: t('ok'), KO: t('ko'), null: t('nsnc') },
     };
   }
 
@@ -157,8 +156,9 @@ export default function Detail() {
   async function setupEvaluationSystem() {
     let evaluationSystem = null;
     if (store.test?.program) {
-      const { evaluationSystem: evalSystem } =
-        await getProgramEvaluationSystemRequest(store.test.program);
+      const { evaluationSystem: evalSystem } = await getProgramEvaluationSystemRequest(
+        store.test.program
+      );
       evaluationSystem = evalSystem;
     }
     store.test.questionsInfo = calculeInfoValues(
@@ -177,11 +177,11 @@ export default function Detail() {
   }, [store.test]);
 
   function goAssignPage() {
-    history.push(`/private/tests/assign/${store.test.id}`);
+    navigate(`/private/tests/assign/${store.test.id}`);
   }
 
   function goEditPage() {
-    history.push(`/private/tests/${store.test.id}`);
+    navigate(`/private/tests/${store.test.id}`);
   }
 
   function toggleQuestionMode() {
@@ -190,14 +190,9 @@ export default function Detail() {
   }
 
   React.useEffect(() => {
-    if (
-      params?.id &&
-      (!store.currentId || store.currentId !== params.id) &&
-      t1V &&
-      t2V &&
-      levels
-    )
+    if (params?.id && (!store.currentId || store.currentId !== params.id) && t1V && t2V && levels) {
       init();
+    }
   }, [levels, params, t1V, t2V]);
 
   return (
@@ -210,34 +205,29 @@ export default function Detail() {
           icon={<AssetTestIcon />}
           direction="row"
         >
-          {!isModulePreview &&
-            !assignableLoading &&
-            !assetsLoading &&
-            canEdit && (
-              <Stack spacing={4}>
-                <Button variant="outline" onClick={() => goEditPage()}>
-                  {t("edit")}
-                </Button>
-                <Button variant="primary" onClick={() => goAssignPage()}>
-                  {t("assign")}
-                </Button>
-              </Stack>
-            )}
+          {!isModulePreview && !assignableLoading && !assetsLoading && canEdit && (
+            <Stack spacing={4}>
+              <Button variant="outline" onClick={() => goEditPage()}>
+                {t('edit')}
+              </Button>
+              <Button variant="primary" onClick={() => goAssignPage()}>
+                {t('assign')}
+              </Button>
+            </Stack>
+          )}
           {isModulePreview && (
             <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
-              <Button variant="outline">{t("goBackToDashboardPreview")}</Button>
+              <Button variant="outline">{t('goBackToDashboardPreview')}</Button>
             </Link>
           )}
-          {!isModulePreview && (assignableLoading || assetsLoading) && (
-            <Loader visible />
-          )}
+          {!isModulePreview && (assignableLoading || assetsLoading) && <Loader visible />}
         </TotalLayoutHeader>
       }
     >
       <Stack
         justifyContent="center"
         ref={scrollRef}
-        style={{ overflow: "auto" }}
+        style={{ overflow: 'auto' }}
         fullWidth
         fullHeight
       >
@@ -245,7 +235,7 @@ export default function Detail() {
           <ContextContainer
             sx={(theme) => ({
               paddingBottom: theme.spacing[12],
-              overflow: "auto",
+              overflow: 'auto',
             })}
             fullHeight
             fullWidth

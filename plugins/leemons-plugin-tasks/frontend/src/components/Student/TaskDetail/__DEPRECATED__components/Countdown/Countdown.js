@@ -1,10 +1,8 @@
-import React, { useMemo, useEffect } from "react";
-import { ActivityCountdown, createStyles, Box } from "@bubbles-ui/components";
-import { useHistory } from "react-router-dom";
+import { ActivityCountdown, Box, createStyles } from "@bubbles-ui/components";
 import dayjs from "dayjs";
 import dayjsDuration from "dayjs/plugin/duration";
+import React, { useMemo } from "react";
 
-import { useLayout } from "@layout/context";
 import FinalizationModal from "../FinalizationModal";
 
 const useStyles = createStyles((theme) => ({

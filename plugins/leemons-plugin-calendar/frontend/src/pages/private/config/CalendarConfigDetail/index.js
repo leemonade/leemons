@@ -1,10 +1,7 @@
-import React from "react";
-
 /*
 
 import { useForm } from 'react-hook-form';
 import { useAsync } from '@common/useAsync';
-import { useHistory, useParams } from 'react-router-dom';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import {
@@ -80,7 +77,7 @@ function ConfigAdd() {
 
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   const {
@@ -201,7 +198,7 @@ function ConfigAdd() {
     try {
       // Todo: Añadir modal de asegurar borrado
       await removeCalendarConfigRequest(data.id);
-      await history.push('/private/calendar/config/');
+      await navigate('/private/calendar/config/');
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -240,7 +237,7 @@ function ConfigAdd() {
         config = response.config;
       }
       setSaveLoading(false);
-      await history.push(`/private/calendar/config/calendars/${config.id}`);
+      await navigate(`/private/calendar/config/calendars/${config.id}`);
       // await router.push(`/calendar/config/detail/${config.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));

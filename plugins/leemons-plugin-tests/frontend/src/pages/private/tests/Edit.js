@@ -1,12 +1,9 @@
 /* eslint-disable camelcase */
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import {
-  getUserProgramsRequest,
-  getUserSubjectsRequest,
-} from "@academic-portfolio/request";
+import { getUserProgramsRequest, getUserSubjectsRequest } from "@academic-portfolio/request";
 import {
   LoadingOverlay,
   TotalLayoutContainer,
@@ -53,7 +50,7 @@ export default function Edit() {
     headerHeight: null,
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
   const scrollRef = React.useRef();
   const form = useForm();
@@ -69,12 +66,8 @@ export default function Edit() {
       render();
 
       const { subjects, subjectsRaw, ...toSend } = formValues;
-      toSend.subjects = subjects?.map((subject) =>
-        isString(subject) ? subject : subject.subject
-      );
-      toSend.program = toSend.subjects?.length
-        ? subjectsRaw[0].programId
-        : null;
+      toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
+      toSend.program = toSend.subjects?.length ? subjectsRaw[0].programId : null;
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
       const { test } = await saveTestRequest({
@@ -84,7 +77,7 @@ export default function Edit() {
       });
       addSuccessAlert(t("savedAsDraft"));
       if (store.isNew) {
-        history.replace(`/private/tests/${test.id}`);
+        navigate(`/private/tests/${test.id}`);
       }
     } catch (error) {
       addErrorAlert(error);
@@ -99,12 +92,8 @@ export default function Edit() {
       render();
       const { subjects, subjectsRaw, ...toSend } = formValues;
 
-      toSend.subjects = subjects?.map((subject) =>
-        isString(subject) ? subject : subject.subject
-      );
-      toSend.program = toSend.subjects?.length
-        ? subjectsRaw[0].programId
-        : null;
+      toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
+      toSend.program = toSend.subjects?.length ? subjectsRaw[0].programId : null;
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
       const { test } = await saveTestRequest({
@@ -114,9 +103,9 @@ export default function Edit() {
       });
       addSuccessAlert(t("published"));
       if (redictToAssign) {
-        history.push(`/private/tests/assign/${test.id}`);
+        navigate(`/private/tests/assign/${test.id}`);
       } else {
-        history.push("/private/tests");
+        navigate("/private/tests");
       }
     } catch (error) {
       addErrorAlert(error);
@@ -186,7 +175,9 @@ export default function Edit() {
   }
 
   React.useEffect(() => {
-    if (params?.id) init();
+    if (params?.id) {
+      init();
+    }
   }, [params?.id]);
 
   // ························································
@@ -211,7 +202,10 @@ export default function Edit() {
     const { config = {} } = formValues;
     if (config.hasResources || config.hasInstructions) {
       let labelKey = "instructions";
-      if (config.hasResources) labelKey = "resources";
+      if (config.hasResources) {
+        labelKey = "resources";
+      }
+
       if (config.hasResources && config.hasInstructions) {
         labelKey = "resoucesAndInstructions";
       }
@@ -249,14 +243,15 @@ export default function Edit() {
   form.register("statement", { required: t("statementRequired") });
 
   const getTitle = () => {
-    if (store.isNew) return t("pageTitleNew");
+    if (store.isNew) {
+      return t("pageTitleNew");
+    }
+
     return t("pageTitleEdit");
   };
   const hasOptionalSteps = () => {
     const { config = {} } = formValues;
-    return (
-      config.hasInstructions || config.hasResources || config.hasObjectives
-    );
+    return config.hasInstructions || config.hasResources || config.hasObjectives;
   };
 
   const stepsContent = React.useMemo(() => {
@@ -377,10 +372,8 @@ export default function Edit() {
         <TotalLayoutHeader
           icon={<TestIcon width={23} height={23} />}
           title={getTitle()}
-          formTitlePlaceholder={
-            formValues.name ? formValues.name : t("headerTitlePlaceholder")
-          }
-          onCancel={() => history.goBack()}
+          formTitlePlaceholder={formValues.name ? formValues.name : t("headerTitlePlaceholder")}
+          onCancel={() => navigate(-1)}
           mainActionLabel={t("cancel")}
         />
       }

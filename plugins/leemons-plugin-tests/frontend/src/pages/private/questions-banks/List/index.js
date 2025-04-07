@@ -1,21 +1,15 @@
-import React from "react";
-import {
-  ContextContainer,
-  Box,
-  TabPanel,
-  Tabs,
-  createStyles,
-} from "@bubbles-ui/components";
+import { Box, ContextContainer, TabPanel, Tabs, createStyles } from "@bubbles-ui/components";
 // TODO: import from @common plugin
 import { AdminPageHeader } from "@bubbles-ui/leemons";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import prefixPN from "@tests/helpers/prefixPN";
 import { useStore } from "@common";
-import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
-import { useHistory } from "react-router-dom";
-import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
 import AssetList from "@leebrary/components/AssetList";
 import { prepareAsset } from "@leebrary/helpers/prepareAsset";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@tests/helpers/prefixPN";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
@@ -32,7 +26,7 @@ export default function List() {
   const { t: tCommon } = useCommonTranslate("page_header");
   const [currentAsset, setCurrentAsset] = React.useState(null);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -43,9 +37,7 @@ export default function List() {
   });
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
-      "tests.questionsBanks",
-    ]);
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(["tests.questionsBanks"]);
     if (permissions[0]) {
       store.canAdd =
         permissions[0].actionNames.includes("create") ||
@@ -55,11 +47,11 @@ export default function List() {
   }
 
   function goCreatePage() {
-    history.push("/private/tests/questions-banks/new");
+    navigate("/private/tests/questions-banks/new");
   }
 
   function goDetailPage(asset) {
-    // history.push(`/private/tests/questions-banks/${asset.id}`);
+    // navigate(`/private/tests/questions-banks/${asset.id}`);
     if (currentAsset?.id !== asset?.id) {
       setCurrentAsset(prepareAsset(asset));
     }

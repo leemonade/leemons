@@ -1,23 +1,22 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import { useHistory, useLocation } from "react-router-dom";
-import { Box, Stack, Button, Modal, Paragraph } from "@bubbles-ui/components";
+import { Box, Button, Modal, Paragraph, Stack } from "@bubbles-ui/components";
+import { useSocketConnected } from "@mqtt-socket-io/hooks/useSocketConnected";
 import { SocketIoService } from "@mqtt-socket-io/service";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { SessionContext, SessionProvider } from "@users/context/session";
+import { apiSessionMiddleware } from "@users/helpers/apiSessionMiddleware";
 import prefixPN from "@users/helpers/prefixPN";
 import { useUpdateUserProfile } from "@users/hooks";
-import { apiSessionMiddleware } from "@users/helpers/apiSessionMiddleware";
-import { useSocketConnected } from "@mqtt-socket-io/hooks/useSocketConnected";
 import checkUserAgentDatasetsRequest from "@users/request/checkUserAgentDatasets";
+import PropTypes from "prop-types";
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export function Provider({ children }) {
   const [t] = useTranslateLoader(prefixPN("needDatasetDataModal"));
-  const [showUpdateDatasetModal, setShowUpdateDatasetModal] =
-    React.useState(false);
+  const [showUpdateDatasetModal, setShowUpdateDatasetModal] = React.useState(false);
   const isSocketConnected = useSocketConnected();
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   useUpdateUserProfile();
@@ -49,7 +48,7 @@ export function Provider({ children }) {
   });
 
   function handleOnGoPage() {
-    history.push("/private/users/detail?editDataset=true");
+    navigate("/private/users/detail?editDataset=true");
     setShowUpdateDatasetModal(false);
   }
 

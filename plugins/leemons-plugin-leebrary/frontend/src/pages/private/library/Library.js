@@ -1,10 +1,10 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
-  Redirect,
+  Navigate,
   Route,
-  Switch,
-  useHistory,
-  useRouteMatch,
+  Routes,
+  useLocation,
+  useNavigate,
 } from "react-router-dom";
 
 import { getClassImage } from "@academic-portfolio/helpers/getClassImage";
@@ -39,7 +39,8 @@ function cleanPath(path) {
 }
 
 const LibraryPageContent = () => {
-  const { path } = useRouteMatch();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [store] = useStore();
   const { newAsset, category, loading, setAsset, setCategories, categories } =
     useContext(LibraryContext);
@@ -47,13 +48,15 @@ const LibraryPageContent = () => {
   const [t, translationsCategories] = useTranslateLoader(
     prefixPN("categories")
   );
-  const history = useHistory();
   const isStudent = useIsStudent();
   const [settings, setSettings] = useState({
     hasPins: false,
     loadingPins: true,
   });
   const [hideNavBar, setHideNavBar] = useState(false);
+
+  // Get the base path from the current location
+  const basePath = location.pathname.split("/").slice(0, -1).join("/");
 
   const getCategories = async () => {
     store.subjects = null;
@@ -93,7 +96,7 @@ const LibraryPageContent = () => {
   };
 
   useEffect(() => {
-    const pathSegments = history.location.pathname.split("/");
+    const pathSegments = location.pathname.split("/");
     const editSegment = pathSegments[pathSegments.length - 2];
     const lastSegment = pathSegments[pathSegments.length - 1];
 
@@ -107,7 +110,7 @@ const LibraryPageContent = () => {
     } else {
       setHideNavBar(false);
     }
-  }, [history.location.pathname]);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (isStudent !== null && translationsCategories) {
@@ -126,9 +129,9 @@ const LibraryPageContent = () => {
   const handleOnNav = (data) => {
     setAsset(null);
     if (data) {
-      history.push(cleanPath(`${path}/${data.key}/list`));
+      navigate(cleanPath(`${basePath}/${data.key}/list`));
     } else {
-      history.push(cleanPath(`${path}/pins/list`));
+      navigate(cleanPath(`${basePath}/pins/list`));
     }
   };
 
@@ -136,7 +139,7 @@ const LibraryPageContent = () => {
     if (!isEmpty(item?.createUrl)) {
       const newURL = new URL(item.createUrl, window?.location);
       newURL.searchParams.set("from", "leebrary");
-      history.push(newURL.href.substring(newURL.origin.length));
+      navigate(newURL.href.substring(newURL.origin.length));
     } else {
       newAsset(null, item);
     }
@@ -147,11 +150,11 @@ const LibraryPageContent = () => {
   };
 
   function onNavShared() {
-    history.push(cleanPath(`${path}/leebrary-shared/list/`));
+    navigate(cleanPath(`${basePath}/leebrary-shared/list/`));
   }
 
   function onNavSubject(subject) {
-    history.push(cleanPath(`${path}/leebrary-subject/${subject.id}/list/`));
+    navigate(cleanPath(`${basePath}/leebrary-subject/${subject.id}/list/`));
   }
 
   if (settings.loadingPins) {
@@ -181,36 +184,47 @@ const LibraryPageContent = () => {
         </Box>
       )}
       <Box>
-        <Switch>
+        <Routes>
           {/* BULK UPLOAD ASSET ·························································· */}
-          <Route path={cleanPath(`${path}/:category/bulk-upload`)}>
-            <BulkAssetPage />
-          </Route>
+          <Route
+            path={cleanPath(`${basePath}/:category/bulk-upload`)}
+            element={<BulkAssetPage />}
+          />
 
           {/* NEW ASSET ·························································· */}
-          <Route path={cleanPath(`${path}/:category/new`)}>
-            <AssetPage />
-          </Route>
+          <Route
+            path={cleanPath(`${basePath}/:category/new`)}
+            element={<AssetPage />}
+          />
 
           {/* EDIT ASSET ·························································· */}
-          <Route path={cleanPath(`${path}/edit/:id`)}>
-            <AssetPage />
-          </Route>
+          <Route
+            path={cleanPath(`${basePath}/edit/:id`)}
+            element={<AssetPage />}
+          />
 
           {/* LIST ASSETS ························································ */}
-          <Route path={cleanPath(`${path}/:category/list`)}>
-            <ListAssetPage />
-          </Route>
+          <Route
+            path={cleanPath(`${basePath}/:category/list`)}
+            element={<ListAssetPage />}
+          />
 
-          <Route path={cleanPath(`${path}/:category/:id/list`)}>
-            <ListAssetPage />
-          </Route>
+          <Route
+            path={cleanPath(`${basePath}/:category/:id/list`)}
+            element={<ListAssetPage />}
+          />
 
           {/* DEFAULT exact path={path} */}
-          <Route>
-            <Redirect to={cleanPath(`${path}/leebrary-recent/list`)} />
-          </Route>
-        </Switch>
+          <Route
+            path="*"
+            element={
+              <Navigate
+                to={cleanPath(`${basePath}/leebrary-recent/list`)}
+                replace
+              />
+            }
+          />
+        </Routes>
       </Box>
     </Stack>
   );
@@ -223,8 +237,9 @@ const LibraryPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState(VIEWS.LIST);
-  const { path } = useRouteMatch();
-  const history = useHistory();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const basePath = location.pathname;
 
   function getSelectedCategory() {
     if (window.location.pathname.includes(CATEGORY_LEEBRARY_SUBJECT)) {
@@ -238,21 +253,21 @@ const LibraryPage = () => {
   const editAsset = (data) => {
     setAsset(data);
     setView(VIEWS.EDIT);
-    history.push(`${path}/edit/${data?.id}`.replace("//", "/"));
+    navigate(`${basePath}/edit/${data?.id}`.replace("//", "/"));
   };
 
   const newAsset = (data, categoryItem) => {
     setFile(data);
     setCategory(categoryItem);
     setView(VIEWS.NEW);
-    history.push(`${path}/${categoryItem.key}/new`.replace("//", "/"));
+    navigate(`${basePath}/${categoryItem.key}/new`.replace("//", "/"));
   };
 
   const newBulkUpload = (data, categoryItem) => {
     setFile(data);
     setCategory(categoryItem);
     setView(VIEWS.BULK_UPLOAD);
-    history.push(`${path}/${categoryItem.key}/bulk-upload`.replace("//", "/"));
+    navigate(`${basePath}/${categoryItem.key}/bulk-upload`.replace("//", "/"));
   };
 
   const selectCategory = useCallback(

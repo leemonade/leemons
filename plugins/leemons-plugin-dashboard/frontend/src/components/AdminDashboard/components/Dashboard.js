@@ -1,41 +1,35 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
-import { cloneDeep, forEach, map, times } from "lodash";
 import {
-  Box,
-  Text,
+  ActivityAccordion,
+  ActivityAccordionPanel,
+  ActivityAnswersBar,
   Badge,
+  Box,
+  ContextContainer,
+  PageContainer,
   Paper,
   Stack,
+  Text,
   Title,
   createStyles,
-  PageContainer,
-  ContextContainer,
-  ActivityAccordion,
-  ActivityAnswersBar,
-  ActivityAccordionPanel,
 } from "@bubbles-ui/components";
 import { Swiper } from "@bubbles-ui/extras";
-import {
-  SchoolTeacherMaleIcon,
-  SingleActionsGraduateIcon,
-} from "@bubbles-ui/icons/outline";
+import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from "@bubbles-ui/icons/outline";
 import { AnalyticsGraphBarIcon } from "@bubbles-ui/icons/solid";
 import { LibraryCardBasic } from "@bubbles-ui/leemons";
 import { useStore } from "@common";
+import { bytesToSize } from "@dashboard/helpers";
 import prefixPN from "@dashboard/helpers/prefixPN";
+import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from "@dashboard/request";
 import { getLocalizations } from "@multilanguage/useTranslate";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { SelectCenter } from "@users/components";
-import {
-  getAdminDashboardRealtimeRequest,
-  getAdminDashboardRequest,
-} from "@dashboard/request";
-import { bytesToSize } from "@dashboard/helpers";
-import { SkeletonDashboardLoader } from "./SkeletonDashboardLoader";
+import { cloneDeep, forEach, map, times } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Icon } from "./Icon";
 import { PcValue } from "./PcValue";
+import { SkeletonDashboardLoader } from "./SkeletonDashboardLoader";
 
 const RIGHT_ZONE_WIDTH = "320px";
 const useStyles = createStyles((theme) => ({
@@ -58,7 +52,7 @@ function Dashboard({ session }) {
     loading: true,
     isAcademicMode: false,
   });
-  const history = useHistory();
+  const navigate = useNavigate();
   const { classes: styles } = useStyles({}, { name: "AdminDashboard" });
   const [t, tl] = useTranslateLoader(prefixPN("adminDashboard"));
 
@@ -145,12 +139,16 @@ function Dashboard({ session }) {
   }
 
   React.useEffect(() => {
-    if (tl) init();
+    if (tl) {
+      init();
+    }
   }, [tl]);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      if (!store.loadingRealtime) realtime();
+      if (!store.loadingRealtime) {
+        realtime();
+      }
     }, 1000);
 
     return () => clearInterval(interval);
@@ -175,9 +173,7 @@ function Dashboard({ session }) {
   }
 
   function goProgram(program) {
-    history.push(
-      `/private/academic-portfolio/tree?center=${store.center}&program=${program.id}`
-    );
+    navigate(`/private/academic-portfolio/tree?center=${store.center}&program=${program.id}`);
   }
 
   return (
@@ -236,8 +232,7 @@ function Dashboard({ session }) {
                   <rect x="732" y="0" width="350" height="350" rx="3" />
                 </SkeletonDashboardLoader>
               ) : null}
-              {!store.loadingCenter &&
-              store.academicPortfolio?.programs.length ? (
+              {!store.loadingCenter && store.academicPortfolio?.programs.length ? (
                 <Swiper
                   className={styles.cardContainer}
                   breakAt={{
@@ -408,12 +403,7 @@ function Dashboard({ session }) {
                   <ActivityAccordionPanel
                     key={0}
                     label={t("createdTasks")}
-                    icon={
-                      <Icon
-                        className="stroke-current"
-                        src={"/public/assets/svgs/tasks.svg"}
-                      />
-                    }
+                    icon={<Icon className="stroke-current" src={"/public/assets/svgs/tasks.svg"} />}
                     rightSection={
                       <Box>
                         <Badge
@@ -441,10 +431,7 @@ function Dashboard({ session }) {
         </Stack>
       </PageContainer>
       {/* -- RIGHT ZONE -- */}
-      <Paper
-        className={styles.rightZone}
-        padding={store.loading ? 0 : undefined}
-      >
+      <Paper className={styles.rightZone} padding={store.loading ? 0 : undefined}>
         {/* --- SYSTEM --- */}
         {/* --- CPU --- */}
         {store.loading ? (
@@ -476,16 +463,10 @@ function Dashboard({ session }) {
                   <PcValue text={t("feq")} value={`${store.pc.cpu.speed}GHz`} />
                 ) : null}
                 {store.pc.cpu.speedMin ? (
-                  <PcValue
-                    text={t("feqMin")}
-                    value={`${store.pc.cpu.speedMin}GHz`}
-                  />
+                  <PcValue text={t("feqMin")} value={`${store.pc.cpu.speedMin}GHz`} />
                 ) : null}
                 {store.pc.cpu.speedMax ? (
-                  <PcValue
-                    text={t("feqMax")}
-                    value={`${store.pc.cpu.speedMax}GHz`}
-                  />
+                  <PcValue text={t("feqMax")} value={`${store.pc.cpu.speedMax}GHz`} />
                 ) : null}
                 {store.pc.cpu.cores ? (
                   <PcValue
@@ -506,40 +487,24 @@ function Dashboard({ session }) {
                     {t("ram")}
                   </Text>
                 </Box>
+                {ram?.clockSpeed ? <PcValue text={t("type")} value={ram.type} /> : null}
                 {ram?.clockSpeed ? (
-                  <PcValue text={t("type")} value={ram.type} />
-                ) : null}
-                {ram?.clockSpeed ? (
-                  <PcValue
-                    text={t("clockSpeed")}
-                    value={`${ram.clockSpeed}MHz`}
-                  />
+                  <PcValue text={t("clockSpeed")} value={`${ram.clockSpeed}MHz`} />
                 ) : null}
                 {store.pc.mem.total ? (
-                  <PcValue
-                    text={t("total")}
-                    value={bytesToSize(store.pc.mem.total)}
-                  />
+                  <PcValue text={t("total")} value={bytesToSize(store.pc.mem.total)} />
                 ) : null}
                 {store.pc.mem.available ? (
-                  <PcValue
-                    text={t("available")}
-                    value={bytesToSize(store.pc.mem.available)}
-                  />
+                  <PcValue text={t("available")} value={bytesToSize(store.pc.mem.available)} />
                 ) : null}
-                {ramUsed ? (
-                  <PcValue text={t("used")} value={`${ramUsed.toFixed(2)}%`} />
-                ) : null}
+                {ramUsed ? <PcValue text={t("used")} value={`${ramUsed.toFixed(2)}%`} /> : null}
               </Box>
             </Stack>
 
             {/* --- DISCO --- */}
             {store.pc?.diskLayout
               ? store.pc.diskLayout.map((disk, i) => (
-                  <Stack
-                    key={i}
-                    sx={(theme) => ({ marginTop: theme.spacing[6] })}
-                  >
+                  <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[6] })}>
                     <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
                       <Icon size="18px" src={"/public/assets/svgs/disk.svg"} />
                     </Box>
@@ -549,17 +514,10 @@ function Dashboard({ session }) {
                           {t("disk")} {store.pc.diskLayout.length > 1 ? i : ""}
                         </Text>
                       </Box>
-                      {disk.name ? (
-                        <PcValue text={t("name")} value={disk.name} />
-                      ) : null}
-                      {disk.type ? (
-                        <PcValue text={t("type")} value={disk.type} />
-                      ) : null}
+                      {disk.name ? <PcValue text={t("name")} value={disk.name} /> : null}
+                      {disk.type ? <PcValue text={t("type")} value={disk.type} /> : null}
                       {disk.size ? (
-                        <PcValue
-                          text={t("space")}
-                          value={bytesToSize(disk.size)}
-                        />
+                        <PcValue text={t("space")} value={bytesToSize(disk.size)} />
                       ) : null}
                       {store.pc.fsSize ? (
                         <PcValue
@@ -575,10 +533,7 @@ function Dashboard({ session }) {
             {/* --- INTERNET --- */}
             <Stack sx={(theme) => ({ marginTop: theme.spacing[6] })}>
               <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-                <Icon
-                  size="18px"
-                  src={"/public/assets/svgs/internet-speed.svg"}
-                />
+                <Icon size="18px" src={"/public/assets/svgs/internet-speed.svg"} />
               </Box>
               <Box sx={() => ({ width: "100%" })}>
                 <Box>
@@ -587,10 +542,7 @@ function Dashboard({ session }) {
                   </Text>
                 </Box>
                 {store.pc.networkInterface ? (
-                  <PcValue
-                    text={t("type")}
-                    value={store.pc.networkInterface.type}
-                  />
+                  <PcValue text={t("type")} value={store.pc.networkInterface.type} />
                 ) : null}
                 {store.pc.networkInterface ? (
                   <PcValue

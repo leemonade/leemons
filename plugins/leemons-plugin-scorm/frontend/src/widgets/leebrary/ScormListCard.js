@@ -1,19 +1,19 @@
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
 import { createStyles } from "@bubbles-ui/components";
-import { LibraryCard } from "@leebrary/components/LibraryCard";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { useLayout } from "@layout/context";
-import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
-import { prefixPN } from "@scorm/helpers";
-import { deletePackageRequest, duplicatePackageRequest } from "@scorm/request";
-import { ScormCardIcon } from "@scorm/components/icons";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import { LibraryCard } from "@leebrary/components/LibraryCard";
 import { AssignIcon } from "@leebrary/components/LibraryDetailToolbar/icons/AssignIcon";
 import { DeleteIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon";
-import { EditIcon } from "@leebrary/components/LibraryDetailToolbar/icons/EditIcon";
 import { DuplicateIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon";
+import { EditIcon } from "@leebrary/components/LibraryDetailToolbar/icons/EditIcon";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { ScormCardIcon } from "@scorm/components/icons";
+import { prefixPN } from "@scorm/helpers";
+import { deletePackageRequest, duplicatePackageRequest } from "@scorm/request";
+import PropTypes from "prop-types";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ScormCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -24,14 +24,7 @@ const ScormCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const ScormListCard = ({
-  asset,
-  selected,
-  onRefresh,
-  embedded,
-  isEmbeddedList,
-  ...props
-}) => {
+const ScormListCard = ({ asset, selected, onRefresh, embedded, isEmbeddedList, ...props }) => {
   const [t] = useTranslateLoader(prefixPN("scormCard"));
   const { classes } = ScormCardStyles({ selected });
   const {
@@ -41,7 +34,7 @@ const ScormListCard = ({
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const menuItems = useMemo(() => {
     const items = [];
@@ -53,8 +46,15 @@ const ScormListCard = ({
       //     children: t('view'),
       //     onClick: (e) => {
       //       e.stopPropagation();
-      //       history.push(`/private/scorm/preview/${asset.providerData.id}`);
+      //       navigate(`/private/scorm/preview/${asset.providerData.id}`);
       //     },
+      //   });
+      // }
+      // if (asset.providerData?.published) {
+      //   items.push({
+      //     icon: <ViewOnIcon />,
+      //     children: t('view'),
+      //     onClick: () => {},
       //   });
       // }
       if (asset.providerData?.published) {
@@ -63,7 +63,7 @@ const ScormListCard = ({
           children: t("assign"),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/scorm/assign/${asset.providerData.id}`);
+            navigate(`/private/scorm/assign/${asset.providerData.id}`);
           },
         });
       }
@@ -73,7 +73,7 @@ const ScormListCard = ({
           children: t("edit"),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/scorm/${asset.providerData.id}`);
+            navigate(`/private/scorm/${asset.providerData.id}`);
           },
         });
       }

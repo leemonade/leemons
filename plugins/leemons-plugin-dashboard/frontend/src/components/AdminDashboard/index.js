@@ -1,10 +1,9 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
 import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import { useNavigate } from "react-router-dom";
 import { Dashboard } from "./components/Dashboard";
 
 function AdminDashboard(props) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const deploymentConfig = useDeploymentConfig({
     pluginName: "dashboard",
     ignoreVersion: true,
@@ -15,7 +14,7 @@ function AdminDashboard(props) {
   }
 
   if (deploymentConfig?.adminDashboardUrl) {
-    history.push(deploymentConfig.adminDashboardUrl);
+    navigate(deploymentConfig.adminDashboardUrl);
     return null;
   }
 

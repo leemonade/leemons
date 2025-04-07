@@ -1,14 +1,14 @@
-import { LoadingOverlay } from "@bubbles-ui/components";
-import { useStore } from "@common";
-import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
-import { LayoutContext } from "@layout/context/layout";
-import hooks from "@leemons/hooks";
-import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
-import { AuthContainer } from "@users/components/AuthContainer";
-import { LoginProfileSelector } from "@users/components/LoginProfileSelector";
-import prefixPN from "@users/helpers/prefixPN";
-import { AuthLayout } from "@users/layout/AuthLayout";
+import { LoadingOverlay } from '@bubbles-ui/components';
+import { useStore } from '@common';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+import { LayoutContext } from '@layout/context/layout';
+import hooks from '@leemons/hooks';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { AuthContainer } from '@users/components/AuthContainer';
+import { LoginProfileSelector } from '@users/components/LoginProfileSelector';
+import prefixPN from '@users/helpers/prefixPN';
+import { AuthLayout } from '@users/layout/AuthLayout';
 import {
   getRememberLoginRequest,
   getUserCenterProfileTokenRequest,
@@ -17,13 +17,13 @@ import {
   getUserProfilesRequest,
   removeRememberLoginRequest,
   setRememberLoginRequest,
-} from "@users/request";
-import { getCookieToken } from "@users/session";
-import Cookies from "js-cookie";
-import _, { find, isArray } from "lodash";
-import PropTypes from "prop-types";
-import React, { useContext, useMemo } from "react";
-import { useHistory } from "react-router-dom";
+} from '@users/request';
+import { getCookieToken } from '@users/session';
+import Cookies from 'js-cookie';
+import _, { find, isArray } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useContext, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SelectProfile({ session }) {
   const [store, render] = useStore({
@@ -36,14 +36,14 @@ export default function SelectProfile({ session }) {
   });
 
   const deploymentConfig = useDeploymentConfig({
-    pluginName: "users",
+    pluginName: 'users',
     ignoreVersion: true,
   });
-  const history = useHistory();
+  const navigate = useNavigate();
   const { layoutState, setLayoutState } = useContext(LayoutContext);
 
-  const { t: tCommon } = useCommonTranslate("forms");
-  const [t, , , tLoading] = useTranslateLoader(prefixPN("selectProfile"));
+  const { t: tCommon } = useCommonTranslate('forms');
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('selectProfile'));
 
   // ····················································································
   // HANDLERS
@@ -62,7 +62,7 @@ export default function SelectProfile({ session }) {
         });
       });
 
-      const profiles = _.uniqBy(userProfiles, "id");
+      const profiles = _.uniqBy(userProfiles, 'id');
       const profile = find(profiles, { id: data.profile });
 
       if (data.remember) {
@@ -74,28 +74,25 @@ export default function SelectProfile({ session }) {
         await removeRememberLoginRequest();
       }
 
-      if (profile.sysName === "admin" || profile.sysName === "super") {
+      if (profile.sysName === 'admin' || profile.sysName === 'super') {
         const { jwtToken } = await getUserProfileTokenRequest(profile.id);
-        await hooks.fireEvent("user:change:profile", profile);
+        await hooks.fireEvent('user:change:profile', profile);
         const newToken = { ...jwtToken, profile: data.profile };
-        Cookies.set("token", newToken);
-        hooks.fireEvent("user:cookie:session:change");
+        Cookies.set('token', newToken);
+        hooks.fireEvent('user:cookie:session:change');
 
-        history.push(
-          profile.sysName === "super"
-            ? deploymentConfig?.superRedirectUrl || "/private/admin/setup"
+        navigate(
+          profile.sysName === 'super'
+            ? deploymentConfig?.superRedirectUrl || '/private/admin/setup'
             : `/private/dashboard`
         );
       } else {
-        const { jwtToken } = await getUserCenterProfileTokenRequest(
-          data.center,
-          data.profile
-        );
-        await hooks.fireEvent("user:change:profile", profile);
+        const { jwtToken } = await getUserCenterProfileTokenRequest(data.center, data.profile);
+        await hooks.fireEvent('user:change:profile', profile);
         const newToken = { ...jwtToken, profile: data.profile };
-        Cookies.set("token", newToken);
-        hooks.fireEvent("user:cookie:session:change");
-        history.push(`/private/dashboard`);
+        Cookies.set('token', newToken);
+        hooks.fireEvent('user:cookie:session:change');
+        navigate(`/private/dashboard`);
       }
     } catch (e) {
       console.error(e);
@@ -130,16 +127,14 @@ export default function SelectProfile({ session }) {
     // If the user is a super admin, fetch super profiles and add them to each center
     if (userToken?.user?.isSuperAdmin) {
       const { profiles } = await getUserProfilesRequest();
-      store.superProfile = _.find(profiles, { sysName: "super" });
+      store.superProfile = _.find(profiles, { sysName: 'super' });
 
       _.forEach(store.centers, (centre) => {
         centre.profiles.push(store.superProfile);
       });
 
       // Filters centers to only include those with profiles
-      store.centers = store.centers.filter(
-        (centre) => centre.profiles.length > 0
-      );
+      store.centers = store.centers.filter((centre) => centre.profiles.length > 0);
     }
     // Sets default values if a profile and center are remembered
     if (profile && center) {
@@ -155,8 +150,7 @@ export default function SelectProfile({ session }) {
       !store.centers.length ||
       (store.centers.length === 1 && store.centers[0].profiles.length === 1)
     ) {
-      const profileToSubmit =
-        store.centers[0]?.profiles[0].id || store.superProfile?.id;
+      const profileToSubmit = store.centers[0]?.profiles[0].id || store.superProfile?.id;
       const centerToSubmit = store.centers[0]?.id;
       const payload = {
         profile: profileToSubmit,
@@ -175,7 +169,9 @@ export default function SelectProfile({ session }) {
   }
 
   React.useEffect(() => {
-    if (!tLoading && deploymentConfig !== undefined) init();
+    if (!tLoading && deploymentConfig !== undefined) {
+      init();
+    }
   }, [tLoading, deploymentConfig]);
 
   // ····················································································
@@ -183,17 +179,17 @@ export default function SelectProfile({ session }) {
 
   const labels = useMemo(
     () => ({
-      title: t("title", { name: session?.name }),
+      title: t('title', { name: session?.name }),
       description:
         store.centers?.length > 1
-          ? t("several_centers")
-          : t("number_of_profiles", {
+          ? t('several_centers')
+          : t('number_of_profiles', {
               profiles: store.centers?.[0]?.profiles?.length,
             }),
-      remember: t("use_always_profile"),
-      help: t("change_easy"),
-      login: t("log_in"),
-      centerPlaceholder: t("choose_center"),
+      remember: t('use_always_profile'),
+      help: t('change_easy'),
+      login: t('log_in'),
+      centerPlaceholder: t('choose_center'),
     }),
     [t, session, store.centers]
   );
@@ -201,10 +197,10 @@ export default function SelectProfile({ session }) {
   const errorMessages = useMemo(
     () => ({
       profile: {
-        required: tCommon("selectionRequired"),
+        required: tCommon('selectionRequired'),
       },
       center: {
-        required: tCommon("selectionRequired"),
+        required: tCommon('selectionRequired'),
       },
     }),
     [tCommon]

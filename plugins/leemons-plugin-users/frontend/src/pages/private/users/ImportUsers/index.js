@@ -1,12 +1,12 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   Box,
   Button,
-  TLayout,
-  ImageLoader,
   ContextContainer,
+  ImageLoader,
+  TLayout,
   TotalLayoutFooterContainer,
 } from "@bubbles-ui/components";
 import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
@@ -24,7 +24,7 @@ function ImportUsers() {
   const [tList] = useTranslateLoader(prefixPN("list_users"));
   const [store, render] = useStore();
   const scrollRef = React.useRef();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   function centerChange(e) {
     store.center = e;
@@ -37,7 +37,7 @@ function ImportUsers() {
   }
 
   function goToUsersList() {
-    history.push("/private/users/list");
+    navigate("/private/users/list");
   }
 
   const childrens = React.useMemo(() => {
@@ -58,20 +58,14 @@ function ImportUsers() {
       </ContextContainer>,
     ];
     if (store.center && store.profile) {
-      result.push(
-        <UploadFile t={t} center={store.center} profile={store.profile} />
-      );
+      result.push(<UploadFile t={t} center={store.center} profile={store.profile} />);
     } else {
       result.push(
         <TotalLayoutFooterContainer
           fixed
           fullWidth
           leftZone={
-            <Button
-              variant="link"
-              onClick={goToUsersList}
-              leftIcon={<ChevLeftIcon />}
-            >
+            <Button variant="link" onClick={goToUsersList} leftIcon={<ChevLeftIcon />}>
               {t("backToUsers")}
             </Button>
           }
@@ -88,11 +82,7 @@ function ImportUsers() {
         cancelable={false}
         icon={
           <Box sx={{ position: "relative", width: 24, height: 24 }}>
-            <ImageLoader
-              src="/public/users/menu-icon.svg"
-              width={18}
-              height={18}
-            />
+            <ImageLoader src="/public/users/menu-icon.svg" width={18} height={18} />
           </Box>
         }
       />

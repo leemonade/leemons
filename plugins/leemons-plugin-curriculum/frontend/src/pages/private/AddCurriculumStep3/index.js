@@ -7,32 +7,18 @@ import {
   Tree,
   useTree,
 } from "@bubbles-ui/components";
-import {
-  ChevLeftIcon,
-  RatingStarIcon,
-  RedoIcon,
-} from "@bubbles-ui/icons/outline";
+import { ChevLeftIcon, RatingStarIcon, RedoIcon } from "@bubbles-ui/icons/outline";
 import prefixPN from "@curriculum/helpers/prefixPN";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { listCentersRequest } from "@users/request";
-import {
-  filter,
-  find,
-  findIndex,
-  forEach,
-  forIn,
-  isArray,
-  keyBy,
-  map,
-  orderBy,
-} from "lodash";
+import { filter, find, findIndex, forEach, forIn, isArray, keyBy, map, orderBy } from "lodash";
 import React, { useMemo } from "react";
 
 import { detailProgramRequest } from "@academic-portfolio/request";
 import { useStore } from "@common";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NewBranchDetailValue from "../../../bubbles-components/NewBranchDetailValue";
 import {
   NEW_BRANCH_VALUE_ERROR_MESSAGES,
@@ -53,7 +39,7 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [t] = useTranslateLoader(prefixPN("addCurriculumStep3"));
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const tree = useTree();
   const { id } = useParams();
 
@@ -156,7 +142,9 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
     function getAcademicIds(nodes) {
       forEach(nodes, (nod) => {
         academicItemIds.push(nod.academicItem);
-        if (nod.childrens) getAcademicIds(nod.childrens);
+        if (nod.childrens) {
+          getAcademicIds(nod.childrens);
+        }
       });
     }
 
@@ -191,27 +179,24 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
       });
     }
 
-    forIn(
-      store.activeNode.nodeLevel?.schema?.compileJsonSchema?.properties,
-      (prop, index) => {
-        store.activeNode.nodeLevel.schema.compileJsonUI[index]["ui:title"] = (
-          <>
-            {prop?.frontConfig?.blockData?.evaluationCriteria ? (
-              <Box
-                sx={(theme) => ({
-                  display: "inline-block",
-                  verticalAlign: "middle",
-                  marginRight: theme.spacing[2],
-                })}
-              >
-                <RatingStarIcon />
-              </Box>
-            ) : null}
-            {prop.title}
-          </>
-        );
-      }
-    );
+    forIn(store.activeNode.nodeLevel?.schema?.compileJsonSchema?.properties, (prop, index) => {
+      store.activeNode.nodeLevel.schema.compileJsonUI[index]["ui:title"] = (
+        <>
+          {prop?.frontConfig?.blockData?.evaluationCriteria ? (
+            <Box
+              sx={(theme) => ({
+                display: "inline-block",
+                verticalAlign: "middle",
+                marginRight: theme.spacing[2],
+              })}
+            >
+              <RatingStarIcon />
+            </Box>
+          ) : null}
+          {prop.title}
+        </>
+      );
+    });
 
     store.activeRightSection = "detail-branch-value";
     render();
@@ -233,8 +218,10 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
         store.curriculum.published = true;
         render();
       }
-      history.push("/private/curriculum/list");
-    } catch (e) {}
+      navigate("/private/curriculum/list");
+    } catch (e) {
+      //
+    }
   }
 
   async function onAddBranchValue(data, noClose) {
@@ -256,8 +243,7 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
           const parentNodeLevelIndex = findIndex(store.curriculum.nodeLevels, {
             id: store.activeNode.nodeLevel,
           });
-          toSend.nodeLevel =
-            store.curriculum.nodeLevels[parentNodeLevelIndex + 1].id;
+          toSend.nodeLevel = store.curriculum.nodeLevels[parentNodeLevelIndex + 1].id;
           toSend.parentNode = store.activeNode.id;
           toSend.nodeOrder = store.activeNode.childrens.length;
         }

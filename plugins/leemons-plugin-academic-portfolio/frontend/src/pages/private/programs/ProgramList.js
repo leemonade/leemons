@@ -20,13 +20,13 @@ import {
 } from "@bubbles-ui/components";
 // TODO: import from @common plugin
 
-import { AdminPageHeader } from "@bubbles-ui/leemons";
 import {
   AcademicProgramSetup,
   AcademicProgramSetupBasicData,
   AcademicProgramSetupCourses,
   AcademicProgramSetupSubjects,
 } from "@academic-portfolio/components/ProgramSetup";
+import { AdminPageHeader } from "@bubbles-ui/leemons";
 import { unflatten, useStore } from "@common";
 import useRequestErrorMessage from "@common/useRequestErrorMessage";
 import { EvaluationsSelect } from "@grades/components/EvaluationsSelect";
@@ -39,14 +39,12 @@ import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { SelectCenter } from "@users/components/SelectCenter";
 import { cloneDeep, isArray, isEmpty, isNil, keyBy, map } from "lodash";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { activeMenuItemSubjects } from "../../../helpers/activeMenuItemSubjects";
 import { detailProgramRequest } from "../../../request";
 
 export default function ProgramList() {
-  const [t, translations, , loading] = useTranslateLoader(
-    prefixPN("programs_page")
-  );
+  const [t, translations, , loading] = useTranslateLoader(prefixPN("programs_page"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const [errorNoEvaluation, setErrorNoEvaluation] = useState(false);
@@ -66,7 +64,7 @@ export default function ProgramList() {
   const [headerBaseRef, headerBase] = useResizeObserver();
   const [headerDescriptionRef, headerDescription] = useResizeObserver();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const treeProps = useTree();
 
@@ -138,15 +136,8 @@ export default function ProgramList() {
       let messageKey = "common.create_done";
 
       if (!isEmpty(store.currentProgram)) {
-        const {
-          name,
-          abbreviation,
-          credits,
-          image,
-          color,
-          totalHours,
-          hideStudentsToStudents,
-        } = values;
+        const { name, abbreviation, credits, image, color, totalHours, hideStudentsToStudents } =
+          values;
         body = {
           id: store.currentProgram.id,
           name,
@@ -248,8 +239,7 @@ export default function ProgramList() {
     handleShowDetail(async () => {
       const { program } = await detailProgramRequest(e.program.id);
       store.currentProgram = program;
-      store.currentProgram.allSubjectsSameDuration =
-        !store.currentProgram.customSubstages?.length;
+      store.currentProgram.allSubjectsSameDuration = !store.currentProgram.customSubstages?.length;
       treeProps.setSelectedNode(e.id);
     });
   };
@@ -275,15 +265,8 @@ export default function ProgramList() {
 
   const setupProps = useMemo(() => {
     if (!isNil(setupLabels)) {
-      const {
-        title,
-        editTitle,
-        basicData,
-        coursesData,
-        subjectsData,
-        frequencies,
-        firstDigits,
-      } = setupLabels;
+      const { title, editTitle, basicData, coursesData, subjectsData, frequencies, firstDigits } =
+        setupLabels;
       const firstDigitOptions = Object.keys(firstDigits).map((key) => ({
         label: firstDigits[key],
         value: key,
@@ -293,17 +276,12 @@ export default function ProgramList() {
         value: key,
       }));
 
-      const values = store.currentProgram
-        ? cloneDeep(store.currentProgram)
-        : {};
+      const values = store.currentProgram ? cloneDeep(store.currentProgram) : {};
       if (values.cycles) {
         const coursesById = keyBy(values.courses, "id");
         values.cycles = map(values.cycles, (cycle) => ({
           ...cycle,
-          courses: map(
-            cycle.courses,
-            (courseId) => coursesById[courseId]?.index
-          ),
+          courses: map(cycle.courses, (courseId) => coursesById[courseId]?.index),
         }));
       }
 
@@ -329,10 +307,7 @@ export default function ProgramList() {
           {
             label: coursesData.step_label,
             content: (
-              <AcademicProgramSetupCourses
-                {...coursesData}
-                frequencyOptions={frequencyOptions}
-              />
+              <AcademicProgramSetupCourses {...coursesData} frequencyOptions={frequencyOptions} />
             ),
           },
           {
@@ -366,7 +341,10 @@ export default function ProgramList() {
   }, [layoutState.contentRef.current]);
 
   let { scroll } = store;
-  if (scroll > headerBase.height) scroll = headerBase.height;
+  if (scroll > headerBase.height) {
+    scroll = headerBase.height;
+  }
+
   const correct = 48;
   const correctBottom = 24;
 
@@ -419,9 +397,7 @@ export default function ProgramList() {
                                 <Anchor
                                   component={Link}
                                   onClick={() =>
-                                    history.push(
-                                      `/private/grades/evaluations?center=${centerId}`
-                                    )
+                                    navigate(`/private/grades/evaluations?center=${centerId}`)
                                   }
                                   to={`/private/grades/evaluations?center=${centerId}`}
                                 >

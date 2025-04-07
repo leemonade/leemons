@@ -5,11 +5,11 @@ import { useRequestErrorMessage } from "@common";
 import { addErrorAlert } from "@layout/alert";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { find, isArray, isEmpty } from "lodash";
-import React, { useContext, useEffect, useMemo } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useContext, useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  BasicData as MediaBasicData,
   BookmarkBasicData,
+  BasicData as MediaBasicData,
   PermissionsData,
   Setup,
 } from "../../../components/AssetSetup";
@@ -23,7 +23,7 @@ const EditAssetPage = () => {
     useContext(LibraryContext);
   const [t] = useTranslateLoader(prefixPN("assetSetup"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   // ·········································································
@@ -54,11 +54,7 @@ const EditAssetPage = () => {
   }, [params, asset]);
 
   useEffect(() => {
-    if (
-      !isEmpty(asset?.category) &&
-      !isEmpty(categories) &&
-      asset?.category !== category?.id
-    ) {
+    if (!isEmpty(asset?.category) && !isEmpty(categories) && asset?.category !== category?.id) {
       const item = find(categories, { id: asset.category });
       setCategory(item);
     }
@@ -68,7 +64,7 @@ const EditAssetPage = () => {
   // HANDLERS
 
   const handleOnBack = () => {
-    history.goBack();
+    navigate(-1);
   };
 
   const handleOnFinish = () => {

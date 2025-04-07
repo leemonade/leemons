@@ -13,7 +13,7 @@ import { fireEvent } from "@leemons/hooks";
 import { cloneDeep, get, set, uniq } from "lodash";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ACTIVITIES_KEY, EVENT_BASE, RESOURCES_KEY } from "../../constants";
 import addAction from "../../helpers/addAction";
 import { EmptyState } from "../StructureData/components/EmptyState";
@@ -51,7 +51,7 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const [sharedData, setSharedData] = useModuleSetupContext();
   const [isLoading, setIsLoading] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(
     () =>
@@ -75,11 +75,7 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
           scrollRef={scrollRef}
           fixed
           leftZone={
-            <Button
-              variant="outline"
-              leftIcon={<ChevLeftIcon />}
-              onClick={onPrevStep}
-            >
+            <Button variant="outline" leftIcon={<ChevLeftIcon />} onClick={onPrevStep}>
               {localizations?.buttons?.previous}
             </Button>
           }
@@ -92,31 +88,23 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
               <DropdownButton
                 chevronUp
                 width="auto"
-                disabled={
-                  isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2
-                }
+                disabled={isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
                 loading={isLoading}
                 data={[
                   {
                     label: localizations?.buttons?.publish,
                     onClick: () =>
-                      fireEvent(
-                        "plugin.learning-paths.modules.edit.onSave&Publish",
-                        () =>
-                          history.push(
-                            "/private/leebrary/assignables.learningpaths.module/list?activeTab=published"
-                          )
+                      fireEvent("plugin.learning-paths.modules.edit.onSave&Publish", () =>
+                        navigate(
+                          "/private/leebrary/assignables.learningpaths.module/list?activeTab=published"
+                        )
                       ),
                   },
                   {
                     label: localizations?.buttons?.publishAndAssign,
                     onClick: () =>
-                      fireEvent(
-                        "plugin.learning-paths.modules.edit.onSave&Publish",
-                        ({ id }) =>
-                          history.push(
-                            `/private/learning-paths/modules/${id}/assign`
-                          )
+                      fireEvent("plugin.learning-paths.modules.edit.onSave&Publish", ({ id }) =>
+                        navigate(`/private/learning-paths/modules/${id}/assign`)
                       ),
                   },
                 ]}
@@ -132,16 +120,11 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
       <Box>
         <AssetPickerDrawer
           layout="rows"
-          categories={[
-            "media-files",
-            "bookmarks",
-            "assignables.content-creator",
-          ]}
+          categories={["media-files", "bookmarks", "assignables.content-creator"]}
           creatable
           onClose={() => setShowAssetDrawer(false)}
           onSelect={(asset) => {
-            const isContentCreator =
-              asset?.providerData?.role === "content-creator";
+            const isContentCreator = asset?.providerData?.role === "content-creator";
 
             setSharedData((data) =>
               set(
@@ -149,9 +132,7 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
                 RESOURCES_KEY,
                 uniq([
                   ...get(data, RESOURCES_KEY, []),
-                  isContentCreator
-                    ? { id: asset.id, duplicate: false }
-                    : asset.id,
+                  isContentCreator ? { id: asset.id, duplicate: false } : asset.id,
                 ])
               )
             );
@@ -163,16 +144,12 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
         {get(sharedData, RESOURCES_KEY, [])?.length ? (
           <ResourcesTable
             onAssetChange={(newAssets) => {
-              setSharedData((data) =>
-                set(cloneDeep(data), RESOURCES_KEY, newAssets)
-              );
+              setSharedData((data) => set(cloneDeep(data), RESOURCES_KEY, newAssets));
             }}
             onSelectAsset={() => setShowAssetDrawer(1)}
             onRemoveAsset={(id) =>
               setSharedData((data) => {
-                const index = data.state.resources.findIndex(
-                  (value) => value === id
-                );
+                const index = data.state.resources.findIndex((value) => value === id);
                 const newData = cloneDeep(data);
 
                 newData.state.resources.splice(index, 1);

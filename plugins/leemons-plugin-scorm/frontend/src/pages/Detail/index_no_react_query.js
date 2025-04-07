@@ -1,38 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { isEmpty } from "lodash";
-import { useForm, Controller, FormProvider } from "react-hook-form";
-import { useHistory, useParams } from "react-router-dom";
 import {
-  LoadingOverlay,
-  Stack,
-  Box,
-  useDebouncedCallback,
-  DropdownButton,
-  TotalLayoutHeader,
-  TotalLayoutFooterContainer,
-  TotalLayoutContainer,
   AssetScormIcon,
+  Box,
+  DropdownButton,
+  LoadingOverlay,
   Select,
+  Stack,
+  TotalLayoutContainer,
+  TotalLayoutFooterContainer,
+  TotalLayoutHeader,
+  useDebouncedCallback,
 } from "@bubbles-ui/components";
-import { BasicData, UploadingFileModal } from "@leebrary/components";
-import JSZip from "jszip";
-import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { useStore } from "@common";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import { BasicData, UploadingFileModal } from "@leebrary/components";
 import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { prefixPN } from "@scorm/helpers";
 import {
-  savePackageRequest,
-  getPackageRequest,
-  getSupportedVersionsRequest,
-} from "@scorm/request";
-import {
-  xml2json,
-  getVersionFromMetadata,
-  getLaunchURL,
   getDefaultOrganization,
+  getLaunchURL,
+  getVersionFromMetadata,
+  xml2json,
 } from "@scorm/lib/utilities";
-import { useLayout } from "@layout/context";
+import { getPackageRequest, getSupportedVersionsRequest, savePackageRequest } from "@scorm/request";
+import JSZip from "jszip";
+import { isEmpty } from "lodash";
+import React, { useEffect, useState } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Detail() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN("scormSetup"));
@@ -53,7 +49,7 @@ export default function Detail() {
     openShareDrawer: false,
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
   const form = useForm();
@@ -82,8 +78,7 @@ export default function Detail() {
         });
       }
 
-      const { versions: supportedVersions } =
-        await getSupportedVersionsRequest();
+      const { versions: supportedVersions } = await getSupportedVersionsRequest();
       store.supportedVersions = supportedVersions;
       store.idLoaded = params.id;
       store.loading = false;
@@ -94,7 +89,9 @@ export default function Detail() {
   }
 
   useEffect(() => {
-    if (params?.id && store.idLoaded !== params?.id) init();
+    if (params?.id && store.idLoaded !== params?.id) {
+      init();
+    }
   }, [params]);
 
   // ----------------------------------------------------------------------------
@@ -151,14 +148,12 @@ export default function Detail() {
 
   async function onlyPublish() {
     await saveAndPublish();
-    history.push(
-      "/private/leebrary/assignables.scorm/list?activeTab=published"
-    );
+    navigate("/private/leebrary/assignables.scorm/list?activeTab=published");
   }
 
   async function publishAndAssign() {
     await saveAndPublish();
-    history.push(`/private/scorm/assign/${store.package.id}`);
+    navigate(`/private/scorm/assign/${store.package.id}`);
   }
 
   async function loadFiles(file) {
@@ -217,8 +212,7 @@ export default function Detail() {
   }
 
   const handleOnCancel = () => {
-    const formHasBeenTouched =
-      Object.keys(form.formState.touchedFields).length > 0;
+    const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
     const formIsNotEmpty = !isEmpty(formValues);
     if (formHasBeenTouched || formIsNotEmpty) {
       openConfirmationModal({
@@ -228,10 +222,10 @@ export default function Detail() {
           confim: t("cancelModalConfirm"),
           cancel: t("cancelModalCancel"),
         },
-        onConfirm: () => history.goBack(),
+        onConfirm: () => navigate(-1),
       })();
     } else {
-      history.goBack();
+      navigate(-1);
     }
   };
 
@@ -343,10 +337,7 @@ export default function Detail() {
           />
         </Stack>
       </TotalLayoutContainer>
-      <UploadingFileModal
-        opened={uploadingFileInfo !== null}
-        info={uploadingFileInfo}
-      />
+      <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </FormProvider>
   );
 }

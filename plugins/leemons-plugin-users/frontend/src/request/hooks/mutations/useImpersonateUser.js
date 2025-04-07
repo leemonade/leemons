@@ -1,11 +1,6 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import {
-  Alert,
-  ContextContainer,
-  Text,
-  getUserFullName,
-} from "@bubbles-ui/components";
+import { Alert, ContextContainer, Text, getUserFullName } from "@bubbles-ui/components";
 import { addErrorAlert } from "@layout/alert";
 import { useLayout } from "@layout/context";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
@@ -18,7 +13,7 @@ import impersonateUser from "@users/request/impersonateUser";
 export default function useImpersonateUser() {
   const queryClient = useQueryClient();
   const [t] = useTranslateLoader(prefixPN("impersonate"));
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { openConfirmationModal } = useLayout();
 
@@ -56,7 +51,7 @@ export default function useImpersonateUser() {
         throw new Error("Failed to save token");
       }
 
-      history.push("/protected/users/select-profile");
+      navigate("/protected/users/select-profile");
       queryClient.invalidateQueries();
     },
     onError: (error) => {

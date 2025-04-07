@@ -1,18 +1,18 @@
-import React, { useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
+import React, { useEffect, useMemo } from "react";
 
 import { Box, SearchInput, useDebouncedValue } from "@bubbles-ui/components";
 
-import { difference, map, pick } from "lodash";
-import { useForm, Controller, useWatch } from "react-hook-form";
 import { useQuery } from "@common";
-import { useHistory } from "react-router-dom";
-import { Subject, Status, Type, Sort } from "./components";
+import { difference, map } from "lodash";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { useFiltersStyle } from "./Filters.style";
+import { Sort, Status, Subject, Type } from "./components";
 import Progress from "./components/Progress";
-import { useRoles } from "./components/Type/Type";
-import { useSortTypes } from "./components/Sort/Sort";
 import { useProgress } from "./components/Progress/Progress";
+import { useSortTypes } from "./components/Sort/Sort";
+import { useRoles } from "./components/Type/Type";
 
 function useOnChange({ control, onChange }) {
   const value = useWatch({
@@ -29,11 +29,7 @@ function useOnChange({ control, onChange }) {
   }, [debouncedValue]);
 }
 
-function valueMatchesValidValuesAndIsDifferent(
-  newValue,
-  oldValue,
-  validValues
-) {
+function valueMatchesValidValuesAndIsDifferent(newValue, oldValue, validValues) {
   return newValue && newValue !== oldValue && validValues.includes(newValue);
 }
 
@@ -45,10 +41,7 @@ function useOnRouterChange({ setValue, getValues, useRouter }) {
 
   const roleTypes = React.useMemo(() => map(_roleTypes, "value"), [_roleTypes]);
   const sortTypes = React.useMemo(() => map(_sortTypes, "value"), [_sortTypes]);
-  const progressTypes = React.useMemo(
-    () => map(_progressTypes, "value"),
-    [_progressTypes]
-  );
+  const progressTypes = React.useMemo(() => map(_progressTypes, "value"), [_progressTypes]);
 
   React.useEffect(() => {
     if (!useRouter) {
@@ -58,9 +51,7 @@ function useOnRouterChange({ setValue, getValues, useRouter }) {
     const { type, sort, query, progress } = params;
     const currentValues = getValues();
 
-    if (
-      valueMatchesValidValuesAndIsDifferent(type, currentValues.type, roleTypes)
-    ) {
+    if (valueMatchesValidValuesAndIsDifferent(type, currentValues.type, roleTypes)) {
       setValue("type", type);
     }
 
@@ -68,26 +59,18 @@ function useOnRouterChange({ setValue, getValues, useRouter }) {
       setValue("query", query);
     }
 
-    if (
-      valueMatchesValidValuesAndIsDifferent(sort, currentValues.sort, sortTypes)
-    ) {
+    if (valueMatchesValidValuesAndIsDifferent(sort, currentValues.sort, sortTypes)) {
       setValue("sort", sort);
     }
 
-    if (
-      valueMatchesValidValuesAndIsDifferent(
-        progress,
-        currentValues.progress,
-        progressTypes
-      )
-    ) {
+    if (valueMatchesValidValuesAndIsDifferent(progress, currentValues.progress, progressTypes)) {
       setValue("progress", progress);
     }
   }, [params, roleTypes, sortTypes]);
 }
 
 function useOnValueChange({ setValue, getValues, value, useRouter }) {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (value) {
@@ -100,7 +83,7 @@ function useOnValueChange({ setValue, getValues, value, useRouter }) {
         ["type", "sort", "query", "progress"].forEach((key) => {
           searchParams.append(key, values[key]);
         });
-        history.push(`?${searchParams.toString()}`);
+        navigate(`?${searchParams.toString()}`);
       }
     }
   }, [value]);
@@ -162,9 +145,7 @@ export default function Filters({
           <Controller
             name="subject"
             control={control}
-            render={({ field }) => (
-              <Subject labels={labels} {...field} program={program} />
-            )}
+            render={({ field }) => <Subject labels={labels} {...field} program={program} />}
           />
         </Box>
       )}

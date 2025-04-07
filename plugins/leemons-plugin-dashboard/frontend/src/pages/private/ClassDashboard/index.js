@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
 import { getClassImage } from "@academic-portfolio/helpers/getClassImage";
@@ -11,8 +11,8 @@ import {
   LoadingOverlay,
   TabPanel,
   Tabs,
-  TotalLayoutContainer,
   Text,
+  TotalLayoutContainer,
 } from "@bubbles-ui/components";
 import { ClassroomHeaderBar, HeaderDropdown } from "@bubbles-ui/leemons";
 import { getShare, useLocale, useStore } from "@common";
@@ -55,7 +55,7 @@ export default function ClassDashboard({ session }) {
   const [t] = useTranslateLoader(prefixPN("classDashboard"));
   const { id } = useParams();
   const isStudent = useIsStudent();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const tabsRef = React.useRef();
   const headerRef = React.useRef();
@@ -63,8 +63,7 @@ export default function ClassDashboard({ session }) {
   function onResize() {
     // TODO Ver que pasa con el scroll en los distintos navegadores
     const haveScrollBar =
-      layoutState.contentRef.current.clientHeight <
-      layoutState.contentRef.current.scrollHeight;
+      layoutState.contentRef.current.clientHeight < layoutState.contentRef.current.scrollHeight;
     if (haveScrollBar !== store.haveScrollBar) {
       // store.haveScrollBar = haveScrollBar;
       // render();
@@ -83,10 +82,7 @@ export default function ClassDashboard({ session }) {
     store.loading = true;
     render();
     store.idLoaded = id;
-    const { classe, programClasses } = await classDetailForDashboardRequest(
-      id,
-      null
-    );
+    const { classe, programClasses } = await classDetailForDashboardRequest(id, null);
 
     store.hideStudents = false;
     if (isStudent && classe.hideStudentsToStudents) {
@@ -118,7 +114,7 @@ export default function ClassDashboard({ session }) {
     }, 4000);
   }
   function changeClass(classe) {
-    history.push(`/private/dashboard/class/${classe.id}`);
+    navigate(`/private/dashboard/class/${classe.id}`);
   }
 
   async function onGetZone(zone) {
@@ -130,8 +126,9 @@ export default function ClassDashboard({ session }) {
   }
 
   React.useEffect(() => {
-    if (id && (!store.idLoaded || id !== store.idLoaded) && isStudent !== null)
+    if (id && (!store.idLoaded || id !== store.idLoaded) && isStudent !== null) {
       init();
+    }
   }, [id, isStudent]);
 
   const headerProps = {};
@@ -161,21 +158,14 @@ export default function ClassDashboard({ session }) {
     ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
 
-      if (
-        properties.label === "academic-portfolio.tabDetail.label" &&
-        store.hideStudents
-      ) {
+      if (properties.label === "academic-portfolio.tabDetail.label" && store.hideStudents) {
         return null;
       }
 
       return (
         <TabPanel
           key={key}
-          label={
-            store.widgetLabels
-              ? store.widgetLabels[properties.label] || "-"
-              : "-"
-          }
+          label={store.widgetLabels ? store.widgetLabels[properties.label] || "-" : "-"}
           className={styles.widgetTab}
         >
           <Component {...properties} classe={store.class} session={session} />
@@ -193,12 +183,7 @@ export default function ClassDashboard({ session }) {
 
   const classHeader = React.useCallback(
     ({ Component, key, properties }) => (
-      <Component
-        {...properties}
-        key={key}
-        classe={store.class}
-        session={session}
-      />
+      <Component {...properties} key={key} classe={store.class} session={session} />
     ),
     [store.class, session]
   );
@@ -233,10 +218,9 @@ export default function ClassDashboard({ session }) {
 
     if (startDate && endDate) {
       return (
-        <Text
-          productive
-          strong
-        >{`${t("customPeriodLabels.from")} ${LocaleDate({ date: startDate })} ${t("customPeriodLabels.to")} ${LocaleDate({ date: endDate })}`}</Text>
+        <Text productive strong>{`${t("customPeriodLabels.from")} ${LocaleDate({
+          date: startDate,
+        })} ${t("customPeriodLabels.to")} ${LocaleDate({ date: endDate })}`}</Text>
       );
     }
 
@@ -271,19 +255,13 @@ export default function ClassDashboard({ session }) {
               locale={locale}
               leftSide={
                 <Box>
-                  <HeaderDropdown
-                    value={store.class}
-                    data={classesData}
-                    onChange={changeClass}
-                  />
+                  <HeaderDropdown value={store.class} data={classesData} onChange={changeClass} />
                 </Box>
               }
               rightSide={
                 <>
                   {!store.loading ? (
-                    <ZoneWidgets zone="dashboard.class.header-bar">
-                      {classHeader}
-                    </ZoneWidgets>
+                    <ZoneWidgets zone="dashboard.class.header-bar">{classHeader}</ZoneWidgets>
                   ) : null}
                 </>
               }
@@ -300,8 +278,7 @@ export default function ClassDashboard({ session }) {
                 <Tabs
                   fullHeight
                   onChange={(key) => {
-                    store.hideRightSide =
-                      !!store.tabsProperties?.[key]?.hideRightSide;
+                    store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
                     render();
                   }}
                 />

@@ -19,15 +19,11 @@ import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
 import useTranslate from "@multilanguage/useTranslate";
 import prefixPN from "@users/helpers/prefixPN";
 import { goDetailProfilePage, goListProfilesPage } from "@users/navigate";
-import {
-  addProfileRequest,
-  getProfileRequest,
-  updateProfileRequest,
-} from "@users/request";
+import { addProfileRequest, getProfileRequest, updateProfileRequest } from "@users/request";
 import { forIn } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { DatasetTab } from "./DatasetTab";
 import { LocaleTab } from "./LocaleTab";
@@ -41,7 +37,7 @@ function ProfileDetail() {
   const { t: tCommonHeader } = useCommonTranslate("page_header");
   const { t: tCommonForm } = useCommonTranslate("forms");
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const { uri } = useParams();
 
   const [editMode, setEditMode] = useState(false);
@@ -49,8 +45,7 @@ function ProfileDetail() {
   const [permissions, setPermissions] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
-  const [error, setError, ErrorAlert, getErrorMessage] =
-    useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
 
   const localesForm = useForm();
 
@@ -87,7 +82,7 @@ function ProfileDetail() {
       await hooks.fireEvent("user:update:permissions", profile);
       setSaveLoading(false);
       setEditMode(false);
-      goDetailProfilePage(history, response.profile.uri);
+      goDetailProfilePage(navigate, response.profile.uri);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
       setSaveLoading(false);
@@ -144,7 +139,7 @@ function ProfileDetail() {
     if (profile?.id) {
       setEditMode(false);
     } else {
-      goListProfilesPage(history);
+      goListProfilesPage(navigate);
     }
   };
 
@@ -231,10 +226,7 @@ function ProfileDetail() {
           <PageContainer noFlex>
             <PlatformLocalesModal
               editMode={editMode}
-              error={
-                localesForm.formState.errors &&
-                localesForm.formState.errors.length
-              }
+              error={localesForm.formState.errors && localesForm.formState.errors.length}
               warning={showDefaultLocaleWarning}
               alert={
                 localesForm.formState.isDirty ? (

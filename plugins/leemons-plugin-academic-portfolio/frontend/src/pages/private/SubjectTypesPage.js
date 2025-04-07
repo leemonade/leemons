@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import SubjectTypesEmptyState from "@academic-portfolio/components/SubjectTypesEmptyState";
 import prefixPN from "@academic-portfolio/helpers/prefixPN";
@@ -10,32 +11,32 @@ import {
 } from "@academic-portfolio/hooks/mutations/useMutateSubjectType";
 import useSubjectTypes from "@academic-portfolio/hooks/useSubjectTypes";
 import {
-  Select,
-  TableInput,
-  TextInput,
+  Box,
   Button,
   ContextContainer,
+  InputWrapper,
+  LoadingOverlay,
+  Select,
+  Stack,
+  TableInput,
+  TextInput,
   TotalLayoutContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
-  LoadingOverlay,
-  InputWrapper,
-  Stack,
-  Box,
 } from "@bubbles-ui/components";
 import { AddCircleIcon } from "@bubbles-ui/icons/solid";
 import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserCenters } from "@users/hooks";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SubjectTypesPage = () => {
   const [t, , , tLoading] = useTranslateLoader(prefixPN("subjectTypes_page"));
   const [subjectTypes, setSubjectTypes] = useState([]);
   const [selectedCenter, setSelectedCenter] = useState("");
   const [showEmptyState, setShowEmptyState] = useState(false);
-  const history = useHistory();
+
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: userCenters, isLoading: centersLoading } = useUserCenters();
   const { mutate: createSubjectType, isLoading: isCreateLoading } =
@@ -136,7 +137,10 @@ const SubjectTypesPage = () => {
   // HANDLERS ---------------------------------------------------------------------------------------------- ||
 
   const onSubmit = async (data) => {
-    if (showEmptyState) setShowEmptyState(false);
+    if (showEmptyState) {
+      setShowEmptyState(false);
+    }
+
     const { name, description } = data;
     const center = selectedCenter;
 
@@ -200,7 +204,7 @@ const SubjectTypesPage = () => {
         Header={
           <TotalLayoutHeader
             title={t("header.title")}
-            onCancel={() => history.goBack()}
+            onCancel={() => navigate(-1)}
             mainActionLabel={t("header.cancel")}
           >
             <Select
