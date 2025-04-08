@@ -1,20 +1,21 @@
-import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, ContextContainer, FileUpload, Text, useDebouncedValue } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { uuidv4 } from '@bubbles-ui/leemons';
-
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { deleteAssetRequest, newAssetRequest } from '@leebrary/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@tasks/helpers';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import mime from 'mime';
+import PropTypes from 'prop-types';
+
 import {
   FileUploadProvider,
   useFileUploadStore,
 } from '../../../../../../../../stores/filesUploadedStore';
+
+import { prefixPN } from '@tasks/helpers';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 
 function useUpdateSubmission({ assignation, value }) {
   const isFirstRender = useRef(true);
@@ -58,7 +59,7 @@ function File({ assignation, preview }) {
   const [t] = useTranslateLoader(prefixPN('task_realization.submission_file'));
 
   const files = useFileUploadStore((state) => state.files);
-  const filesArray = useMemo(() => files.values().toArray(), [files]);
+  const filesArray = useMemo(() => files?.values()?.toArray() ?? [], [files]);
 
   const { addNewFiles, removeMissingFiles, updateLeebraryId, changeStatus } = useFileUploadStore(
     (state) => state.actions
