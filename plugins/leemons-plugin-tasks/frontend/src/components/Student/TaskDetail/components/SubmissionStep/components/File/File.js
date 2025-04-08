@@ -59,7 +59,10 @@ function File({ assignation, preview }) {
   const [t] = useTranslateLoader(prefixPN('task_realization.submission_file'));
 
   const files = useFileUploadStore((state) => state.files);
-  const filesArray = useMemo(() => files?.values()?.toArray() ?? [], [files]);
+  const filesArray = useMemo(() => {
+    // Convert Map values iterator to array using Array.from
+    return files ? Array.from(files.values()) : [];
+  }, [files]);
 
   const { addNewFiles, removeMissingFiles, updateLeebraryId, changeStatus } = useFileUploadStore(
     (state) => state.actions
