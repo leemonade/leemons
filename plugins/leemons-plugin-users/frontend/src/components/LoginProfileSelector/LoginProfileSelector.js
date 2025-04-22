@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
-import _ from 'lodash';
+
 import {
   Box,
   Button,
@@ -11,6 +10,9 @@ import {
   RadioGroup,
   Select,
 } from '@bubbles-ui/components';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+
 import { LoginProfileSelectorStyles } from './LoginProfileSelector.styles';
 
 export const LOGIN_PROFILE_SELECTOR_DEFAULT_PROPS = {

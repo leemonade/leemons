@@ -37,7 +37,7 @@ async function cleanCollectionsNotIn(deploymentIds) {
 (async () => {
   try {
     await init();
-    const keepDeploymentIds = ['66d9dfc96a7d2054230b809b'];
+    const keepDeploymentIds = [];
     await cleanCollectionsNotIn(keepDeploymentIds);
     await client.close();
   } catch (error) {
