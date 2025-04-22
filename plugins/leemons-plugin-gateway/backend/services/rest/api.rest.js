@@ -28,7 +28,20 @@ module.exports = {
           },
           async handler(ctx) {
             try {
-              await mongoose.connection.db.dropDatabase();
+              const database = mongoose.connection.db;
+              const collections = await database.listCollections().toArray();
+
+              for (const collection of collections) {
+                if (
+                  collection.name.endsWith('_keyvalues') ||
+                  collection.name.includes('widgets') ||
+                  collection.name.includes('multilanguage') ||
+                  collection.name.includes('emails_emailtemplate')
+                ) {
+                  continue;
+                }
+                await database.collection(collection.name).deleteMany({});
+              }
               return {
                 status: 200,
                 message: 'Successful Database Drop',
