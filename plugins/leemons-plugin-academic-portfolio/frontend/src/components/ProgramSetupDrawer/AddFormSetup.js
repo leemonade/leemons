@@ -1,6 +1,4 @@
-import React from 'react';
-import { isBoolean } from 'lodash';
-import PropTypes from 'prop-types';
+import { Controller, useForm } from 'react-hook-form';
 
 import {
   ContextContainer,
@@ -12,8 +10,10 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutContainer,
 } from '@bubbles-ui/components';
-import { Controller, useForm } from 'react-hook-form';
 import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
+import { isBoolean } from 'lodash';
+import PropTypes from 'prop-types';
+
 import FooterContainer from './FooterContainer';
 
 const useFormSetupStyles = createStyles((theme) => ({

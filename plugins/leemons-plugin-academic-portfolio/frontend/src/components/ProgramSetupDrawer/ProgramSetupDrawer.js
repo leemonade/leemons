@@ -95,7 +95,7 @@ const ProgramSetupDrawer = ({
     [isEditing, program?.staff]
   );
 
-  const handleCredits = (formData, _body, _program) => {
+  const handleCredits = useCallback((formData, _body, _program) => {
     const body = cloneDeep(_body);
     if (formData.credits || _program?.credits) {
       body.credits = formData.credits;
@@ -107,7 +107,7 @@ const ProgramSetupDrawer = ({
       body.totalHours = formData.totalHours || null;
     }
     return body;
-  };
+  }, []);
 
   const handleCourses = useCallback(
     (formData, _body) => {
@@ -174,7 +174,7 @@ const ProgramSetupDrawer = ({
 
       return body;
     },
-    [setupData, centerId, handleCourses, handleReferenceGroups, handleStaff]
+    [setupData, centerId, handleCourses, handleCredits, handleReferenceGroups, handleStaff]
   );
 
   const handleOnAdd = useCallback(

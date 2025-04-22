@@ -347,7 +347,6 @@ const AddProgramForm = ({
                       )}
                     />
                   </ContextContainer>
-
                   {/* STAFF */}
                   <ProgramStaff
                     control={control}
@@ -357,7 +356,6 @@ const AddProgramForm = ({
                     loading={staffValidationLoading}
                     setLoading={setStaffValidationLoading}
                   />
-
                   {/* REGLAS ACADÉMICAS */}
                   <ContextContainer noFlex spacing={4}>
                     <Title className={classes.sectionTitle}>
@@ -381,7 +379,6 @@ const AddProgramForm = ({
                       )}
                     />
                   </ContextContainer>
-
                   {/* DURACIÓN Y CRÉDITOS */}
                   {(setupData?.creditsSystem || setupData?.durationInHours) && (
                     <ContextContainer noFlex spacing={4}>
