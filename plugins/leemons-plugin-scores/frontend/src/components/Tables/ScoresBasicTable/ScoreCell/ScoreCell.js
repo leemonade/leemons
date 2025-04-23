@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState, useRef } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 import {
   Box,
@@ -10,87 +10,76 @@ import {
   NumberInput,
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { isFunction, isNil, isNumber, noop } from 'lodash';
+import { DeleteIcon, CheckIcon } from '@bubbles-ui/icons/solid';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import { isFunction, isNil, noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { SCORES_CELL_DEFAULT_PROPS } from './ScoreCell.constants';
 import { ScoreCellStyles } from './ScoreCell.styles';
 
-const SelectScore = forwardRef(({ value, onChange, onClose, grades, onDelete }, ref) => {
+const SelectScore = forwardRef(({ value: _value, onChange, onClose, grades, onDelete }, ref) => {
+  const [value, setValue] = useState(_value);
   const isLetterTypes = grades.some((grade) => grade.letter);
-  const isDeletingRef = useRef(false);
+  const { t: tCommon } = useCommonTranslate('formWithTheme');
 
-  const onBlurHandler = () => {
-    // Add a small delay to allow "delete" click events to be processed first
-    setTimeout(() => {
-      if (!isDeletingRef.current) {
-        onClose();
-      }
-    }, 300);
-  };
+  useEffect(() => {
+    setValue(_value);
+  }, [_value]);
 
-  const onDeleteHandler = () => {
-    console.log('SelectScore > onDeleteHandler!!!');
-    isDeletingRef.current = true;
-    onDelete();
-    onChange(null);
+  const onAcceptHandler = () => {
+    const score = Math.max(
+      grades[0].number,
+      Math.min(grades[grades.length - 1].number, value ?? null)
+    );
 
-    // Reset the ref after a short delay to ensure the blur event has been processed
-    setTimeout(() => {
-      isDeletingRef.current = false;
-    }, 400);
+    onChange(score);
+    onClose(score);
   };
 
   const onKeyDownHandler = (e) => {
     if (e.key === 'Enter') {
-      onClose();
+      onAcceptHandler();
     }
   };
 
-  const onChangeHandler = (val) => {
-    onChange(Math.max(grades[0].number, Math.min(grades[grades.length - 1].number, val ?? null)));
-  };
-
-  if (isLetterTypes) {
-    return (
-      <>
-        <Select
-          value={value}
-          data={grades.map(({ letter, number }) => letter || number.toString())}
-          onChange={onChange}
-          onDropdownClose={onClose}
-          style={{ flex: 1 }}
-          autoFocus
-          ref={ref}
-        />
-      </>
-    );
-  }
   return (
     <Stack fullWidth spacing={2}>
-      <NumberInput
-        value={value}
-        onChange={onChangeHandler}
-        onBlur={onBlurHandler}
-        onKeyDown={onKeyDownHandler}
-        min={grades[0].number}
-        max={grades[grades.length - 1].number}
-        precision={2}
-        hideControls
-        autoFocus
-        ref={ref}
-        sx={{ width: 75 }}
-      />
-
-      {isNumber(value) && value >= 0 && (
-        <ActionButton
-          noFlex
-          variant="transparent"
-          onClick={onDeleteHandler}
-          icon={<DeleteBinIcon width={18} height={18} />}
+      {isLetterTypes ? (
+        <Select
+          ref={ref}
+          value={value}
+          data={grades.map(({ letter, number }) => letter || number.toString())}
+          onChange={setValue}
+          style={{ flex: 1 }}
+          autoFocus
+        />
+      ) : (
+        <NumberInput
+          ref={ref}
+          value={value}
+          onChange={setValue}
+          onKeyDown={onKeyDownHandler}
+          min={grades[0].number}
+          max={grades[grades.length - 1].number}
+          precision={2}
+          hideControls
+          autoFocus
+          sx={{ width: 50, marginLeft: 40 }}
         />
       )}
+      <Stack>
+        <ActionButton
+          tooltip={tCommon('accept')}
+          onClick={onAcceptHandler}
+          icon={<CheckIcon width={18} height={18} />}
+        />
+        <ActionButton
+          tooltip={tCommon('cancel')}
+          onClick={() => onClose(value)}
+          icon={<DeleteIcon width={18} height={18} />}
+        />
+      </Stack>
     </Stack>
   );
 });
@@ -197,8 +186,10 @@ const ScoreCell = ({
     setIsEditing(false);
   };
 
-  const onCloseThenChangeHandler = () => {
-    const score = editValue;
+  const onCloseThenChangeHandler = (score) => {
+    if (!score) {
+      score = editValue;
+    }
 
     const rowId = isCustom ? row : row.original.id;
     const columnId = isCustom ? column : column.id;
