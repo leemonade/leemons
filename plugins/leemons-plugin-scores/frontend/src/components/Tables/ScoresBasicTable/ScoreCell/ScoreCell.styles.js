@@ -10,8 +10,6 @@ export const ScoreCellStyles = createStyles((theme, { isEditing, allowChange }) 
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      // border: '2px solid transparent',
-      // borderColor: isEditing && globalTheme.focus.default.color,
     },
     score: {
       width: '100%',

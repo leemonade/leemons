@@ -56,7 +56,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
   );
 
   const onDeleteHandler = ({ rowId, columnId }) => {
-    console.log('ScoresTable > onDeleteHandler', rowId, columnId);
+    // TODO: Implement delete handler
   };
 
   useEffect(() => {
