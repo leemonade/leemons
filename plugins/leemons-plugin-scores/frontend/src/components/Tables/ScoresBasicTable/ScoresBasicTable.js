@@ -4,7 +4,7 @@ import { useSticky } from 'react-table-sticky';
 
 import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
 import { motion } from 'framer-motion';
-import { isFunction } from 'lodash';
+import { isFunction, noop } from 'lodash';
 
 import { CommonTableStyles } from '../CommonTable.styles';
 
@@ -30,6 +30,7 @@ const ScoresBasicTable = ({
   onDataChange,
   onColumnExpand,
   onOpen,
+  onDelete = noop,
   periodName,
   from,
   to,
@@ -51,7 +52,7 @@ const ScoresBasicTable = ({
     { overFlowLeft, overFlowRight, hideCustom },
     { name: 'CommonTable' }
   );
-  const { classes: basicClasses, cx } = ScoresBasicTableStyles({}, { name: 'ScoresBasicTable' });
+  const { classes: basicClasses } = ScoresBasicTableStyles({}, { name: 'ScoresBasicTable' });
   const classes = { ...commonClasses, ...basicClasses };
 
   const onColumnExpandHandler = (columnId) => {
@@ -139,14 +140,10 @@ const ScoresBasicTable = ({
           </Text>
         </Stack>
       ),
-      Cell: ({ value }) => (
+      // eslint-disable-next-line react/prop-types
+      Cell: ({ value: { name, surname, image } = {} }) => (
         <Box className={classes.studentsCells}>
-          <UserDisplayItem
-            name={value.name}
-            surnames={value.surname}
-            avatar={value.image}
-            noBreak
-          />
+          <UserDisplayItem name={name} surnames={surname} avatar={image} noBreak />
         </Box>
       ),
     });
@@ -170,14 +167,15 @@ const ScoresBasicTable = ({
             type={activity.type}
           />
         ),
-        Cell: ({ value, row, column, ...others }) => (
+        // eslint-disable-next-line react/prop-types
+        Cell: ({ value: { score, isSubmitted, source } = {}, row, column, ...others }) => (
           <ScoreCell
-            value={value.score}
+            value={score}
             noActivity={labels.noActivity}
             submittedLabel={labels.submitted}
             allowChange={activity.allowChange && !viewOnly}
-            isSubmitted={value.isSubmitted}
-            source={value.source}
+            isSubmitted={isSubmitted}
+            source={source}
             isClosed={isDeadlineFinished}
             grades={grades}
             usePercentage={usePercentage}
@@ -186,6 +184,7 @@ const ScoresBasicTable = ({
             setValue={setValue}
             onDataChange={onDataChange}
             onOpen={onOpen}
+            onDelete={onDelete}
           />
         ),
       });
@@ -196,8 +195,8 @@ const ScoresBasicTable = ({
               index === 0
                 ? 'first'
                 : index === expandedData.activities.length - 1
-                ? 'last'
-                : 'between';
+                  ? 'last'
+                  : 'between';
             const completionPercentage = getCompletionPercentage(expandedActivity.id, true);
             return {
               accessor: expandedActivity.id,
@@ -216,14 +215,15 @@ const ScoresBasicTable = ({
                 position === 'last'
                   ? { boxShadow: 'inset -10px 0px 6px -6px rgba(0,0,0,0.10)' }
                   : { boxShadow: 'none' },
-              Cell: ({ value, row, column }) => (
+              // eslint-disable-next-line react/prop-types
+              Cell: ({ value: { score, isSubmitted, source } = {}, row, column }) => (
                 <ScoreCell
-                  value={value.score}
+                  value={score}
                   noActivity={labels.noActivity}
                   submittedLabel={labels.submitted}
                   allowChange={expandedActivity.allowChange && !viewOnly}
-                  isSubmitted={value.isSubmitted}
-                  source={value.source}
+                  isSubmitted={isSubmitted}
+                  source={source}
                   grades={grades}
                   usePercentage={usePercentage}
                   row={row}
@@ -233,6 +233,7 @@ const ScoresBasicTable = ({
                   onDataChange={onDataChange}
                   position={position}
                   onOpen={onOpen}
+                  onDelete={onDelete}
                 />
               ),
             };
@@ -306,10 +307,15 @@ const ScoresBasicTable = ({
       <Box ref={tableRef} {...getTableProps()} className={classes.table} onScroll={onScrollHandler}>
         <Box style={{ flex: 1 }}>
           <Box className={classes.tableHeader}>
-            {headerGroups.map((headerGroup) => (
-              <Box {...headerGroup.getHeaderGroupProps()} className={classes.tableHeaderRow}>
-                {headerGroup.headers.map((column) => (
+            {headerGroups.map((headerGroup, headerGroupIndex) => (
+              <Box
+                key={headerGroup.id || headerGroupIndex}
+                {...headerGroup.getHeaderGroupProps()}
+                className={classes.tableHeaderRow}
+              >
+                {headerGroup.headers.map((column, columnIndex) => (
                   <motion.div
+                    key={column.id || columnIndex}
                     layout
                     transition={spring}
                     {...column.getHeaderProps([{ style: column.style }])}
@@ -322,12 +328,13 @@ const ScoresBasicTable = ({
             ))}
           </Box>
           <Box {...getTableBodyProps()} className={classes.tableBody}>
-            {rows.map((row) => {
+            {rows.map((row, rowIndex) => {
               prepareRow(row);
               return (
-                <Box {...row.getRowProps()} className={classes.bodyRow}>
-                  {row.cells.map((cell) => (
+                <Box key={row.id || rowIndex} {...row.getRowProps()} className={classes.bodyRow}>
+                  {row.cells.map((cell, cellIndex) => (
                     <motion.div
+                      key={cell.id || cellIndex}
                       layout
                       transition={spring}
                       {...cell.getCellProps([
@@ -362,6 +369,7 @@ const ScoresBasicTable = ({
           onDataChange={onDataChange}
           usePercentage={usePercentage}
           viewOnly={viewOnly}
+          onDelete={onDelete}
         />
       </Box>
     </Box>

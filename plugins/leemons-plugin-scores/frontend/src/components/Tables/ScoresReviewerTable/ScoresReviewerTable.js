@@ -1,18 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Text, UserDisplayItem, useElementSize } from '@bubbles-ui/components';
+import { useEffect, useMemo, useState } from 'react';
 import { useTable, useFlexLayout } from 'react-table';
-import { isFunction } from 'lodash';
-import { motion } from 'framer-motion';
 import { useSticky } from 'react-table-sticky';
-import { ScoreCell } from './ScoreCell';
-import { SubjectHeader } from './SubjectHeader';
-import { PeriodHeader } from './PeriodHeader';
+
+import { Box, Text, UserDisplayItem, useElementSize } from '@bubbles-ui/components';
+import { motion } from 'framer-motion';
+import { isFunction, noop } from 'lodash';
+
 import { CommonTableStyles } from '../CommonTable.styles';
-import { ScoresReviewerTableStyles } from './ScoresReviewerTable.styles';
+
+import { PeriodHeader } from './PeriodHeader';
+import { ScoreCell } from './ScoreCell';
 import {
   SCORES_REVIEWER_TABLE_DEFAULT_PROPS,
   SCORES_REVIEWER_TABLE_PROP_TYPES,
 } from './ScoresReviewerTable.constants';
+import { ScoresReviewerTableStyles } from './ScoresReviewerTable.styles';
+import { SubjectHeader } from './SubjectHeader';
 
 const ScoresReviewerTable = ({
   grades,
@@ -25,6 +28,7 @@ const ScoresReviewerTable = ({
   from,
   to,
   hideCustom,
+  onDelete = noop,
   ...props
 }) => {
   const { ref: tableRef } = useElementSize(null);
@@ -70,7 +74,7 @@ const ScoresReviewerTable = ({
     studentSubjects.forEach((studentSubject) => {
       const { score: lastScore } = studentSubject.periodScores.at(-1);
       weightedScore +=
-        (lastScore ? lastScore : 0) *
+        (lastScore || 0) *
         (subjects.find((subject) => subject.id === studentSubject.id).periods.at(-1)?.weight || 1);
     });
     let sumOfWeights = 0;
@@ -106,6 +110,7 @@ const ScoresReviewerTable = ({
                 column={'customScore'}
                 isCustom
                 onDataChange={onDataChange}
+                onDelete={onDelete}
               />
             </Box>
           )}
@@ -115,7 +120,7 @@ const ScoresReviewerTable = ({
   };
 
   const getSubjectColumns = (subjectId, subjectPeriods, isFirst, isLast) => {
-    const columns = subjectPeriods.map((period, index) => ({
+    return subjectPeriods.map((period, index) => ({
       Header: period.name,
       accessor: `${subjectId}-${period.name}`,
       Header: (
@@ -133,11 +138,11 @@ const ScoresReviewerTable = ({
             column={column}
             setValue={setValue}
             onDataChange={onDataChange}
+            onDelete={onDelete}
           />
         );
       },
     }));
-    return columns;
   };
 
   const getColumns = () => {

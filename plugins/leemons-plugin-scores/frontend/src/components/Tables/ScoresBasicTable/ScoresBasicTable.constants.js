@@ -69,6 +69,7 @@ export const SCORES_BASIC_TABLE_PROP_TYPES = {
     avgScore: PropTypes.string,
     gradingTasks: PropTypes.string,
     customScore: PropTypes.string,
+    submitted: PropTypes.bool,
   }),
   hideCustom: PropTypes.bool,
   onChange: PropTypes.func,
