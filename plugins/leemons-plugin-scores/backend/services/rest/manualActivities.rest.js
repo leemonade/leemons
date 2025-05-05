@@ -71,6 +71,8 @@ const restActions = {
 
       return {
         ...updated,
+        classId: manualActivity?.classId,
+        id,
         status: 200,
       };
     },

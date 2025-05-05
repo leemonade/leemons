@@ -7,11 +7,16 @@ import {
   useHover,
   ActionButton,
 } from '@bubbles-ui/components';
-import { DeleteBinIcon, MoveLeftIcon, MoveRightIcon } from '@bubbles-ui/icons/outline';
-import { AlertWarningTriangleIcon, CutStarIcon } from '@bubbles-ui/icons/solid';
+import { MoveLeftIcon, MoveRightIcon } from '@bubbles-ui/icons/outline';
+import {
+  AlertWarningTriangleIcon,
+  CutStarIcon,
+  DeleteBinIcon,
+  EditWriteIcon,
+} from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isFunction } from 'lodash';
+import { isFunction, noop } from 'lodash';
 
 import {
   ACTIVIY_HEADER_DEFAULT_PROPS,
@@ -32,6 +37,7 @@ const ActivityHeader = ({
   isExpanded,
   locale,
   onColumnExpand,
+  onEdit = noop,
   position,
   type,
   roleIcon,
@@ -65,7 +71,7 @@ const ActivityHeader = ({
     <Box ref={ref} className={classes.root}>
       <Box className={classes.header}>
         {isManualActivity && (
-          <Box className={classes.removeIcon}>
+          <Stack className={classes.removeIcon}>
             <ActionButton
               icon={<DeleteBinIcon width={18} height={18} />}
               onClick={() =>
@@ -80,7 +86,8 @@ const ActivityHeader = ({
                 })()
               }
             />
-          </Box>
+            <ActionButton icon={<EditWriteIcon width={18} height={18} />} onClick={onEdit} />
+          </Stack>
         )}
         <Stack spacing={2}>
           {roleIcon && (
