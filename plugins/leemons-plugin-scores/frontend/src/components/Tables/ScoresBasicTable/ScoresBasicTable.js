@@ -3,9 +3,11 @@ import { useTable, useFlexLayout } from 'react-table';
 import { useSticky } from 'react-table-sticky';
 
 import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
+import { addErrorAlert } from '@layout/alert';
 import { motion } from 'framer-motion';
 import { isFunction, noop } from 'lodash';
 
+import { ManualActivityDrawer } from '../../EvaluationNotebook/components/ManualActivityDrawer';
 import { CommonTableStyles } from '../CommonTable.styles';
 
 import { ActivityHeader } from './ActivityHeader';
@@ -16,6 +18,8 @@ import {
 } from './ScoresBasicTable.constants';
 import { ScoresBasicTableStyles } from './ScoresBasicTable.styles';
 import { RightContent } from './components/RightContent';
+
+import { useUpdateManualActivityMutation } from '@scores/requests/hooks/mutations/useUpdateManualActivityMutation';
 
 const ScoresBasicTable = ({
   grades,
@@ -42,6 +46,7 @@ const ScoresBasicTable = ({
 }) => {
   const { ref: tableRef } = useElementSize(null);
   const [value, setValue] = useState(_value);
+  const [manualActivity, setManualActivity] = useState(null);
   const useNumbers = !grades.some((grade) => grade.letter);
 
   const [expandedColumn, setExpandedColumn] = useState(_expandedColumn);
@@ -54,6 +59,8 @@ const ScoresBasicTable = ({
   );
   const { classes: basicClasses } = ScoresBasicTableStyles({}, { name: 'ScoresBasicTable' });
   const classes = { ...commonClasses, ...basicClasses };
+
+  const { mutateAsync: updateManualActivity } = useUpdateManualActivityMutation();
 
   const onColumnExpandHandler = (columnId) => {
     isFunction(onColumnExpand) && onColumnExpand(columnId);
@@ -118,6 +125,11 @@ const ScoresBasicTable = ({
     return activitiesObject;
   };
 
+  function handleOpenManualActivity(activityId) {
+    const activity = activities.find((activity) => activity.id === activityId);
+    setManualActivity(activity);
+  }
+
   const getColumns = () => {
     const columns = [];
     columns.push({
@@ -160,6 +172,7 @@ const ScoresBasicTable = ({
           <ActivityHeader
             {...activity}
             completionPercentage={completionPercentage}
+            onEdit={() => handleOpenManualActivity(activity.id)}
             locale={locale}
             isExpandable={activity.expandable}
             isExpanded={expandedColumn === activity.id}
@@ -295,6 +308,24 @@ const ScoresBasicTable = ({
     setExpandedColumn(_expandedColumn);
   }, [_expandedColumn]);
 
+  const handleOnSubmitManualActivity = async (data) => {
+    try {
+      const activity = {
+        name: data.name,
+        description: data.description,
+        date: new Date(manualActivity.deadline),
+        role: manualActivity.role,
+        classId: manualActivity.classId,
+        id: manualActivity.id,
+      };
+      console.log('activity:', activity);
+      await updateManualActivity(activity);
+    } catch (e) {
+      addErrorAlert('Error', e.message);
+      throw e;
+    }
+  };
+
   const spring = {
     type: 'spring',
     stiffness: 100,
@@ -372,6 +403,13 @@ const ScoresBasicTable = ({
           onDelete={onDelete}
         />
       </Box>
+      <ManualActivityDrawer
+        classId={manualActivity?.classId}
+        activity={manualActivity}
+        isOpen={!!manualActivity}
+        onClose={() => setManualActivity(null)}
+        onSubmit={handleOnSubmitManualActivity}
+      />
     </Box>
   );
 };

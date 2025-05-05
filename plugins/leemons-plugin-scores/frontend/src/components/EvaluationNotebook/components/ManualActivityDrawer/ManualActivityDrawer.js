@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
@@ -13,6 +13,7 @@ import {
   Text,
   Select,
 } from '@bubbles-ui/components';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
@@ -23,6 +24,7 @@ import useWeights from '@scores/requests/hooks/queries/useWeights';
 const defaultValues = { date: null, name: '', description: '' };
 
 export function ManualActivityDrawer({
+  activity,
   isOpen,
   classId,
   onClose: _onClose,
@@ -31,14 +33,27 @@ export function ManualActivityDrawer({
   maxDate,
 }) {
   const [t] = useTranslateLoader(prefixPN('manualActivityDrawer'));
+  const [tEval] = useTranslateLoader(prefixPN('evaluationNotebook'));
+  const { t: tCommon } = useCommonTranslate('formWithTheme');
   const [weightT] = useTranslateLoader(prefixPN('weightingTypes'));
-  const form = useForm({ defaultValues });
+
+  const form = useForm({
+    defaultValues,
+  });
   const [isLoading, setIsLoading] = useState(false);
 
-  const { data: weights } = useWeights({ classId });
+  const { data: weights } = useWeights({ classId, enabled: !!classId });
   const isRolesOrActivitiesWeight = weights?.type === 'roles' || weights?.type === 'activities';
 
   const rolesLocalizations = useRolesLocalizations(['task', 'test']);
+
+  useEffect(() => {
+    if (activity) {
+      form.setValue('date', new Date(activity?.deadline));
+      form.setValue('name', activity?.name ?? '');
+      form.setValue('description', activity?.description ?? '');
+    }
+  }, [activity]);
 
   const onClose = () => {
     _onClose();
@@ -56,7 +71,9 @@ export function ManualActivityDrawer({
 
   return (
     <Drawer opened={isOpen} onClose={onClose}>
-      <Drawer.Header title={t('title')} />
+      <Drawer.Header
+        title={activity ? `${tCommon('edit')} - ${tEval('filters.manualActivity')}` : t('title')}
+      />
 
       <Drawer.Content>
         <ContextContainer title={t('config')}>
@@ -73,6 +90,7 @@ export function ManualActivityDrawer({
                   required
                   minDate={minDate}
                   maxDate={maxDate}
+                  disabled={!!activity}
                 />
               </Box>
             )}
@@ -122,6 +140,7 @@ export function ManualActivityDrawer({
                   <Select
                     {...field}
                     label={t('roles')}
+                    disabled={!!activity}
                     data={[
                       {
                         value: 'task',
@@ -148,7 +167,7 @@ export function ManualActivityDrawer({
         </Drawer.Footer.LeftActions>
         <Drawer.Footer.RightActions>
           <Button onClick={handleSubmit} loading={isLoading}>
-            {t('save')}
+            {activity ? tCommon('save') : t('save')}
           </Button>
         </Drawer.Footer.RightActions>
       </Drawer.Footer>
@@ -163,4 +182,5 @@ ManualActivityDrawer.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   minDate: PropTypes.instanceOf(Date),
   maxDate: PropTypes.instanceOf(Date),
+  activity: PropTypes.object,
 };

@@ -11,6 +11,8 @@
 export function updateManualActivity({ id, ...manualActivity }) {
   return leemons.api(`v1/scores/manualActivities/${id}`, {
     method: 'PUT',
-    body: manualActivity,
+    body: {
+      manualActivity,
+    },
   });
 }
