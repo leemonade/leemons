@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   Select,
@@ -14,7 +14,7 @@ import {
   Button,
   ImageLoader,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, RedirectIcon, ReportPageIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon, RedirectIcon } from '@bubbles-ui/icons/solid';
 import { unflatten } from '@common';
 import useCenterEvaluationSystems from '@grades/hooks/queries/useCenterEvaluationSystems';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -288,22 +288,24 @@ const ProgramsPage = () => {
             }
           >
             <Stack fullWidth justifyContent="space-between">
-            <Select
-              data={centersData}
-              placeholder={t('common.select_center')}
-              onChange={(value) => {
-                setSelectedCenter(value);
-              }}
-              value={selectedCenter}
-              sx={{ width: 262 }}
-            />
-            <Button
-            variant="link"
-            leftIcon={<ReportPageIcon />}
-            onClick={handleOnReports}
-          >
-            {t('reports')}
-          </Button>
+              <Select
+                data={centersData}
+                placeholder={t('common.select_center')}
+                onChange={(value) => {
+                  setSelectedCenter(value);
+                }}
+                value={selectedCenter}
+                sx={{ width: 262 }}
+              />
+              {/*
+              <Button
+                variant="link"
+                leftIcon={<ReportPageIcon />}
+                onClick={handleOnReports}
+              >
+                {t('reports')}
+              </Button>
+              */}
             </Stack>
           </TotalLayoutHeader>
         }
